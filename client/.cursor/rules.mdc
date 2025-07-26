@@ -1,0 +1,103 @@
+---
+alwaysApply: true
+---
+
+# Project Management App - Cursor Rules
+
+You are a senior frontend engineer with expertise in React, TypeScript, and modern web development practices. Focus on writing clean, maintainable, and performant code that follows industry best practices and established patterns.
+
+## Project Overview
+
+- **Type**: Modern React TypeScript application
+- **Purpose**: Team collaboration and issue tracking with powerful, intuitive features
+- **Build Tool**: Vite for fast development and optimized builds
+- **Styling**: TailwindCSS + Shadcn UI components
+- **State**: TanStack Query for server state, Zustand for global client state, React hooks for local state
+- **Testing**: Vitest + React Testing Library + MSW for mocking
+- **Package Manager**: Yarn (for dependency management and workspace support)
+
+## Features
+
+- Role-based authentication and access control
+- Full CRUD operations for issues with hierarchical structure
+- Team management with scoped issue creation
+- Rich metadata support (tags, priorities, assignees, comments, history)
+- Status workflow management (Backlog → In Progress → In Review → Done)
+
+## Directory Structure
+
+```
+src/
+├── components/           # Reusable UI components
+│   ├── ui/              # Shadcn UI components
+│   ├── forms/           # Form components
+│   └── layout/          # Layout components
+├── pages/               # Route components
+├── hooks/               # Custom React hooks
+├── lib/                 # Utilities and configurations
+│   ├── api/            # API related code
+│   ├── utils/          # Helper functions
+│   └── validations/    # Zod schemas
+├── routing/             # Centralized route definitions and helpers
+├── types/               # TypeScript type definitions
+├── constants/           # Application constants
+└── __tests__/          # Test files
+```
+
+## File Naming Conventions
+
+- **Components**: kebab-case (e.g., `issue-card.tsx`, `team-selector.tsx`)
+- **Hooks**: camelCase with `use` prefix (e.g., `useIssues.ts`, `useTeamData.ts`)
+- **Utils**: kebab-case (e.g., `date-helpers.ts`, `api-client.ts`)
+- **Types**: kebab-case with `.types.ts` suffix (e.g., `issue-item.types.ts`)
+- **Constants**: SCREAMING_SNAKE_CASE (e.g., `API_ENDPOINTS.ts`)
+
+# Project Management App - Cursor Rules
+
+You are a senior frontend engineer and focusing clean cod
+
+## Project Overview
+
+- **Type**: Modern React TypeScript application
+- **Purpose**: Team collaboration and issue tracking with powerful, intuitive features
+- **Build Tool**: Vite for fast development and optimized builds
+- **Styling**: TailwindCSS + Shadcn UI components
+- **State**: TanStack Query for server state, Zustand for global client state, React hooks for local state
+- **Testing**: Vitest + React Testing Library + MSW for mocking
+- **Packing**: YARN
+
+## Features
+
+- Role-based authentication and access control
+- Full CRUD operations for issues with hierarchical structure
+- Team management with scoped issue creation
+- Rich metadata support (tags, priorities, assignees, comments, history)
+- Status workflow management (Backlog → In Progress → In Review → Done)
+
+## Directory Structure
+
+```
+src/
+├── components/           # Reusable UI components
+│   ├── ui/              # Shadcn UI components
+│   ├── forms/           # Form components
+│   └── layout/          # Layout components
+├── pages/               # Route components
+├── hooks/               # Custom React hooks
+├── lib/                 # Utilities and configurations
+│   ├── api/            # API related code
+│   ├── utils/          # Helper functions
+│   └── validations/    # Zod schemas
+├── routing/             # Centralized route definitions and helpers
+├── types/               # TypeScript type definitions
+├── constants/           # Application constants
+└── __tests__/          # Test files
+```
+
+## File Naming Conventions
+
+- **Components**: kebab-case (e.g., `issue-card.tsx`, `team-selector.tsx`)
+- **Hooks**: camelCase with `use` prefix (e.g., `useIssues.ts`, `useTeamData.ts`)
+- **Utils**: kebab-case (e.g., `date-helpers.ts`, `api-client.ts`)
+- **Types**: kebab-case with `.types.ts` suffix (e.g., `issue-item.types.ts`)
+- **Constants**: SCREAMING_SNAKE_CASE (e.g., `API_ENDPOINTS.ts`)

@@ -1,0 +1,21 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Commit Messages & Design Conversion
+
+## Commit Message Format
+
+- Always use the **conventional commits format**: `type(scope): description`.
+  - Common types include: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
+- Messages must be concise, clear, in the present tense, and use simple, descriptive language.
+- Avoid jargon unless necessary for technical clarity.
+
+## Examples
+
+- `feat(auth): add login form validation`
+- `fix(forms): resolve form submission error handling`
+- `test(invoice): add integration tests for invoice management`
+- `refactor(components): extract reusable SearchableSelect component`

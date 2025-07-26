@@ -41,6 +41,7 @@ A modern, full-stack project management application inspired by Linear, designed
 | **React**                 | Modern UI library for component-based development             |
 | **TypeScript**            | Type-safe JavaScript for better development experience        |
 | **TanStack Query**        | Powerful data fetching and server state management            |
+| **Zustand**               | Lightweight, scalable state management for React              |
 | **Shadcn UI**             | Beautiful, customizable component library with custom theming |
 | **TailwindCSS**           | Utility-first CSS framework for rapid styling                 |
 | **TanStack Table**        | Feature-rich data table components                            |
