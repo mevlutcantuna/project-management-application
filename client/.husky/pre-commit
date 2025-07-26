@@ -1,1 +1,2 @@
-npx lint-staged
+#!/bin/sh
+cd client && npx lint-staged
