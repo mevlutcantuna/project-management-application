@@ -35,6 +35,7 @@ export default tseslint.config([
         "warn",
         { allowConstantExport: true },
       ],
+      "prettier/prettier": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_" },
