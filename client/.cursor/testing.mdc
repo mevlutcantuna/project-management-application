@@ -19,7 +19,7 @@ alwaysApply: true
   - `src/mocks/server.ts` - MSW server for Node (tests)
   - `src/mocks/browser.ts` - MSW worker for browser (dev)
   - `src/mocks/data/index.ts` - typed mock data factories
-- Use `__tests__` folder only for complex integration test suites
+- All tests should be in `__tests__` folders adjacent to source files
 
 ## Vitest Rules
 
@@ -42,6 +42,21 @@ describe("ComponentName", () => {
   });
 });
 ```
+
+- Each `it` block should have exactly one `render()` call
+- For re-rendering with different props, use the `rerender` method:
+
+  ```typescript
+  it("should update when props change", () => {
+    const { rerender } = render(<Component prop="initial" />);
+    expect(screen.getByText("initial")).toBeInTheDocument();
+
+    rerender(<Component prop="updated" />);
+    expect(screen.getByText("updated")).toBeInTheDocument();
+  });
+  ```
+
+- Never call `render()` multiple times in the same test - use `rerender` instead
 
 ### Assertions
 
