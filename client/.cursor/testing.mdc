@@ -1,0 +1,267 @@
+---
+description: Testing rules for vitest, react-testing-library, and MSW
+globs:
+alwaysApply: true
+---
+
+# Testing Rules
+
+## File Organization
+
+- Test files: `*.test.tsx` adjacent to source files
+- Setup files:
+  - `src/lib/test-utils.tsx` - custom render with providers
+  - `src/mocks/handlers/index.ts` - exports all MSW handlers
+  - `src/mocks/handlers/` - handlers organized by domain:
+    - `transactions.ts` - `/api/transactions/*` endpoints
+    - `suppliers.ts` - `/api/suppliers/*` endpoints
+    - `auth.ts` - `/api/auth/*` endpoints
+  - `src/mocks/server.ts` - MSW server for Node (tests)
+  - `src/mocks/browser.ts` - MSW worker for browser (dev)
+  - `src/mocks/data/index.ts` - typed mock data factories
+- Use `__tests__` folder only for complex integration test suites
+
+## Vitest Rules
+
+### Test Structure
+
+**Critical**: Always call `render()` and `userEvent.setup()` inside individual `it` blocks, never globally or in `beforeEach`:
+
+```typescript
+describe("ComponentName", () => {
+  beforeEach(() => {
+    // Setup before each test
+  });
+
+  afterEach(() => {
+    cleanup(); // RTL cleanup
+  });
+
+  it("should do something specific", () => {
+    // Test implementation
+  });
+});
+```
+
+### Assertions
+
+- Use `expect().toBe()` for primitives
+- Use `expect().toEqual()` for objects/arrays
+- Use `expect().toBeInTheDocument()` for DOM elements
+- Use `expect().toHaveBeenCalledWith()` for mocks
+- Avoid `toBeTruthy()`/`toBeFalsy()` - be specific
+
+### Async Testing
+
+```typescript
+// Use waitFor for async state changes
+await waitFor(() => {
+  expect(screen.getByText("Loading...")).not.toBeInTheDocument();
+});
+
+// Use findBy queries for elements that appear async
+const element = await screen.findByText("Success!");
+```
+
+## React Testing Library Rules
+
+### Query Priority (in order)
+
+**Important**: When elements cannot be found using the preferred queries below, add `data-testid` attributes to the component and use `getByTestId()`. This should be a last resort - always try accessible queries first.
+
+1. `getByRole()` - accessibility first
+2. `getByLabelText()` - form controls
+3. `getByPlaceholderText()` - inputs
+4. `getByText()` - content
+5. `getByDisplayValue()` - form values
+6. `getByAltText()` - images
+7. `getByTitle()` - last resort
+8. NEVER use `getByTestId()` unless absolutely necessary
+
+### Query Patterns
+
+```typescript
+// Good - accessible queries
+const button = screen.getByRole("button", { name: /submit/i });
+const input = screen.getByLabelText(/email/i);
+const heading = screen.getByRole("heading", { level: 1 });
+
+// Bad - implementation details
+const element = container.querySelector(".my-class");
+const element = screen.getByTestId("my-element"); // Only use when accessible queries fail
+```
+
+### User Interactions
+
+```typescript
+import { userEvent } from "@testing-library/user-event";
+
+// Always setup userEvent
+const user = userEvent.setup();
+
+// Use userEvent for all interactions
+await user.click(button);
+await user.type(input, "test@example.com");
+await user.selectOptions(select, "option1");
+await user.upload(fileInput, file);
+```
+
+### Component Testing Patterns
+
+```typescript
+// Custom render with providers
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(ui, {
+    wrapper: ({ children }) => (
+      <QueryClient>
+        <Router>
+          {children}
+        </Router>
+      </QueryClient>
+    )
+  })
+}
+
+// Test component behavior, not implementation
+it('should show error message when form is invalid', async () => {
+  const user = userEvent.setup()
+  renderWithProviders(<MyForm />)
+
+  await user.click(screen.getByRole('button', { name: /submit/i }))
+
+  expect(screen.getByText(/email is required/i)).toBeInTheDocument()
+})
+```
+
+## Mock Service Worker Rules
+
+### Setup Structure
+
+```typescript
+// src/mocks/handlers.ts
+import { http, HttpResponse } from "msw";
+import { BASE_URL } from "@/src/lib/api.ts";
+
+export const handlers = [
+  http.get(BASE_URL + "/api/users", () => {
+    return HttpResponse.json([{ id: 1, name: "John Doe" }]);
+  }),
+
+  http.post(BASE_URL + "/api/users", async ({ request }) => {
+    const newUser = await request.json();
+    return HttpResponse.json({ id: 2, ...newUser }, { status: 201 });
+  }),
+];
+
+// src/mocks/server.ts
+import { setupServer } from "msw/node";
+import { handlers } from "./handlers";
+
+export const server = setupServer(...handlers);
+
+// src/mocks/browser.ts
+import { setupServer } from "msw/browser";
+import { handlers } from "./handlers";
+
+export const browser = setupServer(...handlers);
+```
+
+### Test Setup
+
+```typescript
+// vitest.setup.ts
+import { beforeAll, afterEach, afterAll } from "vitest";
+import { server } from "./src/mocks/server";
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+```
+
+### Handler Patterns
+
+```typescript
+// Dynamic responses
+http.get("/api/users/:id", ({ params }) => {
+  const { id } = params;
+  return HttpResponse.json({ id, name: `User ${id}` });
+});
+
+// Error responses
+http.get("/api/users", () => {
+  return new HttpResponse(null, { status: 500 });
+});
+
+// Conditional responses
+http.post("/api/login", async ({ request }) => {
+  const { email } = await request.json();
+
+  if (email === "admin@example.com") {
+    return HttpResponse.json({ token: "admin-token" });
+  }
+
+  return new HttpResponse(null, { status: 401 });
+});
+```
+
+### Test-Specific Mocks
+
+```typescript
+// Override handlers per test
+it('should handle server error', async () => {
+  server.use(
+    http.get('/api/users', () => {
+      return new HttpResponse(null, { status: 500 })
+    })
+  )
+
+  renderWithProviders(<UsersList />)
+
+  expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument()
+})
+```
+
+## General Testing Best Practices
+
+### Test Naming
+
+- Describe behavior: `should show error when email is invalid`
+- Not implementation: `should call validateEmail function`
+
+### Test Organization
+
+```typescript
+describe("UserForm", () => {
+  describe("validation", () => {
+    it("should show error when email is empty", () => {});
+    it("should show error when email is invalid", () => {});
+  });
+
+  describe("submission", () => {
+    it("should submit form with valid data", () => {});
+    it("should disable submit button while loading", () => {});
+  });
+});
+```
+
+### Mocking
+
+- Mock external dependencies (APIs, third-party libs)
+- Don't mock React hooks or components you're testing
+- Use MSW for HTTP requests
+- Use `vi.fn()` for function mocks
+
+### Coverage
+
+- Focus on critical user paths
+- Test error states and edge cases
+- Don't chase 100% coverage - aim for meaningful tests
+
+### Performance
+
+- Use `screen.debug()` for debugging test failures
+  - Full DOM: `screen.debug(undefined, Infinity)`
+  - Specific element: `screen.debug(screen.getByRole('button'))`
+  - Remove before committing
+- Avoid unnecessary `waitFor()` - prefer `findBy` queries
+- Clean up after tests to prevent memory leaks
