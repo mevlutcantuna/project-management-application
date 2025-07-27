@@ -1,4 +1,4 @@
-# Fullstack Project
+# Project Management Application
 
 A modern, full-stack project management application inspired by Linear, designed to streamline team collaboration and issue tracking with powerful, intuitive features.
 
