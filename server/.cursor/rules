@@ -1,0 +1,162 @@
+# Node.js & Express.js Backend Development Rules
+
+## Project Structure & Organization
+
+- Follow modular architecture with clear separation of concerns
+- Use `/src` directory for application code
+- Organize by feature/domain rather than by file type
+- Keep controllers thin, business logic in services
+- Use `/routes`, `/controllers`, `/services`, `/models`, `/middleware`, `/utils` structure
+- Place configuration files in `/config` directory
+- Use `/tests` or `__tests__` for test files alongside source code
+
+## Code Style & Formatting
+
+- Use TypeScript for type safety and better developer experience
+- Follow consistent naming conventions: camelCase for variables/functions, PascalCase for classes
+- Use meaningful, descriptive variable and function names
+- Prefer const over let, avoid var
+- Use arrow functions for callbacks and short functions
+- Maximum line length of 100 characters
+- Use trailing commas in objects and arrays
+- Prefer template literals over string concatenation
+
+## Express.js Best Practices
+
+- Use express.Router() for modular route handlers
+- Implement proper error handling middleware
+- Use helmet for security headers
+- Implement rate limiting with express-rate-limit
+- Use compression middleware
+- Validate input data with libraries like joi or express-validator
+- Use middleware for authentication and authorization
+- Implement proper CORS configuration
+- Use express.json() and express.urlencoded() for parsing
+
+## Error Handling
+
+- Create custom error classes extending Error
+- Use async/await with proper try-catch blocks
+- Implement centralized error handling middleware
+- Never expose internal error details in production
+- Log errors appropriately with structured logging
+- Return consistent error response format
+- Handle unhandled promise rejections and uncaught exceptions
+
+## Security
+
+- Never commit secrets, use environment variables
+- Validate and sanitize all user input
+- Use parameterized queries to prevent SQL injection
+- Implement proper authentication (JWT, sessions)
+- Use HTTPS in production
+- Implement CSRF protection where needed
+- Set security headers with helmet
+- Keep dependencies updated and audit regularly
+
+## Database & ORM
+
+- Use connection pooling
+- Implement proper database error handling
+- Use transactions for related operations
+- Avoid N+1 query problems
+- Use database migrations for schema changes
+- Implement proper indexing strategies
+- Use prepared statements or ORM query builders
+- Close database connections properly
+
+## API Design
+
+- Follow RESTful principles
+- Use proper HTTP status codes
+- Implement consistent response format
+- Use proper HTTP methods (GET, POST, PUT, DELETE, PATCH)
+- Implement API versioning (e.g., /api/v1/)
+- Use meaningful endpoint names
+- Implement proper pagination for list endpoints
+- Document APIs with tools like Swagger/OpenAPI
+
+## Environment & Configuration
+
+- Use different configs for dev/staging/production
+- Load environment variables early in application startup
+- Validate required environment variables on startup
+- Use config management libraries like dotenv
+- Never hardcode configuration values
+- Use different databases for different environments
+
+## Logging & Monitoring
+
+- Use structured logging (JSON format)
+- Include correlation IDs for request tracing
+- Log at appropriate levels (error, warn, info, debug)
+- Don't log sensitive information
+- Use logging libraries like winston or pino
+- Implement health check endpoints
+- Monitor application metrics and performance
+
+## Testing
+
+- Write unit tests for business logic
+- Write integration tests for API endpoints
+- Use test databases or mocking for external dependencies
+- Achieve meaningful test coverage (>80%)
+- Use descriptive test names and organize with describe/it blocks
+- Test error conditions and edge cases
+- Use factories or fixtures for test data
+
+## Performance
+
+- Use async/await instead of callbacks
+- Implement caching strategies (Redis, in-memory)
+- Use connection pooling for databases
+- Implement pagination for large data sets
+- Use compression for responses
+- Optimize database queries
+- Profile and monitor application performance
+- Use clustering for CPU-intensive operations
+
+## Dependencies
+
+- Keep dependencies up to date
+- Audit dependencies regularly for security vulnerabilities
+- Use exact versions in package.json for production
+- Minimize dependency footprint
+- Use dev dependencies appropriately
+- Lock dependency versions with package-lock.json or yarn.lock
+
+## Deployment
+
+- Use Yarn for package management
+- Use Docker for containerization
+- Implement proper health checks
+- Use process managers like PM2 for production
+- Implement graceful shutdown handling
+- Use environment-specific configuration
+- Implement CI/CD pipelines
+- Use reverse proxies (nginx) in production
+
+## Code Organization Patterns
+
+- Use dependency injection for better testability
+- Implement repository pattern for data access
+- Use service layer for business logic
+- Implement factory pattern for object creation
+- Use middleware pattern for cross-cutting concerns
+- Follow single responsibility principle
+
+## Async/Await Best Practices
+
+- Always handle promise rejections
+- Use Promise.all() for concurrent operations
+- Don't use async/await in loops unless sequential processing is needed
+- Prefer Promise.allSettled() when you need all results regardless of failures
+- Use proper error boundaries in async operations
+
+## File and Resource Management
+
+- Always close file handles and streams
+- Use proper cleanup in finally blocks
+- Implement timeout mechanisms for external calls
+- Handle resource cleanup on application shutdown
+- Use streams for large file operations
