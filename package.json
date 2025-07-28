@@ -1,0 +1,26 @@
+{
+  "name": "project-management-application",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo for project management application",
+  "scripts": {
+    "prepare": "husky",
+    "client:dev": "cd client && yarn dev",
+    "server:dev": "cd server && yarn dev",
+    "client:build": "cd client && yarn build",
+    "server:build": "cd server && yarn build",
+    "lint": "yarn lint:client && yarn lint:server",
+    "lint:client": "cd client && yarn lint",
+    "lint:server": "cd server && yarn lint",
+    "format": "yarn format:client && yarn format:server",
+    "format:client": "cd client && yarn format",
+    "format:server": "cd server && yarn format"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}

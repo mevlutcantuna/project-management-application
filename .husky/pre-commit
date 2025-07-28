@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+# Run client lint-staged
+echo "Running client lint-staged..."
+cd client && npx lint-staged
+
+# Run server lint-staged  
+echo "Running server lint-staged..."
+cd ../server && npx lint-staged
+
+echo "All pre-commit checks passed!" 
