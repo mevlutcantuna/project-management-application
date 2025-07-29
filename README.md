@@ -2,6 +2,67 @@
 
 A modern, full-stack project management application inspired by Linear, designed to streamline team collaboration and issue tracking with powerful, intuitive features.
 
+## Development
+
+### Prerequisites
+
+- **Node.js**: v24+ (recommended v24+)
+- **Yarn**: Package manager
+- **Docker**: For containerized development
+- **PostgreSQL**: For database (or use Docker) (will be implemented)
+
+### Quick Start
+
+```bash
+# Clone and navigate to project
+git clone <repository-url>
+cd project-management-application
+
+# Start both client and server
+yarn docker:up
+
+# View logs
+yarn docker:logs
+
+# Stop services
+yarn docker:down
+```
+
+### Environment Setup
+
+**Server** (`server/.env`):
+
+```env
+PORT=8000
+```
+
+**Client** (`client/.env`):
+
+```env
+
+```
+
+### Development URLs
+
+- **Client**: http://localhost:3000
+- **Server**: http://localhost:8000
+- **API Health**: http://localhost:8000/
+
+### Project Structure
+
+```
+project-management-application/
+├── client/          # Frontend frontend
+│   ├── src/
+│   ├── public/
+│   └── Dockerfile
+├── server/          # Backed backend
+│   ├── src/
+│   └── Dockerfile
+├── docker-compose.yml
+└── package.json
+```
+
 ## Project Details
 
 ### 1. **Authorization**

@@ -1,12 +1,9 @@
 {
-  "name": "client",
+  "name": "project-management-app-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "license": "MIT",
-  "engines": {
-    "node": "24.x"
-  },
   "scripts": {
     "dev": "vite --host",
     "build": "tsc -b && vite build",
@@ -15,7 +12,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "preview": "vite preview",
-    "prepare": "husky",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:watch": "vitest --watch",

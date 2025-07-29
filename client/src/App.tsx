@@ -5,7 +5,7 @@ function App() {
   const [count, setCount] = useState(0);
   return (
     <div className="m-5 flex items-center gap-4">
-      <Button onClick={() => setCount(0)}>Reset</Button>
+      <Button onClick={() => setCount(0)}>Reset2</Button>
       <Button
         onClick={() => {
           setCount((prev) => prev - 1);

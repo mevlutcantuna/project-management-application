@@ -52,3 +52,9 @@ jest.setup.js
 tailwind.config.js
 tsconfig.json
 next.config.js
+vite.config.ts
+vitest.config.ts
+
+# Prettier
+.prettierignore
+.prettierrc

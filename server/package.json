@@ -4,8 +4,8 @@
   "description": "Project Management App Server",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "tsx watch --env-file=.env src/index.ts",
-    "start": "node --env-file=.env dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/src/index.js",
     "build": "tsc",
     "type-check": "tsc --noEmit",
     "lint": "eslint 'src/**/*.{ts,js}'",

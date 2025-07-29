@@ -17,8 +17,6 @@ coverage
 .prettierignore
 .prettierrc
 eslint.config.js
-tsconfig.json
-vitest.config.ts
 __tests__
 *.test.ts
 *.test.js

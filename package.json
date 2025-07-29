@@ -1,8 +1,11 @@
 {
-  "name": "project-management-application",
+  "name": "project-management-app",
   "private": true,
-  "version": "1.0.0",
-  "description": "Monorepo for project management application",
+  "version": "0.0.1",
+  "description": "Project management application",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "prepare": "husky",
     "client:dev": "cd client && yarn dev",
@@ -14,13 +17,18 @@
     "lint:server": "cd server && yarn lint",
     "format": "yarn format:client && yarn format:server",
     "format:client": "cd client && yarn format",
-    "format:server": "cd server && yarn format"
+    "format:server": "cd server && yarn format",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "docker:rebuild": "docker-compose build --no-cache",
+    "docker:logs": "docker-compose logs -f",
+    "docker:logs:server": "docker-compose logs -f server",
+    "docker:logs:client": "docker-compose logs -f client",
+    "docker:restart": "docker-compose restart",
+    "docker:clean": "docker-compose down -v --rmi all"
   },
   "devDependencies": {
     "husky": "^9.1.7"
-  },
-  "workspaces": [
-    "client",
-    "server"
-  ]
+  }
 }
