@@ -9,7 +9,7 @@ A modern, full-stack project management application inspired by Linear, designed
 - **Node.js**: v24+ (recommended v24+)
 - **Yarn**: Package manager
 - **Docker**: For containerized development
-- **PostgreSQL**: For database (or use Docker) (will be implemented)
+- **PostgreSQL**: For database
 
 ### Quick Start
 
