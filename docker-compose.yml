@@ -1,4 +1,18 @@
 services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - app-network
+
   server:
     build:
       context: ./server
@@ -15,6 +29,8 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    depends_on:
+      - postgres
 
   client:
     build:
@@ -33,6 +49,9 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+
+volumes:
+  postgres_data:
 
 networks:
   app-network:

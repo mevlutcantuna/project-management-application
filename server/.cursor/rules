@@ -6,7 +6,7 @@
 - Use `/src` directory for application code
 - Organize by feature/domain rather than by file type
 - Keep controllers thin, business logic in services
-- Use `/routes`, `/controllers`, `/services`, `/models`, `/middleware`, `/utils` structure
+- Use `/routes`, `/controllers`, `/services`, `/models`, `/middleware`, `/utils`, `/config` structure
 - Place configuration files in `/config` directory
 - Use `/tests` or `__tests__` for test files alongside source code
 
