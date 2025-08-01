@@ -1,20 +1,33 @@
 services:
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    env_file:
+      - ./server/.env
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   server:
     build:
       context: ./server
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    env_file:
+      - ./server/.env
+    working_dir: /app
+    command: yarn dev
     environment:
+      - NODE_ENV=development
       - PORT=8000
+      - POSTGRES_HOST=postgres
     volumes:
       - ./server:/app
       - /app/node_modules
-    env_file:
-      - ./server/.env
-    restart: unless-stopped
-    networks:
-      - app-network
+    depends_on:
+      - postgres
 
   client:
     build:
@@ -22,18 +35,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      - VITE_API_URL=http://localhost:8000
     env_file:
       - ./client/.env
     working_dir: /app
+    command: yarn dev
     volumes:
       - ./client:/app
       - /app/node_modules
-    restart: unless-stopped
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
+volumes:
+  postgres_data:

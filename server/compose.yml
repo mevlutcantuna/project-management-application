@@ -1,18 +1,27 @@
-version: "3.8"
-
 services:
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   server:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: project-management-server
     ports:
       - "8000:8000"
     environment:
       - NODE_ENV=development
       - PORT=8000
+      - POSTGRES_HOST=postgres
     env_file:
       - .env
     volumes:
       - .:/app
       - /app/node_modules
+
+volumes:
+  postgres_data:
