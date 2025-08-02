@@ -33,20 +33,20 @@ yarn docker:down
 **Server** (`server/.env`):
 
 ```env
-PORT=8000
-```
+# Database Configuration
+POSTGRES_HOST=
+POSTGRES_PORT=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
 
-**Client** (`client/.env`):
-
-```env
-
+# Server Configuration
+PORT=
 ```
 
 ### Development URLs
 
 - **Client**: http://localhost:3000
 - **Server**: http://localhost:8000
-- **API Health**: http://localhost:8000/
 
 ### Project Structure
 
@@ -62,37 +62,6 @@ project-management-application/
 ├── docker-compose.yml
 └── package.json
 ```
-
-## Project Details
-
-### 1. **Authorization**
-
-- **Role-Based Authentication**: Secure user management with different permission levels
-- **Access Control**: Users can only perform actions they have permissions for
-
-### 2. **Issues**
-
-- **Full CRUD Operations**: Users can create, read, update, and delete issues (with proper permissions)
-- **Hierarchical Structure**: Support for sub-issues and nested organization
-- **Comprehensive Metadata**:
-  - **Tags & Labels**: Categorization and organization
-  - **Priority Levels**: Critical, High, Medium, Low priority assignments
-  - **Assignees**: User assignment and responsibility tracking
-  - **Comments**: Team collaboration and discussion threads
-  - **History**: Complete audit trail of all changes
-  - **Due Dates**: Timeline management and deadline tracking
-  - **Status Workflow**: Backlog → In Progress → In Review → Done
-  - **Custom Statuses**: Flexible workflow (Completed, Deployed to Production, etc.)
-  - **Rich Text Editor**: Comprehensive description formatting
-
-### 3. **Teams**
-
-- **Team Management**: Create, update, and delete teams
-- **Issue Scope**: All issues are created within team contexts
-- **Data Integrity**: Team deletion permanently removes all associated issues
-- **Future Features**:
-  - Project organization within teams
-  - Sprint/cycle management
 
 ## 🛠️ Frontend Tech Stack
 
@@ -124,3 +93,45 @@ project-management-application/
 | **Jest**       | Comprehensive testing framework                |
 | **AWS S3**     | Cloud storage for images and file uploads      |
 | **Docker**     | Containerization and deployment                |
+
+## Project Details
+
+- Authentication
+  - When a user logs in, they will either **create a workspace** or **request to join one**.
+  - If they create one, it will be associated with them.
+  - Every user must belong to **at least one workspace**.
+  - **Roles**
+    - **Workspace Owner**:
+      Can view and manage join requests, approve or reject them, and has full permissions.
+    - **User**:
+      Can create, delete, and view projects, and leave teams.
+      However, they **cannot delete a team** or **remove other users**.
+- **Within a Workspace**
+  - **Projects**
+    - Title
+    - Description
+    - Assignees
+    - Priority
+    - Labels
+    - Teams
+    - Lead (a user responsible for the project)
+    - Dates
+      - Start Date
+      - End Date
+  - **Teams**
+    - **Issues**
+      - Status
+      - Title
+      - Description (Rich Text)
+      - Priority
+      - Assignee
+      - Project
+      - Tag
+      - Due Date
+      - Sub-Issues
+  - **Members**
+    - **User**
+      - Full Name
+      - Username
+      - Email
+      - Profile Picture
