@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Project Management App Server",
   "main": "src/index.ts",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/src/index.js",
