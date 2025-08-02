@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "Project management application",
   "engines": {
-    "node": "22.x"
+    "node": ">=22"
   },
   "scripts": {
     "prepare": "husky",
