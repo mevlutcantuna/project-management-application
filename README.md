@@ -79,7 +79,6 @@ project-management-application/
 | **Vitest**                | Fast unit testing framework                                   |
 | **Mock Service Worker**   | API mocking for development and testing                       |
 | **React Testing Library** | Simple and complete testing utilities                         |
-| **tweakcn**               | Multiple theme support and customization                      |
 | **Docker**                | Containerization for consistent deployment                    |
 
 ## ⚙️ Backend Tech Stack
