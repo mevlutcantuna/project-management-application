@@ -43,3 +43,15 @@ export const sendInternalError = (res: Response, message: string) =>
     error: "InternalServerError",
     message,
   });
+
+export const sendUnauthorizedError = (res: Response, message: string) =>
+  sendError(res, 401, {
+    error: "UnauthorizedError",
+    message,
+  });
+
+export const sendNotFoundError = (res: Response, message: string) =>
+  sendError(res, 404, {
+    error: "NotFoundError",
+    message,
+  });
