@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import helmet from "helmet";
 import router from "./routes";
-import Database from "./config/db";
+import { db } from "./config/dbClient";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -10,15 +10,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 const NODE_ENV = process.env.NODE_ENV || "development";
-
-// Connect to database
-const db = new Database({
-  host: process.env.POSTGRES_HOST || "localhost",
-  port: parseInt(process.env.POSTGRES_PORT || "5432"),
-  database: process.env.POSTGRES_DB,
-  user: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-});
 
 // Middleware
 // express.json() is used to parse JSON bodies
