@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import helmet from "helmet";
 import router from "./routes";
+import { errorHandler, notFoundHandler } from "./middleware/error";
 import { db } from "./config/dbClient";
 
 // Load environment variables from .env file
@@ -30,6 +31,19 @@ app.use(helmet());
 
 // Routes
 app.use("/api", router);
+
+// Error handlers
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+// Process-level safety nets
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Promise Rejection:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+});
 
 // Database health check and server startup
 async function startServer() {

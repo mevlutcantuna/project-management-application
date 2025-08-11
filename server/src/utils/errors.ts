@@ -1,4 +1,3 @@
-import { Response } from "express";
 import { ZodError } from "zod";
 
 export type ErrorIssue = { field?: string; message: string; code?: string };
@@ -8,50 +7,92 @@ export type ErrorResponseBody = {
   issues?: ErrorIssue[];
 };
 
-// Send any error in one line
-export function sendError(
-  res: Response,
-  status: number,
-  body: ErrorResponseBody
-) {
-  return res.status(status).json(body);
+export class AppError extends Error {
+  public status: number;
+  public code: string;
+  public issues?: ErrorIssue[];
+  public isOperational: boolean;
+
+  constructor(
+    message: string,
+    status: number,
+    code: string,
+    issues?: ErrorIssue[]
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+    this.status = status;
+    this.code = code;
+    this.issues = issues;
+    this.isOperational = true;
+    Error.captureStackTrace?.(this, this.constructor);
+  }
 }
 
-export function sendZodError(res: Response, err: ZodError) {
-  return sendError(res, 400, {
-    error: "ValidationError",
-    issues: err.issues.map((issue) => ({
-      field: issue.path.join("."),
-      message: issue.message,
-      code: issue.code,
-    })),
-  });
+export class BadRequestError extends AppError {
+  constructor(message = "Bad request", issues?: ErrorIssue[]) {
+    super(message, 400, "BadRequestError", issues);
+  }
 }
 
-export const sendConflictError = (
-  res: Response,
-  field: string,
-  message: string
-) =>
-  sendError(res, 409, {
-    error: "ConflictError",
-    issues: [{ field, message, code: "conflict" }],
-  });
+export class ValidationError extends AppError {
+  constructor(err: ZodError) {
+    const issues: ErrorIssue[] = err.issues.map((i) => ({
+      field: i.path.join("."),
+      message: i.message,
+      code: i.code,
+    }));
+    super("Validation failed", 400, "ValidationError", issues);
+  }
+}
 
-export const sendInternalError = (res: Response, message: string) =>
-  sendError(res, 500, {
-    error: "InternalServerError",
-    message,
-  });
+export class UnauthorizedError extends AppError {
+  constructor(message = "Unauthorized") {
+    super(message, 401, "UnauthorizedError");
+  }
+}
 
-export const sendUnauthorizedError = (res: Response, message: string) =>
-  sendError(res, 401, {
-    error: "UnauthorizedError",
-    message,
-  });
+export class NotFoundError extends AppError {
+  constructor(message = "Not found") {
+    super(message, 404, "NotFoundError");
+  }
+}
 
-export const sendNotFoundError = (res: Response, message: string) =>
-  sendError(res, 404, {
-    error: "NotFoundError",
-    message,
-  });
+export class ConflictError extends AppError {
+  constructor(field: string, message: string) {
+    super(message, 409, "ConflictError", [
+      { field, message, code: "conflict" },
+    ]);
+  }
+}
+
+export class InternalServerError extends AppError {
+  constructor(message = "Internal server error") {
+    super(message, 500, "InternalServerError");
+  }
+}
+
+export function toErrorResponse(err: unknown): {
+  status: number;
+  body: ErrorResponseBody;
+} {
+  if (err instanceof AppError) {
+    return {
+      status: err.status,
+      body: { error: err.code, message: err.message, issues: err.issues },
+    };
+  }
+
+  if (err instanceof ZodError) {
+    const v = new ValidationError(err);
+    return {
+      status: v.status,
+      body: { error: v.code, message: v.message, issues: v.issues },
+    };
+  }
+
+  return {
+    status: 500,
+    body: { error: "InternalServerError", message: "Unexpected error" },
+  };
+}
