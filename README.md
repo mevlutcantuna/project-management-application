@@ -51,11 +51,11 @@ PORT=
 
 ```
 project-management-application/
-├── client/          # Frontend frontend
+├── client/          # Frontend
 │   ├── src/
 │   ├── public/
 │   └── Dockerfile
-├── server/          # Backed backend
+├── server/          # Backend
 │   ├── src/
 │   └── Dockerfile
 ├── docker-compose.yml
