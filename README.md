@@ -94,18 +94,18 @@ project-management-application/
 
 ## Project Details
 
-- Authentication
+### Authentication
 
-  - When a user logs in, they will either **create a workspace** or **request to join one**.
-  - If they create one, it will be associated with them.
-  - Every user must belong to **at least one workspace**.
-  - **Roles**
-    - **Workspace Owner**:
-      Can view and manage join requests, approve or reject them, and has full permissions.
-    - **User**:
-      Can create, delete, and view projects, and leave teams.
-      However, they **cannot delete a team** or **remove other users**.
+- When a user logs in, they will either **create a workspace** or **request to join one**.
+- If they create one, it will be associated with them.
+- Every user must belong to **at least one workspace**.
+- **Roles**
+  - **Workspace Owner**:
+    Can view and manage join requests, approve or reject them, and has full permissions.
+  - **User**:
+    Can create, delete, and view projects, and leave teams.
+    However, they **cannot delete a team** or **remove other users**.
 
-- DB Diagram
+### DB Diagram
 
-[DB Diagram](https://github.com/mevlutcantuna/project-management-application/tree/main/server/screenshots/db-diagram.png)
+![DB Diagram](https://github.com/mevlutcantuna/project-management-application/blob/main/server/screenshots/db-diagram.png?raw=true)
