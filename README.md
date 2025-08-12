@@ -95,6 +95,7 @@ project-management-application/
 ## Project Details
 
 - Authentication
+
   - When a user logs in, they will either **create a workspace** or **request to join one**.
   - If they create one, it will be associated with them.
   - Every user must belong to **at least one workspace**.
@@ -104,32 +105,7 @@ project-management-application/
     - **User**:
       Can create, delete, and view projects, and leave teams.
       However, they **cannot delete a team** or **remove other users**.
-- **Within a Workspace**
-  - **Projects**
-    - Title
-    - Description
-    - Assignees
-    - Priority
-    - Labels
-    - Teams
-    - Lead (a user responsible for the project)
-    - Dates
-      - Start Date
-      - End Date
-  - **Teams**
-    - **Issues**
-      - Status
-      - Title
-      - Description (Rich Text)
-      - Priority
-      - Assignee
-      - Project
-      - Tag
-      - Due Date
-      - Sub-Issues
-  - **Members**
-    - **User**
-      - Full Name
-      - Username
-      - Email
-      - Profile Picture
+
+- DB Diagram
+
+[DB Diagram](https://github.com/mevlutcantuna/project-management-application/tree/main/server/screenshots/db-diagram.png)
