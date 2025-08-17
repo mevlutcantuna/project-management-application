@@ -28,11 +28,10 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { full_name, username, email, workspace_ids } = req.body;
+  const { full_name, email, workspace_ids } = req.body;
 
   const user = await userService.updateUser(id, {
     full_name,
-    username,
     email,
     workspace_ids,
   });

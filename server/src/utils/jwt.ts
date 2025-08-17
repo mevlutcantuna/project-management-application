@@ -9,7 +9,6 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN
 export interface JWTPayload {
   id: string;
   email: string;
-  username: string;
 }
 
 export function generateToken(payload: JWTPayload): string {
@@ -24,7 +23,6 @@ export function verifyToken(token: string): JWTPayload | null {
     return {
       id: decoded.id,
       email: decoded.email,
-      username: decoded.username,
     };
   } catch (error) {
     console.error("Error verifying token:", error);

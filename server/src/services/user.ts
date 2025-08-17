@@ -4,7 +4,6 @@ import Database from "../config/db";
 export interface User {
   id: string;
   full_name: string;
-  username: string;
   email: string;
   created_at: Date;
   updated_at: Date;
@@ -17,14 +16,12 @@ export interface UserWithPassword extends User {
 
 export interface CreateUserInput {
   full_name: string;
-  username: string;
   email: string;
   password: string;
 }
 
 export interface UpdateUserInput {
   full_name?: string;
-  username?: string;
   email?: string;
   workspace_ids?: string[];
 }
@@ -37,12 +34,12 @@ export class UserService {
     const passwordHash = await bcrypt.hash(input.password, saltRounds);
 
     const query = `
-      INSERT INTO users (full_name, username, email, password_hash)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, full_name, username, email, workspace_ids, created_at, updated_at
+      INSERT INTO users (full_name, email, password_hash)
+      VALUES ($1, $2, $3)
+      RETURNING id, full_name, email, workspace_ids, created_at, updated_at
     `;
 
-    const values = [input.full_name, input.username, input.email, passwordHash];
+    const values = [input.full_name, input.email, passwordHash];
 
     const result = await this.db.query(query, values);
     return result.rows[0] as User;
@@ -50,21 +47,21 @@ export class UserService {
 
   async getAllUsers(): Promise<User[]> {
     const query =
-      "SELECT id, full_name, username, email, created_at, updated_at, workspace_ids FROM users";
+      "SELECT id, full_name, email, created_at, updated_at, workspace_ids FROM users";
     const result = await this.db.query(query);
     return result.rows as User[];
   }
 
   async getUserById(id: string): Promise<User | null> {
     const query =
-      "SELECT id, full_name, username, email, workspace_ids, created_at, updated_at FROM users WHERE id = $1";
+      "SELECT id, full_name, email, workspace_ids, created_at, updated_at FROM users WHERE id = $1";
     const result = await this.db.query(query, [id]);
     return (result.rows[0] as User) || null;
   }
 
   async getUserByEmail(email: string): Promise<UserWithPassword | null> {
     const query =
-      "SELECT id, full_name, username, password_hash, email, workspace_ids, created_at, updated_at FROM users WHERE email = $1";
+      "SELECT id, full_name, password_hash, email, workspace_ids, created_at, updated_at FROM users WHERE email = $1";
     const result = await this.db.query(query, [email]);
 
     return (result.rows[0] as UserWithPassword) || null;
@@ -77,13 +74,12 @@ export class UserService {
 
   async updateUser(id: string, input: UpdateUserInput): Promise<User> {
     const query = `UPDATE users
-                   SET full_name = $1, username = $2, email = $3, workspace_ids = $4
-                   WHERE id = $5
-                   RETURNING id, full_name, username, email, workspace_ids, created_at, updated_at`;
+                   SET full_name = $1, email = $2, workspace_ids = $3
+                   WHERE id = $4
+                   RETURNING id, full_name, email, workspace_ids, created_at, updated_at`;
 
     const values = [
       input.full_name ?? null,
-      input.username ?? null,
       input.email ?? null,
       input.workspace_ids ?? [],
       id,
@@ -92,27 +88,21 @@ export class UserService {
     return result.rows[0] as User;
   }
 
-  async checkUserExists(
-    email: string,
-    username: string
-  ): Promise<{
+  async checkUserExists(email: string): Promise<{
     emailExists: boolean;
-    usernameExists: boolean;
   }> {
     const query = `
       SELECT 
-        COUNT(CASE WHEN email = $1 THEN 1 END) as email_count,
-        COUNT(CASE WHEN username = $2 THEN 1 END) as username_count
+        COUNT(CASE WHEN email = $1 THEN 1 END) as email_count
       FROM users 
-      WHERE email = $1 OR username = $2
+      WHERE email = $1
     `;
 
-    const result = await this.db.query(query, [email, username]);
+    const result = await this.db.query(query, [email]);
     const row = result.rows[0];
 
     return {
       emailExists: parseInt(row.email_count) > 0,
-      usernameExists: parseInt(row.username_count) > 0,
     };
   }
 }

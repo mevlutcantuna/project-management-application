@@ -7,15 +7,14 @@ import { AuthService } from "@/services/auth";
 
 const authService = new AuthService(db);
 
-const signup = async (req: Request, res: Response) => {
+export const signup = async (req: Request, res: Response) => {
   const validatedData = signupSchema.safeParse(req.body);
   if (!validatedData.success) throw new ValidationError(validatedData.error);
 
-  const { full_name, username, email, password } = validatedData.data;
+  const { full_name, email, password } = validatedData.data;
 
   const user = await authService.signup({
     full_name,
-    username,
     email,
     password,
   });
@@ -25,14 +24,13 @@ const signup = async (req: Request, res: Response) => {
     user: {
       id: user.id,
       full_name: user.full_name,
-      username: user.username,
       email: user.email,
       createdAt: user.created_at,
     },
   });
 };
 
-const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   const validatedData = loginSchema.safeParse(req.body);
   if (!validatedData.success) throw new ValidationError(validatedData.error);
 
@@ -43,11 +41,9 @@ const login = async (req: Request, res: Response) => {
   res.status(200).json({ message: "Login successful", token: result.token });
 };
 
-const refreshToken = async (req: Request, res: Response) => {
+export const refreshToken = async (req: Request, res: Response) => {
   const token = extractTokenFromHeader(req.headers.authorization);
   if (!token) throw new UnauthorizedError();
   const newToken = await authService.refreshToken(token);
   res.status(200).json({ message: "Token refreshed", token: newToken });
 };
-
-export { signup, login, refreshToken };

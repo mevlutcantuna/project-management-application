@@ -24,22 +24,16 @@ export class AuthService {
     const token = generateToken({
       id: user.id,
       email: user.email,
-      username: user.username,
     });
 
     return { user, token };
   }
 
   async signup(input: CreateUserInput): Promise<User> {
-    const existingUser = await this.userService.checkUserExists(
-      input.email,
-      input.username
-    );
+    const existingUser = await this.userService.checkUserExists(input.email);
 
     if (existingUser.emailExists)
       throw new ConflictError("email", "Email already registered");
-    if (existingUser.usernameExists)
-      throw new ConflictError("username", "Username already taken");
 
     return await this.userService.createUser(input);
   }
@@ -54,7 +48,6 @@ export class AuthService {
     return generateToken({
       id: user.id,
       email: user.email,
-      username: user.username,
     });
   }
 
