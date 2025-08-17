@@ -91,6 +91,41 @@ export function toErrorResponse(err: unknown): {
     };
   }
 
+  if (err instanceof NotFoundError) {
+    return {
+      status: 404,
+      body: { error: "NotFoundError", message: err.message },
+    };
+  }
+
+  if (err instanceof UnauthorizedError) {
+    return {
+      status: 401,
+      body: { error: "UnauthorizedError", message: err.message },
+    };
+  }
+
+  if (err instanceof ConflictError) {
+    return {
+      status: 409,
+      body: { error: "ConflictError", message: err.message },
+    };
+  }
+
+  if (err instanceof BadRequestError) {
+    return {
+      status: 400,
+      body: { error: "BadRequestError", message: err.message },
+    };
+  }
+
+  if (err instanceof InternalServerError) {
+    return {
+      status: 500,
+      body: { error: "InternalServerError", message: err.message },
+    };
+  }
+
   return {
     status: 500,
     body: { error: "InternalServerError", message: "Unexpected error" },

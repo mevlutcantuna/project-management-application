@@ -1,0 +1,87 @@
+### User API Examples
+
+# Base URL
+@baseUrl = http://localhost:8000/api/users
+
+# Note: All user endpoints require authentication
+# Replace YOUR_JWT_TOKEN_HERE with actual JWT token from login
+
+@YOUR_JWT_TOKEN_HERE = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI1NDc3ZjM1LWQxMmQtNDA0NC05MTRiLTcyMjkxNWYzNzYyZSIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTU0MzczNzAsImV4cCI6MTc1NjA0MjE3MH0.h9iXMUkyGkKodm0XbQ6gpNjbaZfNc8Fu6yugm4wvDFc
+@USER_ID = 683e8caf-34cb-4fd3-995a-b5926d257ea7
+
+### 1. Get All Users
+GET {{baseUrl}}/
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 2. Get User by ID
+GET {{baseUrl}}/{{USER_ID}}
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 3. Update User
+PUT {{baseUrl}}/{{USER_ID}}
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+Content-Type: application/json
+
+{
+  "full_name": "Jane Doe Updated",
+  "email": "jane.updated@example.com"
+}
+
+### 4. Delete User
+DELETE {{baseUrl}}/{{USER_ID}}
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### Example Responses
+
+# Get All Users Success Response (200)
+# [
+#   {
+#     "id": "550e8400-e29b-41d4-a716-446655440000",
+#     "full_name": "John Doe",
+#     "email": "john.doe@example.com",
+#     "created_at": "2024-01-01T00:00:00.000Z",
+#     "updated_at": "2024-01-01T00:00:00.000Z"
+#   },
+#   {
+#     "id": "550e8400-e29b-41d4-a716-446655440001",
+#     "full_name": "Jane Smith",
+#     "email": "jane.smith@example.com",
+#     "created_at": "2024-01-01T00:00:00.000Z",
+#     "updated_at": "2024-01-01T00:00:00.000Z"
+#   }
+# ]
+
+# Get User by ID Success Response (200)
+# {
+#   "id": "550e8400-e29b-41d4-a716-446655440000",
+#   "full_name": "John Doe",
+#   "email": "john.doe@example.com",
+#   "created_at": "2024-01-01T00:00:00.000Z",
+#   "updated_at": "2024-01-01T00:00:00.000Z"
+# }
+
+# Update User Success Response (200)
+# {
+#   "id": "550e8400-e29b-41d4-a716-446655440000",
+#   "full_name": "Jane Doe Updated",
+#   "email": "jane.updated@example.com",
+#   "updated_at": "2024-01-01T01:00:00.000Z"
+# }
+
+# Delete User Success Response (200)
+# {
+#   "message": "User deleted"
+# }
+
+# Error Response Examples
+# User Not Found (404)
+# {
+#   "error": "NotFoundError",
+#   "message": "User not found"
+# }
+
+# Unauthorized (401)
+# {
+#   "error": "UnauthorizedError",
+#   "message": "Unauthorized"
+# }

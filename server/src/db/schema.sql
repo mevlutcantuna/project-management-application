@@ -6,9 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
   full_name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL, 
-  role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('admin', 'manager', 'member')),
   profile_picture TEXT,
-  workspace_ids UUID[] NOT NULL DEFAULT '{}',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -28,7 +26,7 @@ CREATE TABLE IF NOT EXISTS workspace_members (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('admin', 'member')),
+  role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('admin', 'manager', 'member')),
   joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(workspace_id, user_id)
 );
@@ -39,7 +37,7 @@ CREATE TABLE IF NOT EXISTS workspace_invitations (
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   email VARCHAR(320) NOT NULL,
   invited_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined')),
+  role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('admin', 'manager', 'member')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '7 days'),
   UNIQUE(workspace_id, email)
