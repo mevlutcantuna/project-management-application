@@ -1,0 +1,334 @@
+import { Request, Response } from "express";
+import { WorkspaceService } from "@/services/workspace";
+import { db } from "@/config/dbClient";
+import { extractTokenFromHeader, verifyToken } from "@/utils/jwt";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+} from "@/utils/errors";
+import { UserService } from "@/services/user";
+
+const workspaceService = new WorkspaceService(db);
+const userService = new UserService(db);
+
+// Workspaces
+
+export const createWorkspace = async (req: Request, res: Response) => {
+  const { title, description } = req.body;
+
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const user = await userService.getUserById(payload.id);
+  if (!user) throw new UnauthorizedError("User not found");
+
+  const workspace = await workspaceService.createWorkspace({
+    title,
+    description,
+    owner_id: user.id,
+  });
+
+  res.status(201).json(workspace);
+};
+
+export const getWorkspaceById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const workspace = await workspaceService.getWorkspaceById(id);
+  if (!workspace) throw new NotFoundError("Workspace not found");
+
+  res.status(200).json(workspace);
+};
+
+export const getMyWorkspaces = async (req: Request, res: Response) => {
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const user = await userService.getUserById(payload.id);
+  if (!user) throw new UnauthorizedError("User not found");
+
+  const workspaces = await workspaceService.getWorkspacesByUserId(user.id);
+  res.status(200).json(workspaces);
+};
+
+export const updateWorkspace = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { title, description } = req.body;
+
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const user = await userService.getUserById(payload.id);
+  if (!user) throw new UnauthorizedError("User not found");
+
+  const workspace = await workspaceService.getWorkspaceById(id);
+  if (!workspace) throw new NotFoundError("Workspace not found");
+
+  if (workspace.owner_id !== user.id)
+    throw new UnauthorizedError("You are not the owner of this workspace");
+
+  const updatedWorkspace = await workspaceService.updateWorkspace({
+    id,
+    title,
+    description,
+  });
+
+  res.status(200).json(updatedWorkspace);
+};
+
+export const deleteWorkspace = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const user = await userService.getUserById(payload.id);
+  if (!user) throw new UnauthorizedError("User not found");
+
+  const workspace = await workspaceService.getWorkspaceById(id);
+  if (!workspace) throw new NotFoundError("Workspace not found");
+
+  if (workspace.owner_id !== user.id)
+    throw new UnauthorizedError("You are not the owner of this workspace");
+
+  await workspaceService.deleteWorkspace(id);
+
+  res.status(200).json({ message: "Workspace deleted" });
+};
+
+// Workspace Members
+
+export const addWorkspaceMember = async (req: Request, res: Response) => {
+  const { id: workspace_id } = req.params;
+  const { user_id, role } = req.body;
+
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const user = await userService.getUserById(payload.id);
+  if (!user) throw new UnauthorizedError("User not found");
+
+  const workspace = await workspaceService.getWorkspaceById(workspace_id);
+  if (!workspace) throw new NotFoundError("Workspace not found");
+
+  if (workspace.owner_id !== user.id)
+    throw new UnauthorizedError("You are not the owner of this workspace");
+
+  const member = await workspaceService.addUserToWorkspaceMember({
+    workspace_id,
+    user_id,
+    role,
+  });
+
+  res.status(200).json(member);
+};
+
+export const getWorkspaceMembers = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const workspace = await workspaceService.getWorkspaceById(id);
+  if (!workspace) throw new NotFoundError("Workspace not found");
+
+  const members = await workspaceService.getWorkspaceMembers(id);
+  res.status(200).json(members);
+};
+
+// Workspace Invitations
+
+export const getWorkspaceMyInvitations = async (
+  req: Request,
+  res: Response
+) => {
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const user = await userService.getUserById(payload.id);
+  if (!user) throw new UnauthorizedError("User not found");
+
+  const invitations = await workspaceService.getWorkspaceInvitationsByEmail(
+    user.email
+  );
+
+  res.status(200).json(invitations);
+};
+
+export const sendWorkspaceInvitation = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { email, role } = req.body;
+
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const workspace = await workspaceService.getWorkspaceById(id);
+  if (!workspace) throw new NotFoundError("Workspace not found");
+
+  const invited_by = await userService.getUserById(payload.id);
+  if (!invited_by) throw new UnauthorizedError("User not found");
+
+  const invited_user = await userService.getUserByEmail(email);
+  if (!invited_user) throw new NotFoundError("User not found");
+
+  if (workspace.owner_id !== invited_by.id)
+    throw new UnauthorizedError("You are not the owner of this workspace");
+
+  // check if the invitation already exists
+  const existing_invitation =
+    await workspaceService.getWorkspaceInvitationsByEmail(email);
+  if (existing_invitation)
+    throw new ConflictError("email", "Invitation already exists");
+
+  // check if the user is already a member of the workspace
+  const workspace_members = await workspaceService.getWorkspaceMembers(id);
+  if (workspace_members.some((member) => member.user_id === invited_user.id))
+    throw new ConflictError(
+      "email",
+      "User is already a member of this workspace"
+    );
+
+  const invitation = await workspaceService.createWorkspaceInvitation({
+    workspace_id: id,
+    email,
+    role,
+    invited_by: invited_by.id,
+  });
+
+  res.status(200).json(invitation);
+};
+
+export const acceptWorkspaceInvitation = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
+
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  // workspace invitaion exists
+  const invitation = await workspaceService.getWorkspaceInvitationById(id);
+  if (!invitation) throw new NotFoundError("Invitation not found");
+
+  // check if the invitation is expired
+  if (await workspaceService.isWorkspaceInvitationExpired(id))
+    throw new BadRequestError("Invitation expired", [
+      {
+        field: "expires_at",
+        message: "Invitation expired",
+      },
+    ]);
+
+  // check if the user is the invited user
+  if (invitation.email !== payload.email)
+    throw new UnauthorizedError("You are not the invited user");
+
+  // check if the user is already a member of the workspace
+  const workspace_members = await workspaceService.getWorkspaceMembers(
+    invitation.workspace_id
+  );
+  if (workspace_members.some((member) => member.user_id === payload.id))
+    throw new ConflictError(
+      "email",
+      "User is already a member of this workspace"
+    );
+
+  // add the user to the workspace
+  await workspaceService.addUserToWorkspaceMember({
+    workspace_id: invitation.workspace_id,
+    user_id: payload.id,
+    role: invitation.role,
+  });
+
+  // delete the invitation
+  await workspaceService.deleteWorkspaceInvitation(id);
+
+  res.status(200).json({ message: "Invitation accepted" });
+};
+
+export const declineWorkspaceInvitation = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
+
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const user = await userService.getUserById(payload.id);
+  if (!user) throw new UnauthorizedError("User not found");
+
+  const invitation = await workspaceService.getWorkspaceInvitationById(id);
+  if (!invitation) throw new NotFoundError("Invitation not found");
+
+  // check if the invitation is expired
+  if (await workspaceService.isWorkspaceInvitationExpired(id))
+    throw new BadRequestError("Invitation expired", [
+      {
+        field: "expires_at",
+        message: "Invitation expired",
+      },
+    ]);
+
+  // check if the user is the invited user
+  if (invitation.email !== user.email)
+    throw new UnauthorizedError("You are not the invited user");
+
+  await workspaceService.deleteWorkspaceInvitation(id);
+
+  res.status(200).json({ message: "Invitation declined" });
+};
+
+export const removeWorkspaceInvitation = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
+
+  const token = extractTokenFromHeader(req.headers.authorization);
+  if (!token) throw new UnauthorizedError("No token provided");
+
+  const payload = verifyToken(token);
+  if (!payload) throw new UnauthorizedError("Invalid token");
+
+  const user = await userService.getUserById(payload.id);
+  if (!user) throw new UnauthorizedError("User not found");
+
+  const invitation = await workspaceService.getWorkspaceInvitationById(id);
+  if (!invitation) throw new NotFoundError("Invitation not found");
+
+  // check if the user is the owner of the workspace
+  if (invitation.invited_by !== user.id)
+    throw new UnauthorizedError("You are not the owner of this workspace");
+
+  await workspaceService.deleteWorkspaceInvitation(id);
+
+  res.status(200).json({ message: "Invitation removed" });
+};

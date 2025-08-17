@@ -1,0 +1,186 @@
+### Workspace API Examples
+
+# Base URL
+@baseUrl = http://localhost:8000/api/workspaces
+
+# Note: All workspace endpoints require authentication
+# Replace YOUR_JWT_TOKEN_HERE with actual JWT token from login
+
+@YOUR_JWT_TOKEN_HERE = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI1NDc3ZjM1LWQxMmQtNDA0NC05MTRiLTcyMjkxNWYzNzYyZSIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTU0MzczNzAsImV4cCI6MTc1NjA0MjE3MH0.h9iXMUkyGkKodm0XbQ6gpNjbaZfNc8Fu6yugm4wvDFc
+@WORKSPACE_ID = 550e8400-e29b-41d4-a716-446655440000
+@INVITATION_ID = 550e8400-e29b-41d4-a716-446655440001
+
+### 1. Create Workspace
+POST {{baseUrl}}/
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+Content-Type: application/json
+
+{
+  "title": "My Project Workspace",
+  "description": "A workspace for managing our project tasks and collaboration"
+}
+
+### 2. Get Workspace by ID
+GET {{baseUrl}}/{{WORKSPACE_ID}}
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 3. Get My Workspaces
+GET {{baseUrl}}/
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 4. Update Workspace
+PUT {{baseUrl}}/{{WORKSPACE_ID}}
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+Content-Type: application/json
+
+{
+  "title": "Updated Project Workspace",
+  "description": "Updated description for our project workspace"
+}
+
+### 5. Delete Workspace
+DELETE {{baseUrl}}/{{WORKSPACE_ID}}
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 6. Get Workspace Members
+GET {{baseUrl}}/{{WORKSPACE_ID}}/members
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 7. Add Member to Workspace
+POST {{baseUrl}}/{{WORKSPACE_ID}}/members
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+Content-Type: application/json
+
+{
+  "user_id": "550e8400-e29b-41d4-a716-446655440001",
+  "role": "member"
+}
+
+### 8. Get My Invitations
+GET {{baseUrl}}/{{WORKSPACE_ID}}/invitations
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 9. Send Workspace Invitation
+POST {{baseUrl}}/{{WORKSPACE_ID}}/invitations
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+Content-Type: application/json
+
+{
+  "email": "newmember@example.com",
+  "role": "member"
+}
+
+### 10. Accept Workspace Invitation
+POST {{baseUrl}}/{{WORKSPACE_ID}}/invitations/{{INVITATION_ID}}/accept
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 11. Decline Workspace Invitation
+POST {{baseUrl}}/{{WORKSPACE_ID}}/invitations/{{INVITATION_ID}}/decline
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### 12. Remove Workspace Invitation (Owner only)
+DELETE {{baseUrl}}/{{WORKSPACE_ID}}/invitations/{{INVITATION_ID}}
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+
+### Example Responses
+
+# Create Workspace Success Response (201)
+# {
+#   "id": "550e8400-e29b-41d4-a716-446655440000",
+#   "title": "My Project Workspace",
+#   "description": "A workspace for managing our project tasks and collaboration",
+#   "owner_id": "user-id-here",
+#   "created_at": "2024-01-01T00:00:00.000Z",
+#   "updated_at": "2024-01-01T00:00:00.000Z"
+# }
+
+# Get Workspace Success Response (200)
+# {
+#   "id": "550e8400-e29b-41d4-a716-446655440000",
+#   "title": "My Project Workspace",
+#   "description": "A workspace for managing our project tasks and collaboration",
+#   "owner_id": "user-id-here",
+#   "created_at": "2024-01-01T00:00:00.000Z",
+#   "updated_at": "2024-01-01T00:00:00.000Z"
+# }
+
+# Get Workspace Members Success Response (200)
+# [
+#   {
+#     "id": "member-id-1",
+#     "user_id": "user-id-1",
+#     "role": "owner",
+#     "joined_at": "2024-01-01T00:00:00.000Z",
+#     "user": {
+#       "id": "user-id-1",
+#       "full_name": "John Doe",
+#       "email": "john.doe@example.com"
+#     }
+#   },
+#   {
+#     "id": "member-id-2",
+#     "user_id": "user-id-2",
+#     "role": "member",
+#     "joined_at": "2024-01-02T00:00:00.000Z",
+#     "user": {
+#       "id": "user-id-2",
+#       "full_name": "Jane Smith",
+#       "email": "jane.smith@example.com"
+#     }
+#   }
+# ]
+
+# Send Invitation Success Response (200)
+# {
+#   "id": "invitation-id-here",
+#   "email": "newmember@example.com",
+#   "role": "member",
+#   "invited_by": "user-id-here",
+#   "created_at": "2024-01-01T00:00:00.000Z",
+#   "expires_at": "2024-01-08T00:00:00.000Z"
+# }
+
+# Accept/Decline Invitation Success Response (200)
+# {
+#   "message": "Invitation accepted"
+# }
+# {
+#   "message": "Invitation declined"
+# }
+
+# Delete Workspace Success Response (200)
+# {
+#   "message": "Workspace deleted"
+# }
+
+# Error Response Examples
+# Workspace Not Found (404)
+# {
+#   "error": "NotFoundError",
+#   "message": "Workspace not found"
+# }
+
+# Unauthorized - Not Owner (401)
+# {
+#   "error": "UnauthorizedError",
+#   "message": "You are not the owner of this workspace"
+# }
+
+# Conflict - User Already Member (409)
+# {
+#   "error": "ConflictError",
+#   "message": "User is already a member of this workspace",
+#   "field": "email"
+# }
+
+# Bad Request - Invitation Expired (400)
+# {
+#   "error": "BadRequestError",
+#   "message": "Invitation expired",
+#   "details": [
+#     {
+#       "field": "expires_at",
+#       "message": "Invitation expired"
+#     }
+#   ]
+# }

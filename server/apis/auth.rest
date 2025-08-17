@@ -1,0 +1,63 @@
+### Auth API Examples
+
+# Base URL
+@baseUrl = http://localhost:8000/api/auth
+
+### 1. User Signup
+POST {{baseUrl}}/signup
+Content-Type: application/json
+
+{
+  "full_name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "securePassword123"
+}
+
+### 2. User Login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "securePassword123"
+}
+
+### 3. Refresh Token
+GET {{baseUrl}}/refresh
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 4. Get User Profile (Protected Route - Placeholder)
+GET {{baseUrl}}/me
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Example Responses
+
+# Signup Success Response (201)
+# {
+#   "message": "User created successfully",
+#   "user": {
+#     "id": "uuid-here",
+#     "full_name": "John Doe",
+#     "email": "john.doe@example.com",
+#     "createdAt": "2024-01-01T00:00:00.000Z"
+#   }
+# }
+
+# Login Success Response (200)
+# {
+#   "message": "Login successful",
+#   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+# }
+
+# Refresh Token Success Response (200)
+# {
+#   "message": "Token refreshed",
+#   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+# }
+
+# Error Response Example (400/401/500)
+# {
+#   "error": "ValidationError",
+#   "message": "Validation failed",
+#   "details": [...]
+# }
