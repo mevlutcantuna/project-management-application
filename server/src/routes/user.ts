@@ -5,8 +5,11 @@ import {
   getAllUsers,
   updateUser,
 } from "@/controllers/user";
+import { authenticate } from "@/middleware/auth";
 
 const router = Router();
+
+router.use(authenticate);
 
 router.get("/users/", getAllUsers);
 router.get("/users/:id", getUser);
