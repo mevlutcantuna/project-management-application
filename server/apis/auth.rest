@@ -3,6 +3,8 @@
 # Base URL
 @baseUrl = http://localhost:8000/api/auth
 
+@YOUR_JWT_TOKEN_HERE = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI1NDc3ZjM1LWQxMmQtNDA0NC05MTRiLTcyMjkxNWYzNzYyZSIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTU0MzczNzAsImV4cCI6MTc1NjA0MjE3MH0.h9iXMUkyGkKodm0XbQ6gpNjbaZfNc8Fu6yugm4wvDFc
+
 ### 1. User Signup
 POST {{baseUrl}}/signup
 Content-Type: application/json
@@ -28,7 +30,7 @@ Authorization: Bearer YOUR_JWT_TOKEN_HERE
 
 ### 4. Get User Profile (Protected Route - Placeholder)
 GET {{baseUrl}}/me
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 
 ### Example Responses
 
