@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import express from "express";
+import cors from "cors";
 import helmet from "helmet";
 import router from "./routes";
 import { errorHandler, notFoundHandler } from "./middleware/error";
@@ -13,6 +14,16 @@ const PORT = process.env.PORT || 8000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 // Middleware
+// CORS configuration
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+    methods: "*",
+    allowedHeaders: "*",
+  })
+);
+
 // express.json() is used to parse JSON bodies
 // such as { name: "John", age: 20 }
 app.use(express.json());
@@ -32,7 +43,6 @@ app.use(helmet());
 // Routes
 app.use("/api", router);
 
-// Error handlers
 app.use(notFoundHandler);
 app.use(errorHandler);
 

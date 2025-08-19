@@ -5,7 +5,7 @@ export const notFoundHandler: RequestHandler = (req, _res, next) => {
   next(new NotFoundError(`Route ${req.method} ${req.originalUrl} not found`));
 };
 
-export const errorHandler: ErrorRequestHandler = (err, _req, res) => {
+export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   const { status, body } = toErrorResponse(err);
 
   // In production, avoid leaking stack traces
