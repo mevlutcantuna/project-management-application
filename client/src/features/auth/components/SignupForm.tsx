@@ -13,9 +13,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/shared/lib/utils";
+import { cn, getErrorMessage } from "@/shared/lib/utils";
 import { useSignupMutation } from "../api/mutations";
 import { toast } from "sonner";
+import type { SignupResponse } from "../api/types";
+import { AxiosError } from "axios";
 
 const signupSchema = z
   .object({
@@ -47,20 +49,11 @@ const signupSchema = z
 
 interface SignupForm {
   className?: string;
-  onSuccess?: () => void;
+  onSuccess?: (data: SignupResponse) => void;
   onError?: () => void;
 }
 
-const SignupForm = ({ className }: SignupForm) => {
-  const { mutate: signup, isPending } = useSignupMutation({
-    onSuccess: () => {
-      toast.success("Success");
-    },
-    onError: () => {
-      toast.error("Error");
-    },
-  });
-
+const SignupForm = ({ className, onSuccess, onError }: SignupForm) => {
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -69,6 +62,23 @@ const SignupForm = ({ className }: SignupForm) => {
       email: "",
       password: "",
       confirmPassword: "",
+    },
+  });
+
+  const { mutate: signup, isPending } = useSignupMutation({
+    onSuccess: (data: unknown) => {
+      toast.success("Success", {
+        description: "You have successfully signed up",
+      });
+      onSuccess?.(data as SignupResponse);
+    },
+    onError: (error: unknown) => {
+      if (error instanceof AxiosError) {
+        form.setError("email", {
+          message: getErrorMessage(error),
+        });
+      }
+      onError?.();
     },
   });
 

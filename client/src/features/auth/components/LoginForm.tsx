@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/shared/lib/utils";
+import { cn, getErrorMessage } from "@/shared/lib/utils";
 import {
   Form,
   FormControl,
@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLoginMutation } from "../api/mutations";
 import { Link } from "react-router-dom";
+import { AxiosError } from "axios";
+import { useState } from "react";
 
 const loginSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
@@ -29,7 +31,15 @@ interface LoginForm {
 }
 
 const LoginForm = ({ className }: LoginForm) => {
-  const { mutate: login, isPending } = useLoginMutation();
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const { mutate: login, isPending } = useLoginMutation({
+    onError: (error: unknown) => {
+      if (error instanceof AxiosError) {
+        setFormError(getErrorMessage(error));
+      }
+    },
+  });
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -46,7 +56,11 @@ const LoginForm = ({ className }: LoginForm) => {
   return (
     <div className={cn("w-full", className)}>
       <Form {...form}>
-        <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className="space-y-3"
+          onChange={() => setFormError(null)}
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <FormField
             control={form.control}
             name="email"
@@ -70,6 +84,9 @@ const LoginForm = ({ className }: LoginForm) => {
                   <Input type="password" className="h-10" {...field} />
                 </FormControl>
                 <FormMessage />
+                {formError && (
+                  <p className="text-destructive text-sm">{formError}</p>
+                )}
               </FormItem>
             )}
           />
