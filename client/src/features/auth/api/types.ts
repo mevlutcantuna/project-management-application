@@ -4,18 +4,21 @@ export interface LoginRequest {
 }
 
 export interface SignupRequest {
+  full_name: string;
   email: string;
   password: string;
-  name: string;
+}
+
+export interface SignupResponse {
+  id: string;
+  full_name: string;
+  email: string;
+  createdAt: string;
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
 }

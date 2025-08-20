@@ -1,31 +1,54 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";
-
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN
-  ? (process.env.JWT_EXPIRES_IN as SignOptions["expiresIn"])
-  : "7d";
+const JWT_REFRESH_SECRET =
+  process.env.JWT_REFRESH_SECRET || "your-refresh-secret-key";
 
 export interface JWTPayload {
   id: string;
   email: string;
+  full_name: string;
+  type: "access" | "refresh";
+  iat: number;
+  exp: number;
 }
 
-export function generateToken(payload: JWTPayload): string {
-  const options: SignOptions = { expiresIn: JWT_EXPIRES_IN };
-  return jwt.sign(payload, JWT_SECRET, options);
+export function generateToken(
+  payload: Omit<JWTPayload, "type" | "iat" | "exp">,
+  type: "access" | "refresh" = "access"
+): string {
+  const now = Math.floor(Date.now() / 1000);
+  const expiration =
+    type === "access"
+      ? now + 6 * 60 * 60 // 6 hours
+      : now + 7 * 24 * 60 * 60; // 7 days
+
+  const tokenPayload = {
+    ...payload,
+    type,
+    iat: now,
+    exp: expiration,
+  };
+
+  const secret = type === "access" ? JWT_SECRET : JWT_REFRESH_SECRET;
+  return jwt.sign(tokenPayload, secret);
 }
 
-export function verifyToken(token: string): JWTPayload | null {
+export function verifyToken(
+  token: string,
+  type: "access" | "refresh" = "access"
+): JWTPayload | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    const secret = type === "access" ? JWT_SECRET : JWT_REFRESH_SECRET;
+    const decoded = jwt.verify(token, secret) as JWTPayload;
 
-    return {
-      id: decoded.id,
-      email: decoded.email,
-    };
+    if (decoded.type !== type) {
+      return null;
+    }
+
+    return decoded;
   } catch (error) {
-    console.error("Error verifying token:", error);
+    console.error(`Error verifying ${type} token:`, error);
     return null;
   }
 }

@@ -1,7 +1,12 @@
-import React from "react";
+import AuthLayout from "@/features/auth/components/Layout";
+import SignupForm from "@/features/auth/components/SignupForm";
 
 const SignupPage = () => {
-  return <div>SignupPage</div>;
+  return (
+    <AuthLayout title="Create your account">
+      <SignupForm />
+    </AuthLayout>
+  );
 };
 
 export default SignupPage;

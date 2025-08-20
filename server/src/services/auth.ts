@@ -14,19 +14,33 @@ export class AuthService {
   async login(
     email: string,
     password: string
-  ): Promise<{ user: User; token: string } | null> {
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+    tokenType: string;
+  } | null> {
     const user = await this.verifyPassword(email, password);
 
     if (!user) {
       return null;
     }
 
-    const token = generateToken({
+    const tokenPayload = {
       id: user.id,
       email: user.email,
-    });
+      full_name: user.full_name,
+    };
 
-    return { user, token };
+    const accessToken = generateToken(tokenPayload, "access");
+    const refreshToken = generateToken(tokenPayload, "refresh");
+
+    return {
+      accessToken,
+      refreshToken,
+      expiresIn: 6 * 60 * 60, // 6 hours in seconds
+      tokenType: "Bearer",
+    };
   }
 
   async signup(input: CreateUserInput): Promise<User> {
@@ -38,17 +52,33 @@ export class AuthService {
     return await this.userService.createUser(input);
   }
 
-  async refreshToken(oldToken: string): Promise<string> {
-    const payload = verifyToken(oldToken);
-    if (!payload) throw new UnauthorizedError();
+  async refreshAccessToken(refreshToken: string): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+  }> {
+    // Verify refresh token
+    const payload = verifyToken(refreshToken, "refresh");
+    if (!payload) throw new UnauthorizedError("Invalid refresh token");
 
+    // Verify user still exists
     const user = await this.userService.getUserById(payload.id);
-    if (!user) throw new UnauthorizedError();
+    if (!user) throw new UnauthorizedError("User not found");
 
-    return generateToken({
+    const tokenPayload = {
       id: user.id,
       email: user.email,
-    });
+      full_name: user.full_name,
+    };
+
+    const newAccessToken = generateToken(tokenPayload, "access");
+    const newRefreshToken = generateToken(tokenPayload, "refresh");
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      expiresIn: 6 * 60 * 60, // 6 hours in seconds
+    };
   }
 
   async verifyPassword(

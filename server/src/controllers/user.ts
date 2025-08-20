@@ -23,7 +23,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   const user = await userService.getUserById(id);
   if (!user) throw new NotFoundError("User not found");
   await userService.deleteUser(id);
-  res.status(200).json({ message: "User deleted" });
+  res.status(200).json({ message: "User deleted successfully" });
 };
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -35,5 +35,11 @@ export const updateUser = async (req: Request, res: Response) => {
     email,
   });
 
-  res.status(200).json(user);
+  res.status(200).json({
+    id: user.id,
+    full_name: user.full_name,
+    email: user.email,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+  });
 };

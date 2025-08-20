@@ -70,7 +70,7 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 
 # Delete User Success Response (200)
 # {
-#   "message": "User deleted"
+#   "message": "User deleted successfully"
 # }
 
 # Error Response Examples

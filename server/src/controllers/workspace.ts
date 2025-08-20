@@ -21,7 +21,7 @@ export const createWorkspace = async (req: Request, res: Response) => {
   const token = extractTokenFromHeader(req.headers.authorization);
   if (!token) throw new UnauthorizedError("No token provided");
 
-  const payload = verifyToken(token);
+  const payload = verifyToken(token, "access");
   if (!payload) throw new UnauthorizedError("Invalid token");
 
   const user = await userService.getUserById(payload.id);
