@@ -14,7 +14,8 @@ A modern, full-stack project management application inspired by Linear, designed
 
 ```bash
 # Clone and navigate to project
-git clone <repository-url>
+git clone https://github.com/mevlutcantuna/project-management-application
+
 cd project-management-application
 
 # Start both client and server
