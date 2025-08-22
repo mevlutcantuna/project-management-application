@@ -1,9 +1,10 @@
 import Database from "@/config/db";
-import { CreateUserInput, User, UserService } from "./user";
+import { UserService } from "./user";
 import bcrypt from "bcrypt";
 import { generateToken, verifyToken } from "@/utils/jwt";
 import { ConflictError, UnauthorizedError } from "@/utils/errors";
-import { LoginResponse } from "@/types/auth";
+import { LoginResponse, RefreshTokenResponse } from "@/types/auth";
+import { CreateUserInput, User } from "@/types/user";
 
 export class AuthService {
   private userService: UserService;
@@ -23,15 +24,18 @@ export class AuthService {
       id: user.id,
       email: user.email,
       fullName: user.fullName,
+      profilePicture: user.profilePicture,
     };
 
     const accessToken = generateToken(tokenPayload, 6 * 60 * 60); // 6 hours in seconds
     const refreshToken = generateToken(tokenPayload, 7 * 24 * 60 * 60); // 7 days in seconds
 
+    const now = Math.floor(Date.now() / 1000);
+
     return {
       accessToken,
       refreshToken,
-      expiresIn: 6 * 60 * 60, // 6 hours in seconds
+      expiresIn: now + 6 * 60 * 60, // 6 hours in seconds
       tokenType: "Bearer",
     };
   }
@@ -45,11 +49,9 @@ export class AuthService {
     return await this.userService.createUser(input);
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<{
-    accessToken: string;
-    refreshToken: string;
-    expiresIn: number;
-  }> {
+  async refreshAccessToken(
+    refreshToken: string
+  ): Promise<RefreshTokenResponse> {
     // Verify refresh token
     const payload = verifyToken(refreshToken);
     if (!payload) throw new UnauthorizedError("Invalid refresh token");
@@ -62,15 +64,18 @@ export class AuthService {
       id: user.id,
       email: user.email,
       fullName: user.fullName,
+      profilePicture: user.profilePicture,
     };
 
     const newAccessToken = generateToken(tokenPayload, 6 * 60 * 60); // 6 hours in seconds
     const newRefreshToken = generateToken(tokenPayload, 7 * 24 * 60 * 60); // 7 days in seconds
 
+    const now = Math.floor(Date.now() / 1000);
+
     return {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
-      expiresIn: 6 * 60 * 60, // 6 hours in seconds
+      expiresIn: now + 6 * 60 * 60, // 6 hours in seconds,
     };
   }
 

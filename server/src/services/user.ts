@@ -1,27 +1,7 @@
 import bcrypt from "bcrypt";
 import Database from "../config/db";
 import camelcaseKeys from "camelcase-keys";
-
-export interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-  passwordHash: string;
-  profilePicture: string;
-}
-
-export interface CreateUserInput extends Record<string, unknown> {
-  fullName: string;
-  email: string;
-  password: string;
-}
-
-export interface UpdateUserInput extends Record<string, unknown> {
-  fullName?: string;
-  email?: string;
-}
+import { CreateUserInput, UpdateUserInput, User } from "@/types/user";
 
 export class UserService {
   constructor(private db: Database) {}
@@ -33,12 +13,17 @@ export class UserService {
     const passwordHash = await bcrypt.hash(input.password, saltRounds);
 
     const query = `
-      INSERT INTO users (full_name, email, password_hash)
-      VALUES ($1, $2, $3)
+      INSERT INTO users (full_name, email, password_hash, profile_picture)
+      VALUES ($1, $2, $3, $4)
       RETURNING id, full_name, email, profile_picture, created_at, updated_at
     `;
 
-    const values = [input.fullName, input.email, passwordHash];
+    const values = [
+      input.fullName,
+      input.email,
+      passwordHash,
+      input.profilePicture ?? null,
+    ];
 
     const result = await this.db.query(query, values);
     return camelcaseKeys(result.rows[0]);
@@ -76,11 +61,16 @@ export class UserService {
     input: UpdateUserInput
   ): Promise<Omit<User, "passwordHash">> {
     const query = `UPDATE users
-                   SET full_name = $1, email = $2
-                   WHERE id = $3
-                   RETURNING id, full_name, email, profile_picture, created_at, updated_at`;
+                   SET full_name = $1, email = $2, profile_picture = $3
+                   WHERE id = $4
+                   RETURNING id, full_name, email, profile_picture, created_at, updated_at `;
 
-    const values = [input.fullName ?? null, input.email ?? null, id];
+    const values = [
+      input.fullName ?? null,
+      input.email ?? null,
+      input.profilePicture ?? null,
+      id,
+    ];
     const result = await this.db.query(query, values);
     return camelcaseKeys(result.rows[0]);
   }

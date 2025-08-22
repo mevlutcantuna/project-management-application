@@ -4,10 +4,11 @@ import { db } from "../config/dbClient";
 import { ValidationError, UnauthorizedError } from "../utils/errors";
 import { AuthService } from "@/services/auth";
 import { extractTokenFromHeader } from "@/utils/jwt";
+import { LoginRequest, SignupRequest } from "@/types/auth";
 
 const authService = new AuthService(db);
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (req: SignupRequest, res: Response) => {
   const validatedData = signupSchema.safeParse(req.body);
   if (!validatedData.success) throw new ValidationError(validatedData.error);
 
@@ -19,15 +20,10 @@ export const signup = async (req: Request, res: Response) => {
     password,
   });
 
-  res.status(201).json({
-    id: user.id,
-    fullName: user.fullName,
-    email: user.email,
-    createdAt: user.createdAt,
-  });
+  res.status(201).json(user);
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: LoginRequest, res: Response) => {
   const validatedData = loginSchema.safeParse(req.body);
   if (!validatedData.success) throw new ValidationError(validatedData.error);
 
@@ -35,12 +31,7 @@ export const login = async (req: Request, res: Response) => {
   const result = await authService.login(email, password);
   if (!result) throw new UnauthorizedError("Invalid email or password");
 
-  res.status(200).json({
-    accessToken: result.accessToken,
-    refreshToken: result.refreshToken,
-    expiresIn: result.expiresIn,
-    tokenType: result.tokenType,
-  });
+  res.status(200).json(result);
 };
 
 export const refreshToken = async (req: Request, res: Response) => {
@@ -50,9 +41,7 @@ export const refreshToken = async (req: Request, res: Response) => {
   const result = await authService.refreshAccessToken(refresh_token);
 
   res.status(200).json({
-    accessToken: result.accessToken,
-    refreshToken: result.refreshToken,
-    expiresIn: result.expiresIn,
+    ...result,
     tokenType: "Bearer",
   });
 };

@@ -9,13 +9,22 @@ import {
   UnauthorizedError,
 } from "@/utils/errors";
 import { UserService } from "@/services/user";
+import {
+  CreateWorkspaceRequest,
+  UpdateWorkspaceRequest,
+  AddWorkspaceMemberRequest,
+  SendWorkspaceInvitationRequest,
+} from "@/types/workspace";
 
 const workspaceService = new WorkspaceService(db);
 const userService = new UserService(db);
 
 // Workspaces
 
-export const createWorkspace = async (req: Request, res: Response) => {
+export const createWorkspace = async (
+  req: CreateWorkspaceRequest,
+  res: Response
+) => {
   const { title, description } = req.body;
 
   const token = extractTokenFromHeader(req.headers.authorization);
@@ -59,7 +68,10 @@ export const getMyWorkspaces = async (req: Request, res: Response) => {
   res.status(200).json(workspaces);
 };
 
-export const updateWorkspace = async (req: Request, res: Response) => {
+export const updateWorkspace = async (
+  req: UpdateWorkspaceRequest,
+  res: Response
+) => {
   const { id } = req.params;
   const { title, description } = req.body;
 
@@ -79,7 +91,7 @@ export const updateWorkspace = async (req: Request, res: Response) => {
     throw new UnauthorizedError("You are not the owner of this workspace");
 
   const updatedWorkspace = await workspaceService.updateWorkspace({
-    id,
+    id: id,
     title,
     description,
   });
@@ -112,7 +124,10 @@ export const deleteWorkspace = async (req: Request, res: Response) => {
 
 // Workspace Members
 
-export const addWorkspaceMember = async (req: Request, res: Response) => {
+export const addWorkspaceMember = async (
+  req: AddWorkspaceMemberRequest,
+  res: Response
+) => {
   const { id: workspaceId } = req.params;
   const { userId, role } = req.body;
 
@@ -132,8 +147,8 @@ export const addWorkspaceMember = async (req: Request, res: Response) => {
     throw new UnauthorizedError("You are not the owner of this workspace");
 
   const member = await workspaceService.addUserToWorkspaceMember({
-    workspaceId,
-    userId,
+    workspaceId: workspaceId,
+    userId: userId,
     role,
   });
 
@@ -172,7 +187,10 @@ export const getWorkspaceMyInvitations = async (
   res.status(200).json(invitations);
 };
 
-export const sendWorkspaceInvitation = async (req: Request, res: Response) => {
+export const sendWorkspaceInvitation = async (
+  req: SendWorkspaceInvitationRequest,
+  res: Response
+) => {
   const { id } = req.params;
   const { email, role } = req.body;
 

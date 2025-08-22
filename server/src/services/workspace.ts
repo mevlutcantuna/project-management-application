@@ -1,59 +1,16 @@
 import Database from "@/config/db";
-import { UserRole } from "@/utils/types";
-import { User } from "./user";
 import camelcaseKeys from "camelcase-keys";
-
-export interface Workspace {
-  id: string;
-  title: string;
-  description: string;
-  ownerId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface CreateWorkspaceInput extends Record<string, unknown> {
-  title: string;
-  description: string;
-  ownerId: string;
-}
-
-export interface UpdateWorkspaceInput extends Partial<CreateWorkspaceInput> {
-  id: string;
-}
-
-export interface AddUserToWorkspaceInput extends Record<string, unknown> {
-  workspaceId: string;
-  userId: string;
-  role: UserRole;
-}
-
-export interface WorkspaceMember extends User {
-  userId: string;
-  role: UserRole;
-}
-
-export interface WorkspaceInvitation {
-  id: string;
-  workspaceId: string;
-  email: string;
-  role: UserRole;
-  invitedBy: string;
-  expiresAt: Date;
-}
-
-export interface CreateWorkspaceInvitationInput
-  extends Record<string, unknown> {
-  workspaceId: string;
-  email: string;
-  role: UserRole;
-  invitedBy: string;
-}
-
-export interface UpdateWorkspaceInvitationInput
-  extends Record<string, unknown> {
-  role: UserRole;
-}
+import { UserRole } from "@/types/user";
+import {
+  CreateWorkspaceInput,
+  UpdateWorkspaceInput,
+  Workspace,
+  WorkspaceMember,
+  WorkspaceInvitation,
+  CreateWorkspaceInvitationInput,
+  UpdateWorkspaceInvitationInput,
+  AddUserToWorkspaceInput,
+} from "@/types/workspace";
 
 export class WorkspaceService {
   constructor(private db: Database) {}

@@ -6,6 +6,7 @@ export interface JWTPayload {
   id: string;
   email: string;
   fullName: string;
+  profilePicture: string | null;
   iat: number;
   exp: number;
 }
