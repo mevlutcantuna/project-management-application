@@ -28,18 +28,18 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { full_name, email } = req.body;
+  const { fullName, email } = req.body;
 
   const user = await userService.updateUser(id, {
-    full_name,
+    fullName,
     email,
   });
 
   res.status(200).json({
     id: user.id,
-    full_name: user.full_name,
+    fullName: user.fullName,
     email: user.email,
-    created_at: user.created_at,
-    updated_at: user.updated_at,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   });
 };

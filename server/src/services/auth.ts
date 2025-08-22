@@ -1,8 +1,9 @@
 import Database from "@/config/db";
-import { CreateUserInput, User, UserService, UserWithPassword } from "./user";
+import { CreateUserInput, User, UserService } from "./user";
 import bcrypt from "bcrypt";
 import { generateToken, verifyToken } from "@/utils/jwt";
 import { ConflictError, UnauthorizedError } from "@/utils/errors";
+import { LoginResponse } from "@/types/auth";
 
 export class AuthService {
   private userService: UserService;
@@ -11,15 +12,7 @@ export class AuthService {
     this.userService = new UserService(db);
   }
 
-  async login(
-    email: string,
-    password: string
-  ): Promise<{
-    accessToken: string;
-    refreshToken: string;
-    expiresIn: number;
-    tokenType: string;
-  } | null> {
+  async login(email: string, password: string): Promise<LoginResponse | null> {
     const user = await this.verifyPassword(email, password);
 
     if (!user) {
@@ -29,11 +22,11 @@ export class AuthService {
     const tokenPayload = {
       id: user.id,
       email: user.email,
-      full_name: user.full_name,
+      fullName: user.fullName,
     };
 
-    const accessToken = generateToken(tokenPayload, "access");
-    const refreshToken = generateToken(tokenPayload, "refresh");
+    const accessToken = generateToken(tokenPayload, 6 * 60 * 60); // 6 hours in seconds
+    const refreshToken = generateToken(tokenPayload, 7 * 24 * 60 * 60); // 7 days in seconds
 
     return {
       accessToken,
@@ -43,7 +36,7 @@ export class AuthService {
     };
   }
 
-  async signup(input: CreateUserInput): Promise<User> {
+  async signup(input: CreateUserInput): Promise<Omit<User, "passwordHash">> {
     const existingUser = await this.userService.checkUserExists(input.email);
 
     if (existingUser.emailExists)
@@ -58,7 +51,7 @@ export class AuthService {
     expiresIn: number;
   }> {
     // Verify refresh token
-    const payload = verifyToken(refreshToken, "refresh");
+    const payload = verifyToken(refreshToken);
     if (!payload) throw new UnauthorizedError("Invalid refresh token");
 
     // Verify user still exists
@@ -68,11 +61,11 @@ export class AuthService {
     const tokenPayload = {
       id: user.id,
       email: user.email,
-      full_name: user.full_name,
+      fullName: user.fullName,
     };
 
-    const newAccessToken = generateToken(tokenPayload, "access");
-    const newRefreshToken = generateToken(tokenPayload, "refresh");
+    const newAccessToken = generateToken(tokenPayload, 6 * 60 * 60); // 6 hours in seconds
+    const newRefreshToken = generateToken(tokenPayload, 7 * 24 * 60 * 60); // 7 days in seconds
 
     return {
       accessToken: newAccessToken,
@@ -84,19 +77,22 @@ export class AuthService {
   async verifyPassword(
     email: string,
     password: string
-  ): Promise<UserWithPassword | null> {
+  ): Promise<Omit<User, "passwordHash"> | null> {
     const user = await this.userService.getUserByEmail(email);
 
     if (!user) {
       return null;
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password_hash);
+    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
 
     if (!isValidPassword) {
       return null;
     }
 
-    return user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash, ...userWithoutPassword } = user;
+
+    return userWithoutPassword;
   }
 }
