@@ -6,12 +6,12 @@ import type {
   SignupRequest,
   SignupResponse,
 } from "./types";
-import cookie from "js-cookie";
+import { TokenService } from "@/shared/lib/token";
 
 export const useLoginMutation = (
   options?: Omit<Parameters<typeof useMutation>[0], "mutationFn">
 ) => {
-  const { onSuccess, onError } = options || {};
+  const { onSuccess } = options || {};
 
   return useMutation({
     mutationFn: async (credentials: LoginRequest): Promise<LoginResponse> => {
@@ -19,14 +19,13 @@ export const useLoginMutation = (
       return response.data;
     },
     onSuccess: (data, ...others) => {
-      cookie.set("access_token", data.access_token);
-      cookie.set("refresh_token", data.refresh_token);
-      cookie.set("token_expiry", data.expires_in.toString());
+      const { setAccessToken, setRefreshToken, setTokenExpiry } =
+        new TokenService();
+
+      setAccessToken(data.access_token);
+      setRefreshToken(data.refresh_token);
+      setTokenExpiry(data.expires_in);
       onSuccess?.(data, ...others);
-    },
-    onError: (error, ...others) => {
-      console.error("Login failed:", error);
-      onError?.(error, ...others);
     },
     ...options,
   });

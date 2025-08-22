@@ -14,15 +14,20 @@ export const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
-    path: "/workspace-selection",
-    element: <WorkspaceSelectionPage />,
-  },
-  {
-    path: "/dashboard",
-    element: <Dashboard />,
-  },
-  {
-    path: "/",
-    element: <Navigate to="/dashboard" />,
+    element: <div>Protected</div>,
+    children: [
+      {
+        path: "/workspace-selection",
+        element: <WorkspaceSelectionPage />,
+      },
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "/",
+        element: <Navigate to="/dashboard" />,
+      },
+    ],
   },
 ]);

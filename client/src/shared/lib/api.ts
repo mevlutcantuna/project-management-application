@@ -1,7 +1,5 @@
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import cookie from "js-cookie";
-import type { DecodedUser } from "../types/user";
+import { TokenService } from "./token";
 
 export const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -13,68 +11,54 @@ export const uninterceptedApi = axios.create({
   baseURL: BASE_URL,
 });
 
-export function decodeJWT(token: string): DecodedUser {
-  try {
-    const decoded = jwtDecode<DecodedUser>(token);
-    return decoded;
-  } catch (error) {
-    console.warn(error);
-    return {} as DecodedUser;
+// Add token to requests
+api.interceptors.request.use(
+  (config) => {
+    const { getAccessToken } = new TokenService();
+
+    const token = getAccessToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-}
-
-export function getAccessToken(): string | undefined {
-  return cookie.get("access_token");
-}
-
-export function getRefreshToken(): string | undefined {
-  return cookie.get("refresh_token");
-}
-
-export function isTokenExpired(): boolean {
-  const expiry = cookie.get("token_expiry");
-  if (!expiry) return true;
-  return Date.now() > Number(expiry) * 1000;
-}
-
-export function clearTokens(): void {
-  cookie.remove("access_token");
-  cookie.remove("refresh_token");
-  cookie.remove("token_expiry");
-}
+);
 
 api.interceptors.request.use(
   async (config) => {
-    if (isTokenExpired()) {
+    const {
+      isAccessTokenExpired,
+      getRefreshToken,
+      setAccessToken,
+      removeTokens,
+    } = new TokenService();
+
+    if (isAccessTokenExpired()) {
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          const response = await uninterceptedApi.post("/auth/refresh", {
-            refresh_token: refreshToken,
+          const response = await uninterceptedApi.get("/auth/refresh", {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+            },
           });
-          const { accessToken, expiresIn } = response.data;
-          cookie.set("access_token", accessToken);
-          cookie.set(
-            "token_expiry",
-            ((Date.now() + expiresIn * 1000) / 1000).toString()
-          );
+          const { accessToken } = response.data;
+          setAccessToken(accessToken);
         } catch (error) {
-          clearTokens();
+          removeTokens();
           window.location.href = "/login";
           return Promise.reject(error);
         }
       } else {
-        clearTokens();
+        removeTokens();
         window.location.href = "/login";
         return Promise.reject("No refresh token available");
       }
     }
 
-    const token = getAccessToken();
-
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
     return config;
   },
   (error) => {
