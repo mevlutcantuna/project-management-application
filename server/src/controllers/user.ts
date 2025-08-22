@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { UserService } from "@/services/user";
 import { db } from "@/config/dbClient";
-import { NotFoundError } from "@/utils/errors";
+import { BadRequestError, NotFoundError } from "@/utils/errors";
+import { UpdateUserRequest } from "@/types/user";
 
 const userService = new UserService(db);
 
@@ -26,20 +27,18 @@ export const deleteUser = async (req: Request, res: Response) => {
   res.status(200).json({ message: "User deleted successfully" });
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (req: UpdateUserRequest, res: Response) => {
   const { id } = req.params;
-  const { full_name, email } = req.body;
+  const { fullName, email, profilePicture } = req.body;
+
+  if (!fullName || !email || !profilePicture)
+    throw new BadRequestError("Please provide all fields");
 
   const user = await userService.updateUser(id, {
-    full_name,
+    fullName,
     email,
+    profilePicture,
   });
 
-  res.status(200).json({
-    id: user.id,
-    full_name: user.full_name,
-    email: user.email,
-    created_at: user.created_at,
-    updated_at: user.updated_at,
-  });
+  res.status(200).json(user);
 };

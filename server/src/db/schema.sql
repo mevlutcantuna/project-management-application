@@ -1,8 +1,6 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   full_name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL, 
@@ -13,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Workspace table
 CREATE TABLE IF NOT EXISTS workspaces (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title VARCHAR(100) NOT NULL,
   description VARCHAR(255) NOT NULL,
   owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -23,7 +21,7 @@ CREATE TABLE IF NOT EXISTS workspaces (
 
 -- Workspace members junction table (many-to-many relationship)
 CREATE TABLE IF NOT EXISTS workspace_members (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('admin', 'manager', 'member')),
@@ -33,7 +31,7 @@ CREATE TABLE IF NOT EXISTS workspace_members (
 
 -- Workspace invitations (pending users)
 CREATE TABLE IF NOT EXISTS workspace_invitations (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   email VARCHAR(320) NOT NULL,
   invited_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -45,18 +43,18 @@ CREATE TABLE IF NOT EXISTS workspace_invitations (
 
 -- Teams table
 CREATE TABLE IF NOT EXISTS teams (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   title VARCHAR(100) NOT NULL,
   description VARCHAR(255) NOT NULL,
-  user_ids UUID[] NOT NULL DEFAULT '{}',
+    user_ids UUID[] NOT NULL DEFAULT '{}',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Issue statuses (predefined statuses)
 CREATE TABLE IF NOT EXISTS issue_statuses (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(50) NOT NULL UNIQUE,
   icon_name VARCHAR(50),
   color VARCHAR(7), -- Hex color code like #FF0000
@@ -65,7 +63,7 @@ CREATE TABLE IF NOT EXISTS issue_statuses (
 
 -- Issue labels
 CREATE TABLE IF NOT EXISTS issue_labels (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   title VARCHAR(100) NOT NULL,
   color VARCHAR(7) NOT NULL, -- Hex color code
@@ -75,7 +73,7 @@ CREATE TABLE IF NOT EXISTS issue_labels (
 
 -- Issues table
 CREATE TABLE IF NOT EXISTS issues (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
@@ -98,7 +96,7 @@ CREATE TABLE IF NOT EXISTS issues (
 
 -- Issue activities
 CREATE TABLE IF NOT EXISTS issue_activities (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   activity_type VARCHAR(50) NOT NULL, -- 'created', 'updated', 'assigned', 'status_changed', etc.
@@ -108,7 +106,7 @@ CREATE TABLE IF NOT EXISTS issue_activities (
 
 -- Issue comments
 CREATE TABLE IF NOT EXISTS issue_comments (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   content TEXT NOT NULL,

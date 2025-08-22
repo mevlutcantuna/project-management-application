@@ -64,6 +64,9 @@
 - Implement proper indexing strategies
 - Use prepared statements or ORM query builders
 - Close database connections properly
+- Use snake_case for database column names and table names
+- Convert between snake_case (database) and camelCase (API/internal) using libraries like camelcase-keys and snakecase-keys
+- Maintain consistent naming conventions: database uses snake_case, API responses use camelCase
 
 ## API Design
 
@@ -75,6 +78,9 @@
 - Use meaningful endpoint names
 - Implement proper pagination for list endpoints
 - Document APIs with tools like Swagger/OpenAPI
+- Use camelCase for all API responses and internal data structures
+- Convert database snake_case to camelCase using libraries like camelcase-keys
+- Maintain consistent camelCase naming throughout the backend codebase
 
 ## Environment & Configuration
 

@@ -1,56 +1,16 @@
 import Database from "@/config/db";
-import { UserRole } from "@/utils/types";
-import { User } from "./user";
-
-export interface Workspace {
-  id: string;
-  title: string;
-  description: string;
-  owner_id: string;
-  created_at: Date;
-  updated_at: Date;
-}
-
-export interface CreateWorkspaceInput {
-  title: string;
-  description: string;
-  owner_id: string;
-}
-
-export interface UpdateWorkspaceInput extends Partial<CreateWorkspaceInput> {
-  id: string;
-}
-
-export interface AddUserToWorkspaceInput {
-  workspace_id: string;
-  user_id: string;
-  role: UserRole;
-}
-
-export interface WorkspaceMember extends User {
-  user_id: string;
-  role: UserRole;
-}
-
-export interface WorkspaceInvitation {
-  id: string;
-  workspace_id: string;
-  email: string;
-  role: UserRole;
-  invited_by: string;
-  expires_at: Date;
-}
-
-export interface CreateWorkspaceInvitationInput {
-  workspace_id: string;
-  email: string;
-  role: UserRole;
-  invited_by: string;
-}
-
-export interface UpdateWorkspaceInvitationInput {
-  role: UserRole;
-}
+import camelcaseKeys from "camelcase-keys";
+import { UserRole } from "@/types/user";
+import {
+  CreateWorkspaceInput,
+  UpdateWorkspaceInput,
+  Workspace,
+  WorkspaceMember,
+  WorkspaceInvitation,
+  CreateWorkspaceInvitationInput,
+  UpdateWorkspaceInvitationInput,
+  AddUserToWorkspaceInput,
+} from "@/types/workspace";
 
 export class WorkspaceService {
   constructor(private db: Database) {}
@@ -59,35 +19,35 @@ export class WorkspaceService {
     const query = `
       INSERT INTO workspaces (title, description, owner_id)
       VALUES ($1, $2, $3)
-      RETURNING id, title, description, owner_id
+      RETURNING id, title, description, owner_id, created_at, updated_at
     `;
 
-    const values = [input.title, input.description, input.owner_id];
+    const values = [input.title, input.description, input.ownerId];
 
     const result = await this.db.query(query, values);
-    return result.rows[0] as Workspace;
+    return camelcaseKeys(result.rows[0]);
   }
 
   async getWorkspaceById(id: string): Promise<Workspace | null> {
     const query = `
-      SELECT id, title, description, owner_id
+      SELECT id, title, description, owner_id, created_at, updated_at
       FROM workspaces
       WHERE id = $1
     `;
 
     const result = await this.db.query(query, [id]);
-    return result.rows[0] as Workspace | null;
+    return result.rows[0] ? (camelcaseKeys(result.rows[0]) as Workspace) : null;
   }
 
   async getWorkspacesByUserId(userId: string): Promise<Workspace[]> {
     const query = `
-      SELECT id, title, description, owner_id
+      SELECT id, title, description, owner_id, created_at, updated_at
       FROM workspaces
       WHERE owner_id = $1
     `;
 
     const result = await this.db.query(query, [userId]);
-    return result.rows as Workspace[];
+    return camelcaseKeys(result.rows) as Workspace[];
   }
 
   async updateWorkspace(input: UpdateWorkspaceInput): Promise<Workspace> {
@@ -95,23 +55,23 @@ export class WorkspaceService {
       UPDATE workspaces
       SET title = $1, description = $2, owner_id = $3
       WHERE id = $4
-      RETURNING id, title, description, owner_id
+      RETURNING id, title, description, owner_id, created_at, updated_at
     `;
 
     const values = [
       input.title ?? null,
       input.description ?? null,
-      input.owner_id ?? null,
+      input.ownerId ?? null,
       input.id,
     ];
 
     const result = await this.db.query(query, values);
-    return result.rows[0] as Workspace;
+    return camelcaseKeys(result.rows[0]);
   }
 
   async deleteWorkspace(id: string): Promise<void> {
     const query = `
-      DELETE FROM workspace_members WHERE workspace_id = $1;
+      DELETE FROM workspace_members WHERE workspace_id = $1; 
       DELETE FROM workspaces WHERE id = $1;
       DELETE FROM workspace_invitations WHERE workspace_id = $1;
     `;
@@ -155,7 +115,7 @@ export class WorkspaceService {
       VALUES ($1, $2, $3)
     `;
 
-    await this.db.query(query, [input.workspace_id, input.user_id, input.role]);
+    await this.db.query(query, [input.workspaceId, input.userId, input.role]);
   }
 
   async getWorkspaceMembers(workspaceId: string): Promise<WorkspaceMember[]> {
@@ -166,21 +126,23 @@ export class WorkspaceService {
     `;
 
     const result = await this.db.query(query, [workspaceId]);
-    return result.rows as WorkspaceMember[];
+    return camelcaseKeys(result.rows);
   }
 
   async getWorkspaceMemberByUserId(
     userId: string
   ): Promise<WorkspaceMember | null> {
     const query = `
-    SELECT id, user_id, role, email, full_name, profile_picture, created_at, updated_at
-    FROM workspace_members
-    WHERE user_id = $1
-    JOIN users ON workspace_members.user_id = users.id;
+      SELECT id, user_id, role, email, full_name, profile_picture, created_at, updated_at
+      FROM workspace_members
+      JOIN users ON workspace_members.user_id = users.id
+      WHERE user_id = $1
     `;
 
     const result = await this.db.query(query, [userId]);
-    return result.rows[0] as WorkspaceMember | null;
+    return result.rows[0]
+      ? (camelcaseKeys(result.rows[0]) as WorkspaceMember)
+      : null;
   }
 
   // Workspace Invitations
@@ -194,7 +156,7 @@ export class WorkspaceService {
     `;
 
     const result = await this.db.query(query, [id]);
-    return result.rows[0] as WorkspaceInvitation | null;
+    return result.rows[0] ? camelcaseKeys(result.rows[0]) : null;
   }
 
   async getWorkspaceInvitationsByWorkspaceId(
@@ -207,7 +169,7 @@ export class WorkspaceService {
     `;
 
     const result = await this.db.query(query, [workspaceId]);
-    return result.rows as WorkspaceInvitation[];
+    return camelcaseKeys(result.rows);
   }
 
   async getWorkspaceInvitationsByEmail(
@@ -220,7 +182,7 @@ export class WorkspaceService {
     `;
 
     const result = await this.db.query(query, [email]);
-    return result.rows as WorkspaceInvitation[];
+    return camelcaseKeys(result.rows);
   }
 
   async createWorkspaceInvitation(
@@ -233,14 +195,14 @@ export class WorkspaceService {
     `;
 
     const values = [
-      input.workspace_id,
+      input.workspaceId,
       input.email,
       input.role,
-      input.invited_by,
+      input.invitedBy,
     ];
 
     const result = await this.db.query(query, values);
-    return result.rows[0] as WorkspaceInvitation;
+    return camelcaseKeys(result.rows[0]);
   }
 
   async deleteWorkspaceInvitation(id: string): Promise<void> {
@@ -266,7 +228,7 @@ export class WorkspaceService {
     const values = [id, input.role];
 
     const result = await this.db.query(query, values);
-    return result.rows[0] as WorkspaceInvitation;
+    return camelcaseKeys(result.rows[0]);
   }
 
   async isWorkspaceInvitationExpired(id: string): Promise<boolean> {
@@ -277,6 +239,7 @@ export class WorkspaceService {
     `;
 
     const result = await this.db.query(query, [id]);
-    return result.rows[0].expires_at < new Date();
+    const row = camelcaseKeys(result.rows[0]);
+    return row.expiresAt < new Date();
   }
 }

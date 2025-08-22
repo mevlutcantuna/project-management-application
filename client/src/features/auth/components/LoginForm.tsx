@@ -30,14 +30,16 @@ interface LoginForm {
   onError?: () => void;
 }
 
-const LoginForm = ({ className }: LoginForm) => {
+const LoginForm = ({ className, onSuccess, onError }: LoginForm) => {
   const [formError, setFormError] = useState<string | null>(null);
 
   const { mutate: login, isPending } = useLoginMutation({
+    onSuccess,
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
         setFormError(getErrorMessage(error));
       }
+      onError?.();
     },
   });
 

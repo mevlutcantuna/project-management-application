@@ -1,54 +1,38 @@
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";
-const JWT_REFRESH_SECRET =
-  process.env.JWT_REFRESH_SECRET || "your-refresh-secret-key";
 
 export interface JWTPayload {
   id: string;
   email: string;
-  full_name: string;
-  type: "access" | "refresh";
+  fullName: string;
+  profilePicture: string | null;
   iat: number;
   exp: number;
 }
 
 export function generateToken(
-  payload: Omit<JWTPayload, "type" | "iat" | "exp">,
-  type: "access" | "refresh" = "access"
+  payload: Omit<JWTPayload, "iat" | "exp">,
+  expiresIn: number
 ): string {
   const now = Math.floor(Date.now() / 1000);
-  const expiration =
-    type === "access"
-      ? now + 6 * 60 * 60 // 6 hours
-      : now + 7 * 24 * 60 * 60; // 7 days
 
   const tokenPayload = {
     ...payload,
-    type,
     iat: now,
-    exp: expiration,
+    exp: now + expiresIn,
   };
 
-  const secret = type === "access" ? JWT_SECRET : JWT_REFRESH_SECRET;
-  return jwt.sign(tokenPayload, secret);
+  return jwt.sign(tokenPayload, JWT_SECRET);
 }
 
-export function verifyToken(
-  token: string,
-  type: "access" | "refresh" = "access"
-): JWTPayload | null {
+export function verifyToken(token: string): JWTPayload | null {
   try {
-    const secret = type === "access" ? JWT_SECRET : JWT_REFRESH_SECRET;
-    const decoded = jwt.verify(token, secret) as JWTPayload;
-
-    if (decoded.type !== type) {
-      return null;
-    }
+    const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
 
     return decoded;
   } catch (error) {
-    console.error(`Error verifying ${type} token:`, error);
+    console.error(`Error verifying token:`, error);
     return null;
   }
 }

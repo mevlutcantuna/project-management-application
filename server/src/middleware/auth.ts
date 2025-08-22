@@ -21,7 +21,7 @@ export const authenticate = async (
       throw new UnauthorizedError("Invalid token");
     }
 
-    // Optionally verify user still exists and is active
+    // Verify user still exists
     const userService = new UserService(db);
     const user = await userService.getUserById(payload.id);
 
