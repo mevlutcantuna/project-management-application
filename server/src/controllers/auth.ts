@@ -1,10 +1,9 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { loginSchema, signupSchema } from "../schemas/auth";
 import { db } from "../config/dbClient";
 import { ValidationError, UnauthorizedError } from "../utils/errors";
 import { AuthService } from "@/services/auth";
-import { extractTokenFromHeader } from "@/utils/jwt";
-import { LoginRequest, SignupRequest } from "@/types/auth";
+import { LoginRequest, RefreshTokenRequest, SignupRequest } from "@/types/auth";
 
 const authService = new AuthService(db);
 
@@ -34,11 +33,11 @@ export const login = async (req: LoginRequest, res: Response) => {
   res.status(200).json(result);
 };
 
-export const refreshToken = async (req: Request, res: Response) => {
-  const refresh_token = extractTokenFromHeader(req.headers.authorization);
-  if (!refresh_token) throw new UnauthorizedError("No refresh token provided");
+export const refreshToken = async (req: RefreshTokenRequest, res: Response) => {
+  const { token } = req.body;
+  if (!token) throw new UnauthorizedError("No refresh token provided");
 
-  const result = await authService.refreshAccessToken(refresh_token);
+  const result = await authService.refreshAccessToken(token);
 
   res.status(200).json({
     ...result,

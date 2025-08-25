@@ -15,6 +15,12 @@ export interface LoginRequest extends Request {
   };
 }
 
+export interface RefreshTokenRequest extends Request {
+  body: {
+    token: string;
+  };
+}
+
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;

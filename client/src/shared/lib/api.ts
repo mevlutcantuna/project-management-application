@@ -40,10 +40,8 @@ api.interceptors.request.use(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          const response = await uninterceptedApi.get("/auth/refresh", {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`,
-            },
+          const response = await uninterceptedApi.post("/auth/refresh", {
+            token: refreshToken,
           });
           const { accessToken } = response.data;
           setAccessToken(accessToken);
