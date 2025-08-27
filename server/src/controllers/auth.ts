@@ -1,46 +1,53 @@
 import { Response } from "express";
 import { loginSchema, signupSchema } from "../schemas/auth";
-import { db } from "../config/dbClient";
 import { ValidationError, UnauthorizedError } from "../utils/errors";
 import { AuthService } from "@/services/auth";
 import { LoginRequest, RefreshTokenRequest, SignupRequest } from "@/types/auth";
 
-const authService = new AuthService(db);
+class AuthController {
+  private authService: AuthService;
 
-export const signup = async (req: SignupRequest, res: Response) => {
-  const validatedData = signupSchema.safeParse(req.body);
-  if (!validatedData.success) throw new ValidationError(validatedData.error);
+  constructor(authService: AuthService) {
+    this.authService = authService;
+  }
 
-  const { fullName, email, password } = validatedData.data;
+  async signup(req: SignupRequest, res: Response) {
+    const validatedData = signupSchema.safeParse(req.body);
+    if (!validatedData.success) throw new ValidationError(validatedData.error);
 
-  const user = await authService.signup({
-    fullName,
-    email,
-    password,
-  });
+    const { fullName, email, password } = validatedData.data;
 
-  res.status(201).json(user);
-};
+    const user = await this.authService.signup({
+      fullName,
+      email,
+      password,
+    });
 
-export const login = async (req: LoginRequest, res: Response) => {
-  const validatedData = loginSchema.safeParse(req.body);
-  if (!validatedData.success) throw new ValidationError(validatedData.error);
+    res.status(201).json(user);
+  }
 
-  const { email, password } = validatedData.data;
-  const result = await authService.login(email, password);
-  if (!result) throw new UnauthorizedError("Invalid email or password");
+  async login(req: LoginRequest, res: Response) {
+    const validatedData = loginSchema.safeParse(req.body);
+    if (!validatedData.success) throw new ValidationError(validatedData.error);
 
-  res.status(200).json(result);
-};
+    const { email, password } = validatedData.data;
+    const result = await this.authService.login(email, password);
+    if (!result) throw new UnauthorizedError("Invalid email or password");
 
-export const refreshToken = async (req: RefreshTokenRequest, res: Response) => {
-  const { token } = req.body;
-  if (!token) throw new UnauthorizedError("No refresh token provided");
+    res.status(200).json(result);
+  }
 
-  const result = await authService.refreshAccessToken(token);
+  async refreshToken(req: RefreshTokenRequest, res: Response) {
+    const { token } = req.body;
+    if (!token) throw new UnauthorizedError("No refresh token provided");
 
-  res.status(200).json({
-    ...result,
-    tokenType: "Bearer",
-  });
-};
+    const result = await this.authService.refreshAccessToken(token);
+
+    res.status(200).json({
+      ...result,
+      tokenType: "Bearer",
+    });
+  }
+}
+
+export default AuthController;

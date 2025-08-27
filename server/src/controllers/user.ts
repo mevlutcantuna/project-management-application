@@ -1,44 +1,50 @@
 import { Request, Response } from "express";
 import { UserService } from "@/services/user";
-import { db } from "@/config/dbClient";
-import { BadRequestError, NotFoundError } from "@/utils/errors";
+import { NotFoundError, ValidationError } from "@/utils/errors";
 import { UpdateUserRequest } from "@/types/user";
+import { updateUserSchema } from "@/schemas/user";
 
-const userService = new UserService(db);
+class UserController {
+  private userService: UserService;
 
-export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await userService.getAllUsers();
-  if (!users) throw new NotFoundError("No users found");
-  res.status(200).json(users);
-};
+  constructor(userService: UserService) {
+    this.userService = userService;
+  }
 
-export const getUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const user = await userService.getUserById(id);
-  if (!user) throw new NotFoundError("User not found");
-  res.status(200).json(user);
-};
+  async getAllUsers(req: Request, res: Response) {
+    const users = await this.userService.getAllUsers();
+    if (!users) throw new NotFoundError("No users found");
+    res.status(200).json(users);
+  }
 
-export const deleteUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const user = await userService.getUserById(id);
-  if (!user) throw new NotFoundError("User not found");
-  await userService.deleteUser(id);
-  res.status(200).json({ message: "User deleted successfully" });
-};
+  async getUser(req: Request, res: Response) {
+    const { id } = req.params;
+    const user = await this.userService.getUserById(id);
+    if (!user) throw new NotFoundError("User not found");
+    res.status(200).json(user);
+  }
 
-export const updateUser = async (req: UpdateUserRequest, res: Response) => {
-  const { id } = req.params;
-  const { fullName, email, profilePicture } = req.body;
+  async deleteUser(req: Request, res: Response) {
+    const { id } = req.params;
+    const user = await this.userService.getUserById(id);
+    if (!user) throw new NotFoundError("User not found");
+    await this.userService.deleteUser(id);
+    res.status(200).json({ message: "User deleted successfully" });
+  }
 
-  if (!fullName || !email || !profilePicture)
-    throw new BadRequestError("Please provide all fields");
+  async updateUser(req: UpdateUserRequest, res: Response) {
+    const { id } = req.params;
+    const { success, data, error } = updateUserSchema.safeParse(req.body);
 
-  const user = await userService.updateUser(id, {
-    fullName,
-    email,
-    profilePicture,
-  });
+    if (!success) throw new ValidationError(error);
 
-  res.status(200).json(user);
-};
+    const user = await this.userService.updateUser(id, {
+      fullName: data.fullName,
+      email: data.email,
+      profilePicture: data.profilePicture,
+    });
+    res.status(200).json(user);
+  }
+}
+
+export default UserController;
