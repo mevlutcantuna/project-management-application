@@ -43,8 +43,7 @@ export class AuthService {
   async signup(input: CreateUserInput): Promise<Omit<User, "passwordHash">> {
     const existingUser = await this.userService.checkUserExists(input.email);
 
-    if (existingUser.emailExists)
-      throw new ConflictError("email", "Email already registered");
+    if (existingUser) throw new ConflictError("email", "Email already exists");
 
     return await this.userService.createUser(input);
   }
