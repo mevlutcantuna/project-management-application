@@ -1,69 +1,161 @@
-# React + TypeScript + Vite
+# Client - Project Management Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React frontend for the project management application, built with TypeScript and featuring a beautiful, intuitive interface inspired by Linear.
 
-Currently, two official plugins are available:
+## 🛠️ Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Technology                | Purpose                                                       |
+| ------------------------- | ------------------------------------------------------------- |
+| **Vite**                  | Fast build tool and development server                        |
+| **React**                 | Modern UI library for component-based development             |
+| **TypeScript**            | Type-safe JavaScript for better development experience        |
+| **TanStack Query**        | Powerful data fetching and server state management            |
+| **Zustand**               | Lightweight, scalable state management for React              |
+| **Shadcn UI**             | Beautiful, customizable component library with custom theming |
+| **TailwindCSS**           | Utility-first CSS framework for rapid styling                 |
+| **TanStack Table**        | Feature-rich data table components                            |
+| **Axios**                 | HTTP client with request/response interceptors                |
+| **Vitest**                | Fast unit testing framework                                   |
+| **Mock Service Worker**   | API mocking for development and testing                       |
+| **React Testing Library** | Simple and complete testing utilities                         |
+| **Docker**                | Containerization for consistent deployment                    |
 
-## Expanding the ESLint configuration
+## 🚀 Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Node.js**: v22+ (recommended v22+)
+- **Yarn**: Package manager
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Development
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Navigate to client directory
+cd client
+
+# Install dependencies
+yarn install
+
+# Start development server
+yarn dev
+
+# Run tests
+yarn test
+
+# Run tests in watch mode
+yarn test:watch
+
+# Build for production
+yarn build
+
+# Preview production build
+yarn preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Docker Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# From project root - start both client and server
+yarn docker:up
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# View client logs specifically
+docker-compose logs client
+
+# Stop services
+yarn docker:down
 ```
+
+## 📁 Project Structure
+
+```
+client/
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   └── ui/             # Shadcn UI components
+│   ├── features/           # Feature-based modules
+│   ├── pages/              # Page components
+│   ├── shared/             # Shared utilities and components
+│   │   ├── components/     # Shared components
+│   │   ├── hooks/          # Custom React hooks
+│   │   ├── lib/            # Utility libraries
+│   │   ├── routes/         # Routing configuration
+│   │   └── types/          # TypeScript type definitions
+│   └── mocks/              # MSW mock data and handlers
+├── public/                 # Static assets
+├── Dockerfile             # Docker configuration
+└── package.json           # Dependencies and scripts
+```
+
+## 🧪 Testing
+
+The client uses Vitest and React Testing Library for testing:
+
+```bash
+# Run all tests
+yarn test
+
+# Run tests in watch mode
+yarn test:watch
+
+# Run tests with coverage
+yarn test:coverage
+```
+
+## 🎨 UI Components
+
+Built with Shadcn UI and TailwindCSS for a modern, consistent design system:
+
+- Form components with validation
+- Data tables with sorting and filtering
+- Loading states and error boundaries
+- Responsive design patterns
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env.local` file in the client directory:
+
+```env
+# API Configuration
+VITE_API_BASE_URL=http://localhost:8000
+
+# Other environment-specific variables
+```
+
+### Development URLs
+
+- **Development Server**: http://localhost:3000
+- **API Server**: http://localhost:8000
+
+## 🐳 Docker
+
+The client includes Docker configuration for containerized development:
+
+```dockerfile
+# Multi-stage build for optimized production image
+FROM node:22-alpine AS builder
+# ... build steps
+
+
+```
+
+## 📦 Build & Deployment
+
+```bash
+# Production build
+yarn build
+
+# Analyze bundle size
+yarn build --analyze
+
+# Preview production build locally
+yarn preview
+```
+
+The build output will be in the `dist/` directory, ready for deployment to any static hosting service.
+
+## 🔗 Related
+
+- [Server Documentation](../server/README.md)
+- [Main Project README](../README.md)

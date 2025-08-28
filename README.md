@@ -2,7 +2,7 @@
 
 A modern, full-stack project management application inspired by Linear, designed to streamline team collaboration and issue tracking with powerful, intuitive features.
 
-## Development
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -10,15 +10,14 @@ A modern, full-stack project management application inspired by Linear, designed
 - **Docker**: For containerized development
 - **PostgreSQL**: For database v17+
 
-### Quick Start
+### Get Started in 30 seconds
 
 ```bash
 # Clone and navigate to project
 git clone https://github.com/mevlutcantuna/project-management-application
-
 cd project-management-application
 
-# Start both client and server
+# Start both client and server with Docker
 yarn docker:up
 
 # View logs
@@ -28,70 +27,39 @@ yarn docker:logs
 yarn docker:down
 ```
 
-### Environment Setup
-
-**Server** (`server/.env`):
-
-```env
-# Database Configuration
-POSTGRES_HOST=
-POSTGRES_PORT=
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-
-# Server Configuration
-PORT=
-```
-
 ### Development URLs
 
 - **Client**: http://localhost:3000
 - **Server**: http://localhost:8000
 
-### Project Structure
+## 📁 Project Structure
 
 ```
 project-management-application/
-├── client/          # Frontend
+├── client/              # React Frontend Application
 │   ├── src/
 │   ├── public/
 │   └── Dockerfile
-├── server/          # Backend
+├── server/              # Node.js Backend API
 │   ├── src/
 │   └── Dockerfile
-├── docker-compose.yml
-└── package.json
+├── docker-compose.yml   # Container orchestration
+└── package.json         # Root package configuration
 ```
 
-## 🛠️ Frontend Tech Stack
+## 🛠️ Tech Stack Overview
 
-| Technology                | Purpose                                                       |
-| ------------------------- | ------------------------------------------------------------- |
-| **Vite**                  | Fast build tool and development server                        |
-| **React**                 | Modern UI library for component-based development             |
-| **TypeScript**            | Type-safe JavaScript for better development experience        |
-| **TanStack Query**        | Powerful data fetching and server state management            |
-| **Zustand**               | Lightweight, scalable state management for React              |
-| **Shadcn UI**             | Beautiful, customizable component library with custom theming |
-| **TailwindCSS**           | Utility-first CSS framework for rapid styling                 |
-| **TanStack Table**        | Feature-rich data table components                            |
-| **Axios**                 | HTTP client with request/response interceptors                |
-| **Vitest**                | Fast unit testing framework                                   |
-| **Mock Service Worker**   | API mocking for development and testing                       |
-| **React Testing Library** | Simple and complete testing utilities                         |
-| **Docker**                | Containerization for consistent deployment                    |
+### Frontend
 
-## ⚙️ Backend Tech Stack
+Modern React application with TypeScript, TanStack Query, Zustand, and Shadcn UI components.
 
-| Technology     | Purpose                                        |
-| -------------- | ---------------------------------------------- |
-| **Node.js**    | JavaScript runtime for server-side development |
-| **TypeScript** | Type-safe server-side JavaScript               |
-| **Express.js** | Fast, minimalist web framework                 |
-| **PostgreSQL** | Robust relational database                     |
-| **Jest**       | Comprehensive testing framework                |
-| **AWS S3**     | Cloud storage for images and file uploads      |
-| **Docker**     | Containerization and deployment                |
+**[📖 Detailed Client Documentation →](client/README.md)**
+
+### Backend
+
+Robust Node.js API with Express.js, PostgreSQL, and comprehensive authentication.
+
+**[📖 Detailed Server Documentation →](server/README.md)**
 
 ## Project Details
 
