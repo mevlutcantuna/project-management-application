@@ -10,7 +10,7 @@ A modern, full-stack project management application inspired by Linear, designed
 - **Docker**: For containerized development
 - **PostgreSQL**: For database v17+
 
-### Get Started in 30 seconds
+### Get Started
 
 ```bash
 # Clone and navigate to project
