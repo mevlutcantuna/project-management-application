@@ -1,5 +1,6 @@
 import Database from "@/config/db";
 import { User } from "@/types/user";
+import camelcaseKeys from "camelcase-keys";
 
 class UserRepository {
   constructor(private db: Database) {}
@@ -21,18 +22,18 @@ class UserRepository {
     ];
 
     const result = await this.db.query(query, values);
-    return result.rows[0];
+    return camelcaseKeys(result.rows[0]);
   }
 
-  async getUserById(id: string): Promise<User | null> {
+  async getUserById(id: string): Promise<Omit<User, "passwordHash"> | null> {
     const query = `
-      SELECT id, full_name, email, profile_picture, created_at, updated_at, password_hash
+      SELECT id, full_name, email, profile_picture, created_at, updated_at
       FROM users
       WHERE id = $1
     `;
 
     const result = await this.db.query(query, [id]);
-    return result.rows[0] || null;
+    return result.rows[0] ? (camelcaseKeys(result.rows[0]) as User) : null;
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
@@ -43,7 +44,7 @@ class UserRepository {
     `;
 
     const result = await this.db.query(query, [email]);
-    return result.rows[0] || null;
+    return result.rows[0] ? (camelcaseKeys(result.rows[0]) as User) : null;
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -53,7 +54,7 @@ class UserRepository {
     `;
 
     const result = await this.db.query(query);
-    return result.rows;
+    return result.rows.map((row) => camelcaseKeys(row) as User);
   }
 
   async updateUser(id: string, updates: Partial<User>): Promise<User> {
@@ -72,7 +73,7 @@ class UserRepository {
     ];
 
     const result = await this.db.query(query, values);
-    return result.rows[0];
+    return camelcaseKeys(result.rows[0]);
   }
 
   async deleteUser(id: string): Promise<void> {

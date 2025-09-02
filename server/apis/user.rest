@@ -6,8 +6,8 @@
 # Note: All user endpoints require authentication
 # Replace YOUR_JWT_TOKEN_HERE with actual JWT token from login
 
-@YOUR_JWT_TOKEN_HERE = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJqb2huLmRvZUBleGFtcGxlLmNvbSIsImZ1bGxOYW1lIjoiSm9obiBEb2UiLCJwcm9maWxlUGljdHVyZSI6bnVsbCwiaWF0IjoxNzU1ODYzMjA5LCJleHAiOjE3NTU4ODQ4MDl9.Z4RgfG1bTIIb7l0gu1MBwLzjtlzb8CGoS5zteP0W2jk
-@USER_ID = 2
+@YOUR_JWT_TOKEN_HERE = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA0ZmQ2NGMwLTMxMTctNGY3Yi1iOWRiLTZjMGNlMThmNTc0MyIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJmdWxsTmFtZSI6IkpvaG4gRG9lIiwicHJvZmlsZVBpY3R1cmUiOm51bGwsImlhdCI6MTc1NjgwMDY2MCwiZXhwIjoxNzU2ODIyMjYwfQ.xa2SHDUrr3Zj8q1NOZxJsHbaPGfq4aizDe41dAOST5I
+@USER_ID = 04fd64c0-3117-4f7b-b9db-6c0ce18f5743
 
 ### 1. Get All Users
 GET {{baseUrl}}/

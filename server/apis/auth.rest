@@ -3,7 +3,7 @@
 # Base URL
 @baseUrl = http://localhost:8000/api/auth
 
-@YOUR_JWT_TOKEN_HERE = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huLmRvZUBleGFtcGxlLmNvbSIsImZ1bGxOYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE3NTU4NjIzMDgsImV4cCI6MTc1NTg4MzkwOH0.DGtrQmIpey2ykY7WHcN3QUyte-zEMQiRmlYt4a9lALI
+@YOUR_JWT_TOKEN_HERE = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA0ZmQ2NGMwLTMxMTctNGY3Yi1iOWRiLTZjMGNlMThmNTc0MyIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJmdWxsTmFtZSI6IkpvaG4gRG9lIiwicHJvZmlsZVBpY3R1cmUiOm51bGwsImlhdCI6MTc1NjgwMDY2MCwiZXhwIjoxNzU2ODIyMjYwfQ.xa2SHDUrr3Zj8q1NOZxJsHbaPGfq4aizDe41dAOST5I
 
 ### 1. User Signup
 POST {{baseUrl}}/signup
@@ -25,9 +25,12 @@ Content-Type: application/json
 }
 
 ### 3. Refresh Token
-GET {{baseUrl}}/refresh
-Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
+POST {{baseUrl}}/refresh
+Content-Type: application/json
 
+{
+  "token": "{{YOUR_JWT_TOKEN_HERE}}"
+}
 ### 4. Get User Profile (Protected Route - Placeholder)
 GET {{baseUrl}}/me
 Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
