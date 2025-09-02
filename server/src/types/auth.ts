@@ -21,6 +21,8 @@ export interface RefreshTokenRequest extends Request {
   };
 }
 
+export type GetMeRequest = Request;
+
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;

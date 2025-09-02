@@ -26,7 +26,7 @@ class WorkspaceController {
 
   // Workspaces
 
-  async createWorkspace(req: CreateWorkspaceRequest, res: Response) {
+  createWorkspace = async (req: CreateWorkspaceRequest, res: Response) => {
     const { title, description } = req.body;
 
     const token = extractTokenFromHeader(req.headers.authorization);
@@ -45,18 +45,18 @@ class WorkspaceController {
     });
 
     res.status(201).json(workspace);
-  }
+  };
 
-  async getWorkspaceById(req: Request, res: Response) {
+  getWorkspaceById = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const workspace = await this.workspaceService.getWorkspaceById(id);
     if (!workspace) throw new NotFoundError("Workspace not found");
 
     res.status(200).json(workspace);
-  }
+  };
 
-  async getMyWorkspaces(req: Request, res: Response) {
+  getMyWorkspaces = async (req: Request, res: Response) => {
     const token = extractTokenFromHeader(req.headers.authorization);
     if (!token) throw new UnauthorizedError("No token provided");
 
@@ -70,9 +70,9 @@ class WorkspaceController {
       user.id
     );
     res.status(200).json(workspaces);
-  }
+  };
 
-  async updateWorkspace(req: UpdateWorkspaceRequest, res: Response) {
+  updateWorkspace = async (req: UpdateWorkspaceRequest, res: Response) => {
     const { id } = req.params;
     const { title, description } = req.body;
 
@@ -98,9 +98,9 @@ class WorkspaceController {
     });
 
     res.status(200).json(updatedWorkspace);
-  }
+  };
 
-  async deleteWorkspace(req: Request, res: Response) {
+  deleteWorkspace = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const token = extractTokenFromHeader(req.headers.authorization);
@@ -121,11 +121,14 @@ class WorkspaceController {
     await this.workspaceService.deleteWorkspace(id);
 
     res.status(200).json({ message: "Workspace deleted" });
-  }
+  };
 
   // Workspace Members
 
-  async addWorkspaceMember(req: AddWorkspaceMemberRequest, res: Response) {
+  addWorkspaceMember = async (
+    req: AddWorkspaceMemberRequest,
+    res: Response
+  ) => {
     const { id: workspaceId } = req.params;
     const { userId, role } = req.body;
 
@@ -151,9 +154,9 @@ class WorkspaceController {
     });
 
     res.status(200).json(member);
-  }
+  };
 
-  async getWorkspaceMembers(req: Request, res: Response) {
+  getWorkspaceMembers = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const workspace = await this.workspaceService.getWorkspaceById(id);
@@ -161,11 +164,11 @@ class WorkspaceController {
 
     const members = await this.workspaceService.getWorkspaceMembers(id);
     res.status(200).json(members);
-  }
+  };
 
   // Workspace Invitations
 
-  async getWorkspaceMyInvitations(req: Request, res: Response) {
+  getWorkspaceMyInvitations = async (req: Request, res: Response) => {
     const token = extractTokenFromHeader(req.headers.authorization);
     if (!token) throw new UnauthorizedError("No token provided");
 
@@ -179,12 +182,12 @@ class WorkspaceController {
       await this.workspaceService.getWorkspaceInvitationsByEmail(user.email);
 
     res.status(200).json(invitations);
-  }
+  };
 
-  async sendWorkspaceInvitation(
+  sendWorkspaceInvitation = async (
     req: SendWorkspaceInvitationRequest,
     res: Response
-  ) {
+  ) => {
     const { id } = req.params;
     const { email, role } = req.body;
 
@@ -229,9 +232,9 @@ class WorkspaceController {
     });
 
     res.status(200).json(invitation);
-  }
+  };
 
-  async acceptWorkspaceInvitation(req: Request, res: Response) {
+  acceptWorkspaceInvitation = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const token = extractTokenFromHeader(req.headers.authorization);
@@ -279,9 +282,9 @@ class WorkspaceController {
     await this.workspaceService.deleteWorkspaceInvitation(id);
 
     res.status(200).json({ message: "Invitation accepted" });
-  }
+  };
 
-  async declineWorkspaceInvitation(req: Request, res: Response) {
+  declineWorkspaceInvitation = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const token = extractTokenFromHeader(req.headers.authorization);
@@ -313,9 +316,9 @@ class WorkspaceController {
     await this.workspaceService.deleteWorkspaceInvitation(id);
 
     res.status(200).json({ message: "Invitation declined" });
-  }
+  };
 
-  async removeWorkspaceInvitation(req: Request, res: Response) {
+  removeWorkspaceInvitation = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const token = extractTokenFromHeader(req.headers.authorization);
@@ -338,7 +341,7 @@ class WorkspaceController {
     await this.workspaceService.deleteWorkspaceInvitation(id);
 
     res.status(200).json({ message: "Invitation removed" });
-  }
+  };
 }
 
 export default WorkspaceController;

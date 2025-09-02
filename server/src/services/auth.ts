@@ -99,4 +99,11 @@ export class AuthService {
 
     return userWithoutPassword;
   }
+
+  async getMe(id: string): Promise<Omit<User, "passwordHash"> | null> {
+    const user = await this.userService.getUserById(id);
+    if (!user) return null;
+
+    return user;
+  }
 }
