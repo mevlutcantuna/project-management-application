@@ -21,10 +21,9 @@ export class AuthService {
     }
 
     const tokenPayload = {
-      id: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      profilePicture: user.profilePicture,
+      sub: user.id,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 6 * 60 * 60, // 6 hours in seconds
     };
 
     const accessToken = generateToken(tokenPayload, 6 * 60 * 60); // 6 hours in seconds
@@ -37,6 +36,7 @@ export class AuthService {
       refreshToken,
       expiresIn: now + 6 * 60 * 60, // 6 hours in seconds
       tokenType: "Bearer",
+      user,
     };
   }
 
@@ -56,14 +56,13 @@ export class AuthService {
     if (!payload) throw new UnauthorizedError("Invalid refresh token");
 
     // Verify user still exists
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const tokenPayload = {
-      id: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      profilePicture: user.profilePicture,
+      sub: user.id,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 6 * 60 * 60, // 6 hours in seconds
     };
 
     const newAccessToken = generateToken(tokenPayload, 6 * 60 * 60); // 6 hours in seconds

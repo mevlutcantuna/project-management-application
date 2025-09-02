@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { User } from "./user";
 
 export interface SignupRequest extends Request {
   body: {
@@ -28,6 +29,7 @@ export interface LoginResponse {
   refreshToken: string;
   expiresIn: number;
   tokenType: string;
+  user: Omit<User, "passwordHash">;
 }
 
 export interface RefreshTokenResponse {

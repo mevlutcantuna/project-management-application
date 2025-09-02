@@ -1,8 +1,9 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import LoginPage from "@/pages/LoginPage";
 import SignupPage from "@/pages/SignupPage";
 import WorkspaceSelectionPage from "@/pages/WorkspaceSelectionPage";
 import Dashboard from "@/pages/Dashboard";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -14,19 +15,15 @@ export const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
-    element: <div>Protected</div>,
+    element: <ProtectedRoute />,
     children: [
       {
         path: "/workspace-selection",
         element: <WorkspaceSelectionPage />,
       },
       {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
-      {
         path: "/",
-        element: <Navigate to="/dashboard" />,
+        element: <Dashboard />,
       },
     ],
   },

@@ -8,7 +8,7 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
-import { router } from "@/shared/routes/route";
+import { router } from "@/shared/routing/route";
 import { Toaster } from "./components/ui/sonner";
 import { toast } from "sonner";
 import { getErrorMessage } from "./shared/lib/utils";

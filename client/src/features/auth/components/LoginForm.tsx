@@ -16,6 +16,8 @@ import { useLoginMutation } from "../api/mutations";
 import { Link } from "react-router-dom";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { TokenService } from "@/shared/lib/token";
+import { useAuthStore } from "../store";
 
 const loginSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
@@ -32,9 +34,20 @@ interface LoginForm {
 
 const LoginForm = ({ className, onSuccess, onError }: LoginForm) => {
   const [formError, setFormError] = useState<string | null>(null);
+  const { login: loginStore } = useAuthStore();
+  const { setAccessToken, setRefreshToken, setTokenExpiry } =
+    new TokenService();
 
   const { mutate: login, isPending } = useLoginMutation({
-    onSuccess,
+    onSuccess: (data) => {
+      const { accessToken, refreshToken, expiresIn } = data;
+      setAccessToken(accessToken);
+      setRefreshToken(refreshToken);
+      setTokenExpiry(expiresIn);
+      loginStore(data.user, accessToken);
+
+      onSuccess?.();
+    },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
         setFormError(getErrorMessage(error));

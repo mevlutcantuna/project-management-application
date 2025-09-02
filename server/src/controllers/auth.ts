@@ -62,7 +62,7 @@ class AuthController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.authService.getMe(payload.id);
+    const user = await this.authService.getMe(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     res.status(200).json(user);

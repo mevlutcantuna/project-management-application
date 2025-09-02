@@ -1,10 +1,14 @@
 export interface DecodedUser {
-  id: string;
-  email: string;
+  sub: string;
   iat: number;
   exp: number;
 }
 
 export interface User {
-  name: string;
+  id: string;
+  fullName: string;
+  email: string;
+  profilePicture: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -6,33 +6,27 @@ import type {
   SignupRequest,
   SignupResponse,
 } from "./types";
-import { TokenService } from "@/shared/lib/token";
 
 export const useLoginMutation = (
-  options?: Omit<Parameters<typeof useMutation>[0], "mutationFn">
+  options?: Omit<
+    Parameters<typeof useMutation<LoginResponse, Error, LoginRequest>>[0],
+    "mutationFn"
+  >
 ) => {
-  const { onSuccess } = options || {};
-
   return useMutation({
     mutationFn: async (credentials: LoginRequest): Promise<LoginResponse> => {
       const response = await uninterceptedApi.post("/auth/login", credentials);
       return response.data;
-    },
-    onSuccess: (data, ...others) => {
-      const { setAccessToken, setRefreshToken, setTokenExpiry } =
-        new TokenService();
-
-      setAccessToken(data.access_token);
-      setRefreshToken(data.refresh_token);
-      setTokenExpiry(data.expires_in);
-      onSuccess?.(data, ...others);
     },
     ...options,
   });
 };
 
 export const useSignupMutation = (
-  options?: Omit<Parameters<typeof useMutation>[0], "mutationFn">
+  options?: Omit<
+    Parameters<typeof useMutation<SignupResponse, Error, SignupRequest>>[0],
+    "mutationFn"
+  >
 ) => {
   return useMutation({
     mutationFn: async (credentials: SignupRequest): Promise<SignupResponse> => {
