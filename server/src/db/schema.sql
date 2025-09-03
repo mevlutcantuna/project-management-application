@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS workspace_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('admin', 'manager', 'member')),
   joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(workspace_id, user_id)
 );
@@ -35,7 +34,6 @@ CREATE TABLE IF NOT EXISTS workspace_invitations (
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   email VARCHAR(320) NOT NULL,
   invited_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('admin', 'manager', 'member')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '7 days'),
   UNIQUE(workspace_id, email)
@@ -47,9 +45,16 @@ CREATE TABLE IF NOT EXISTS teams (
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   title VARCHAR(100) NOT NULL,
   description VARCHAR(255) NOT NULL,
-    user_ids UUID[] NOT NULL DEFAULT '{}',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS team_members (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(team_id, user_id)
 );
 
 -- Issue statuses (predefined statuses)
@@ -79,24 +84,40 @@ CREATE TABLE IF NOT EXISTS issues (
   content TEXT NOT NULL,
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
-  assignee_id UUID REFERENCES users(id) ON DELETE SET NULL,
   created_by_id UUID REFERENCES users(id) ON DELETE SET NULL,
-  subscribed_user_ids UUID[] NOT NULL DEFAULT '{}' ,
   status_id UUID NOT NULL REFERENCES issue_statuses(id),
   label_id UUID REFERENCES issue_labels(id) ON DELETE SET NULL,
   priority VARCHAR(10) DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
-  activity_ids UUID[] NOT NULL DEFAULT '{}',
   parent_issue_id UUID REFERENCES issues(id) ON DELETE SET NULL,
-  sub_issue_ids UUID[] NOT NULL DEFAULT '{}',
-  is_read_by_subscribed_users BOOLEAN DEFAULT FALSE,
   due_date TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS issue_subscribers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE(issue_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS issue_assignees (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE(issue_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS sub_issues (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
+  sub_issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
+  UNIQUE(issue_id, sub_issue_id)
+);
+
 -- Issue activities
 CREATE TABLE IF NOT EXISTS issue_activities (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   activity_type VARCHAR(50) NOT NULL, -- 'created', 'updated', 'assigned', 'status_changed', etc.
