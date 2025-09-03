@@ -23,7 +23,7 @@ export const authenticate = async (
 
     // Verify user still exists
     const userService = new UserService(db);
-    const user = await userService.getUserById(payload.id);
+    const user = await userService.getUserById(payload.sub);
 
     if (!user) {
       throw new UnauthorizedError("User not found");

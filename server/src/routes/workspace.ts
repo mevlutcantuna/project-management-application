@@ -16,6 +16,7 @@ const workspaceController = new WorkspaceController(
   userService
 );
 
+router.get("/", workspaceController.getMyWorkspaces);
 router.post("/", workspaceController.createWorkspace);
 router.get("/:id", workspaceController.getWorkspaceById);
 router.put("/:id", workspaceController.updateWorkspace);

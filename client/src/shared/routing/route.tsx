@@ -4,6 +4,7 @@ import SignupPage from "@/pages/SignupPage";
 import WorkspaceSelectionPage from "@/pages/WorkspaceSelectionPage";
 import Dashboard from "@/pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
+import WorkspaceProvider from "../providers/WorkspaceProvider";
 
 export const router = createBrowserRouter([
   {
@@ -18,12 +19,17 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        path: "/workspace-selection",
-        element: <WorkspaceSelectionPage />,
-      },
-      {
-        path: "/",
-        element: <Dashboard />,
+        element: <WorkspaceProvider />,
+        children: [
+          {
+            path: "/",
+            element: <WorkspaceSelectionPage />,
+          },
+          {
+            path: "/:workspaceId",
+            element: <Dashboard />,
+          },
+        ],
       },
     ],
   },

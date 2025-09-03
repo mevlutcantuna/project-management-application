@@ -35,7 +35,7 @@ class WorkspaceController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const workspace = await this.workspaceService.createWorkspace({
@@ -63,7 +63,7 @@ class WorkspaceController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const workspaces = await this.workspaceService.getWorkspacesByUserId(
@@ -82,7 +82,7 @@ class WorkspaceController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const workspace = await this.workspaceService.getWorkspaceById(id);
@@ -109,7 +109,7 @@ class WorkspaceController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const workspace = await this.workspaceService.getWorkspaceById(id);
@@ -138,7 +138,7 @@ class WorkspaceController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const workspace = await this.workspaceService.getWorkspaceById(workspaceId);
@@ -175,7 +175,7 @@ class WorkspaceController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const invitations =
@@ -200,7 +200,7 @@ class WorkspaceController {
     const workspace = await this.workspaceService.getWorkspaceById(id);
     if (!workspace) throw new NotFoundError("Workspace not found");
 
-    const invitedBy = await this.userService.getUserById(payload.id);
+    const invitedBy = await this.userService.getUserById(payload.sub);
     if (!invitedBy) throw new UnauthorizedError("User not found");
 
     const invitedUser = await this.userService.getUserByEmail(email);
@@ -257,15 +257,18 @@ class WorkspaceController {
         },
       ]);
 
+    const user = await this.userService.getUserById(payload.sub);
+    if (!user) throw new UnauthorizedError("User not found");
+
     // check if the user is the invited user
-    if (invitation.email !== payload.email)
+    if (invitation.email !== user.email)
       throw new UnauthorizedError("You are not the invited user");
 
     // check if the user is already a member of the workspace
     const workspaceMembers = await this.workspaceService.getWorkspaceMembers(
       invitation.workspaceId
     );
-    if (workspaceMembers.some((member) => member.userId === payload.id))
+    if (workspaceMembers.some((member) => member.userId === user.id))
       throw new ConflictError(
         "email",
         "User is already a member of this workspace"
@@ -274,7 +277,7 @@ class WorkspaceController {
     // add the user to the workspace
     await this.workspaceService.addUserToWorkspaceMember({
       workspaceId: invitation.workspaceId,
-      userId: payload.id,
+      userId: user.id,
       role: invitation.role,
     });
 
@@ -293,7 +296,7 @@ class WorkspaceController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const invitation =
@@ -327,7 +330,7 @@ class WorkspaceController {
     const payload = verifyToken(token);
     if (!payload) throw new UnauthorizedError("Invalid token");
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
     const invitation =
