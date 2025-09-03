@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS teams (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Team members junction table (many-to-many relationship)
 CREATE TABLE IF NOT EXISTS team_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
@@ -94,6 +95,7 @@ CREATE TABLE IF NOT EXISTS issues (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Issue subscribers junction table (many-to-many relationship)
 CREATE TABLE IF NOT EXISTS issue_subscribers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
@@ -101,6 +103,7 @@ CREATE TABLE IF NOT EXISTS issue_subscribers (
   UNIQUE(issue_id, user_id)
 );
 
+-- Issue assignees junction table (many-to-many relationship)
 CREATE TABLE IF NOT EXISTS issue_assignees (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
@@ -108,6 +111,7 @@ CREATE TABLE IF NOT EXISTS issue_assignees (
   UNIQUE(issue_id, user_id)
 );
 
+-- Sub issues junction table (many-to-many relationship)
 CREATE TABLE IF NOT EXISTS sub_issues (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
@@ -115,7 +119,7 @@ CREATE TABLE IF NOT EXISTS sub_issues (
   UNIQUE(issue_id, sub_issue_id)
 );
 
--- Issue activities
+-- Issue activities log
 CREATE TABLE IF NOT EXISTS issue_activities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
