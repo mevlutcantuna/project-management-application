@@ -17,7 +17,7 @@ A modern, full-stack project management application inspired by Linear, designed
 git clone https://github.com/mevlutcantuna/project-management-application
 cd project-management-application
 
-# Start both client and server with Docker
+# Start both client and server
 yarn docker:up
 
 # View logs
