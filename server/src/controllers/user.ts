@@ -39,7 +39,8 @@ class UserController {
     if (!success) throw new ValidationError(error);
 
     const user = await this.userService.updateUser(id, {
-      fullName: data.fullName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       profilePicture: data.profilePicture,
     });

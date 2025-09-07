@@ -5,25 +5,19 @@ import {
 import { useWorkspaceStore } from "@/features/workspace/store";
 import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
 import LoadingScreen from "@/components/LoadingScreen";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 const WorkspaceProvider = () => {
   const { currentWorkspace, setCurrentWorkspace, setWorkspaces } =
     useWorkspaceStore();
   const { workspaceId } = useParams();
   const {
-    data: workspaceData = null,
+    data: workspace = null,
     isPending: isPendingWorkspace,
     isError: isErrorWorkspace,
   } = useGetWorkspaceByIdQuery(workspaceId ?? "");
-  const { data: allWorkspacesData } = useGetMyWorkspacesQuery();
+  const { data: allWorkspaces } = useGetMyWorkspacesQuery();
   const navigate = useNavigate();
-
-  const workspace = useMemo(() => workspaceData?.data ?? null, [workspaceData]);
-  const allWorkspaces = useMemo(
-    () => allWorkspacesData?.data ?? [],
-    [allWorkspacesData]
-  );
 
   useEffect(() => {
     if (workspace) {
@@ -38,14 +32,17 @@ const WorkspaceProvider = () => {
   }, [allWorkspaces, setWorkspaces]);
 
   useEffect(() => {
-    if (isErrorWorkspace) navigate("/");
-  }, [isErrorWorkspace, navigate]);
+    if (isErrorWorkspace) {
+      setCurrentWorkspace(null);
+      navigate("/");
+    }
+  }, [isErrorWorkspace, navigate, setCurrentWorkspace]);
 
   if (isPendingWorkspace) {
     return <LoadingScreen />;
   }
 
-  if (currentWorkspace) {
+  if (isErrorWorkspace && currentWorkspace) {
     return <Navigate to={`/${currentWorkspace.id}`} />;
   }
 

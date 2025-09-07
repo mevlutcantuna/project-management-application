@@ -10,7 +10,8 @@ POST {{baseUrl}}/signup
 Content-Type: application/json
 
 {
-  "fullName": "John Doe",
+  "firstName": "John",
+  "lastName": "Doe",
   "email": "john.doe@example.com",
   "password": "securePassword123"
 }
@@ -40,7 +41,8 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 # Signup Success Response (201)
 # {
 #   "id": "uuid-here",
-#   "fullName": "John Doe",
+#   "firstName": "John",
+#   "lastName": "Doe",
 #   "email": "john.doe@example.com",
 #   "createdAt": "2024-01-01T00:00:00.000Z"
 # }

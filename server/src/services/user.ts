@@ -17,7 +17,8 @@ export class UserService {
     const passwordHash = await bcrypt.hash(input.password, saltRounds);
 
     return this.userRepository.createUser({
-      fullName: input.fullName,
+      firstName: input.firstName,
+      lastName: input.lastName,
       email: input.email,
       passwordHash: passwordHash,
       profilePicture: input.profilePicture ?? null,
@@ -45,7 +46,8 @@ export class UserService {
     input: UpdateUserInput
   ): Promise<Omit<User, "passwordHash">> {
     return this.userRepository.updateUser(id, {
-      fullName: input.fullName ?? undefined,
+      firstName: input.firstName ?? undefined,
+      lastName: input.lastName ?? undefined,
       email: input.email ?? undefined,
       profilePicture: input.profilePicture ?? undefined,
     });

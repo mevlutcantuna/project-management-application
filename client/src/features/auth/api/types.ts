@@ -6,14 +6,16 @@ export interface LoginRequest {
 }
 
 export interface SignupRequest {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }
 
 export interface SignupResponse {
   id: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   createdAt: string;
 }

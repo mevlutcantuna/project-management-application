@@ -27,7 +27,7 @@ class WorkspaceController {
   // Workspaces
 
   createWorkspace = async (req: CreateWorkspaceRequest, res: Response) => {
-    const { title, description } = req.body;
+    const { name, description } = req.body;
 
     const token = extractTokenFromHeader(req.headers.authorization);
     if (!token) throw new UnauthorizedError("No token provided");
@@ -39,7 +39,7 @@ class WorkspaceController {
     if (!user) throw new UnauthorizedError("User not found");
 
     const workspace = await this.workspaceService.createWorkspace({
-      title,
+      name,
       description,
       ownerId: user.id,
     });
@@ -74,7 +74,7 @@ class WorkspaceController {
 
   updateWorkspace = async (req: UpdateWorkspaceRequest, res: Response) => {
     const { id } = req.params;
-    const { title, description } = req.body;
+    const { name, description } = req.body;
 
     const token = extractTokenFromHeader(req.headers.authorization);
     if (!token) throw new UnauthorizedError("No token provided");
@@ -93,7 +93,7 @@ class WorkspaceController {
 
     const updatedWorkspace = await this.workspaceService.updateWorkspace({
       id: id,
-      title,
+      name,
       description,
     });
 

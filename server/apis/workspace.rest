@@ -16,7 +16,7 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 Content-Type: application/json
 
 {
-  "title": "My Project Workspace",
+  "name": "My Project Workspace",
   "description": "A workspace for managing our project tasks and collaboration"
 }
 
@@ -34,7 +34,7 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 Content-Type: application/json
 
 {
-  "title": "Updated Project Workspace",
+  "name": "Updated Project Workspace",
   "description": "Updated description for our project workspace"
 }
 
@@ -87,7 +87,7 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 # Create Workspace Success Response (201)
 # {
 #   "id": "550e8400-e29b-41d4-a716-446655440000",
-#   "title": "My Project Workspace",
+#   "name": "My Project Workspace",
 #   "description": "A workspace for managing our project tasks and collaboration",
 #   "ownerId": "user-id-here"
 # }
@@ -95,7 +95,7 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 # Get Workspace Success Response (200)
 # {
 #   "id": "550e8400-e29b-41d4-a716-446655440000",
-#   "title": "My Project Workspace",
+#   "name": "My Project Workspace",
 #   "description": "A workspace for managing our project tasks and collaboration",
 #   "ownerId": "user-id-here"
 # }

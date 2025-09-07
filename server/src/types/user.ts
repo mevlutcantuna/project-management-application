@@ -4,7 +4,8 @@ export type UserRole = "admin" | "manager" | "member";
 
 export interface User {
   id: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   createdAt: Date;
   updatedAt: Date;
@@ -13,14 +14,16 @@ export interface User {
 }
 
 export interface CreateUserInput {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   profilePicture?: string;
 }
 
 export interface UpdateUserInput {
-  fullName?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   profilePicture?: string;
 }
@@ -30,7 +33,8 @@ export interface UpdateUserRequest extends Request {
     id: string;
   };
   body: {
-    fullName?: string;
+    firstName?: string;
+    lastName?: string;
     email?: string;
     profilePicture?: string;
   };

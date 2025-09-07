@@ -3,7 +3,8 @@ import { User } from "./user";
 
 export interface SignupRequest extends Request {
   body: {
-    fullName: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
   };

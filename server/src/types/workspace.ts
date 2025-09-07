@@ -3,7 +3,7 @@ import { User, UserRole } from "./user";
 
 export interface Workspace {
   id: string;
-  title: string;
+  name: string;
   description: string;
   ownerId: string;
   createdAt: Date;
@@ -12,7 +12,7 @@ export interface Workspace {
 
 export interface CreateWorkspaceRequest extends Request {
   body: {
-    title: string;
+    name: string;
     description: string;
   };
 }
@@ -44,7 +44,7 @@ export interface SendWorkspaceInvitationRequest extends Request {
 }
 
 export interface CreateWorkspaceInput {
-  title: string;
+  name: string;
   description: string;
   ownerId: string;
 }

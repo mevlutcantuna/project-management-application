@@ -84,7 +84,8 @@ const SignupForm = ({ className, onSuccess, onError }: SignupForm) => {
 
   const onSubmit = (data: z.infer<typeof signupSchema>) => {
     signup({
-      full_name: `${data.firstName} ${data.lastName}`,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       password: data.password,
     });

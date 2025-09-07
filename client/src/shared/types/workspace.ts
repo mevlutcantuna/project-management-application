@@ -1,6 +1,6 @@
 export interface Workspace {
   id: string;
-  title: string;
+  name: string;
   description: string;
   ownerId: string;
   createdAt: Date;

@@ -17,12 +17,12 @@ class WorkspaceRepository {
 
   async createWorkspace(input: CreateWorkspaceInput): Promise<Workspace> {
     const query = `
-      INSERT INTO workspaces (title, description, owner_id)
+      INSERT INTO workspaces (name, description, owner_id)
       VALUES ($1, $2, $3)
-      RETURNING id, title, description, owner_id, created_at, updated_at
+      RETURNING id, name, description, owner_id, created_at, updated_at
     `;
 
-    const values = [input.title, input.description, input.ownerId];
+    const values = [input.name, input.description, input.ownerId];
 
     const result = await this.db.query(query, values);
     return camelcaseKeys(result.rows[0]);
@@ -30,7 +30,7 @@ class WorkspaceRepository {
 
   async getWorkspaceById(id: string): Promise<Workspace | null> {
     const query = `
-      SELECT id, title, description, owner_id, created_at, updated_at
+      SELECT id, name, description, owner_id, created_at, updated_at
       FROM workspaces
       WHERE id = $1
     `;
@@ -41,7 +41,7 @@ class WorkspaceRepository {
 
   async getWorkspacesByUserId(userId: string): Promise<Workspace[]> {
     const query = `
-      SELECT id, title, description, owner_id, created_at, updated_at
+      SELECT id, name, description, owner_id, created_at, updated_at
       FROM workspaces
       WHERE owner_id = $1
     `;
@@ -53,13 +53,13 @@ class WorkspaceRepository {
   async updateWorkspace(input: UpdateWorkspaceInput): Promise<Workspace> {
     const query = `
       UPDATE workspaces
-      SET title = $1, description = $2, owner_id = $3
+      SET name = $1, description = $2, owner_id = $3
       WHERE id = $4
-      RETURNING id, title, description, owner_id, created_at, updated_at
+      RETURNING id, name, description, owner_id, created_at, updated_at
     `;
 
     const values = [
-      input.title ?? null,
+      input.name ?? null,
       input.description ?? null,
       input.ownerId ?? null,
       input.id,
@@ -133,7 +133,7 @@ class WorkspaceRepository {
     userId: string
   ): Promise<WorkspaceMember | null> {
     const query = `
-      SELECT id, user_id, role, email, full_name, profile_picture, created_at, updated_at
+      SELECT id, user_id, role, email, first_name, last_name, profile_picture, created_at, updated_at
       FROM workspace_members
       JOIN users ON workspace_members.user_id = users.id
       WHERE user_id = $1

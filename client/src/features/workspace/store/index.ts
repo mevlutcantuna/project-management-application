@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 
 interface WorkspaceState {
   currentWorkspace: Workspace | null;
-  setCurrentWorkspace: (workspace: Workspace) => void;
+  setCurrentWorkspace: (workspace: Workspace | null) => void;
   workspaces: Workspace[];
   setWorkspaces: (workspaces: Workspace[]) => void;
   workspaceInvitations: WorkspaceInvitation[];

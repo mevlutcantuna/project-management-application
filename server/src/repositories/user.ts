@@ -9,13 +9,14 @@ class UserRepository {
     user: Omit<User, "id" | "createdAt" | "updatedAt">
   ): Promise<User> {
     const query = `
-      INSERT INTO users (full_name, email, password_hash, profile_picture)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, full_name, email, profile_picture, created_at, updated_at
+      INSERT INTO users (first_name, last_name, email, password_hash, profile_picture)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id, first_name, last_name, email, profile_picture, created_at, updated_at
     `;
 
     const values = [
-      user.fullName,
+      user.firstName,
+      user.lastName,
       user.email,
       user.passwordHash,
       user.profilePicture ?? null,
@@ -27,7 +28,7 @@ class UserRepository {
 
   async getUserById(id: string): Promise<Omit<User, "passwordHash"> | null> {
     const query = `
-      SELECT id, full_name, email, profile_picture, created_at, updated_at
+      SELECT id, first_name, last_name, email, profile_picture, created_at, updated_at
       FROM users
       WHERE id = $1
     `;
@@ -38,7 +39,7 @@ class UserRepository {
 
   async getUserByEmail(email: string): Promise<User | null> {
     const query = `
-      SELECT id, full_name, email, profile_picture, created_at, updated_at, password_hash
+      SELECT id, first_name, last_name, email, profile_picture, created_at, updated_at, password_hash
       FROM users
       WHERE email = $1
     `;
@@ -49,7 +50,7 @@ class UserRepository {
 
   async getAllUsers(): Promise<User[]> {
     const query = `
-      SELECT id, full_name, email, profile_picture, created_at, updated_at
+      SELECT id, first_name, last_name, email, profile_picture, created_at, updated_at
       FROM users
     `;
 
@@ -60,13 +61,14 @@ class UserRepository {
   async updateUser(id: string, updates: Partial<User>): Promise<User> {
     const query = `
       UPDATE users
-      SET full_name = $1, email = $2, profile_picture = $3
+      SET first_name = $1, last_name = $2, email = $3, profile_picture = $4
       WHERE id = $4
-      RETURNING id, full_name, email, profile_picture, created_at, updated_at
+      RETURNING id, first_name, last_name, email, profile_picture, created_at, updated_at
     `;
 
     const values = [
-      updates.fullName,
+      updates.firstName,
+      updates.lastName,
       updates.email,
       updates.profilePicture,
       id,

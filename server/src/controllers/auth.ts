@@ -21,10 +21,11 @@ class AuthController {
     const validatedData = signupSchema.safeParse(req.body);
     if (!validatedData.success) throw new ValidationError(validatedData.error);
 
-    const { fullName, email, password } = validatedData.data;
+    const { firstName, lastName, email, password } = validatedData.data;
 
     const user = await this.authService.signup({
-      fullName,
+      firstName,
+      lastName,
       email,
       password,
     });

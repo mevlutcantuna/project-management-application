@@ -23,7 +23,8 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 Content-Type: application/json
 
 {
-  "fullName": "Jane Doe Updated",
+  "firstName": "Jane",
+  "lastName": "Doe Updated",
   "email": "jane.updated@example.com",
   "profilePicture": "https://example.com/profile.jpg"
 }
@@ -38,14 +39,16 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 # [
 #   {
 #     "id": "550e8400-e29b-41d4-a716-446655440000",
-#     "fullName": "John Doe",
+#     "firstName": "John",
+#     "lastName": "Doe",
 #     "email": "john.doe@example.com",
 #     "createdAt": "2024-01-01T00:00:00.000Z",
 #     "updatedAt": "2024-01-01T00:00:00.000Z"
 #   },
 #   {
 #     "id": "550e8400-e29b-41d4-a716-446655440001",
-#     "fullName": "Jane Smith",
+#     "firstName": "Jane",
+#     "lastName": "Smith",
 #     "email": "jane.smith@example.com",
 #     "createdAt": "2024-01-01T00:00:00.000Z",
 #     "updatedAt": "2024-01-01T00:00:00.000Z"
@@ -55,7 +58,8 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 # Get User by ID Success Response (200)
 # {
 #   "id": "550e8400-e29b-41d4-a716-446655440000",
-#   "full_name": "John Doe",
+#   "firstName": "John",
+#   "lastName": "Doe",
 #   "email": "john.doe@example.com",
 #   "createdAt": "2024-01-01T00:00:00.000Z",
 #   "updatedAt": "2024-01-01T00:00:00.000Z"
@@ -64,7 +68,8 @@ Authorization: Bearer {{YOUR_JWT_TOKEN_HERE}}
 # Update User Success Response (200)
 # {
 #   "id": "550e8400-e29b-41d4-a716-446655440000",
-#   "fullName": "Jane Doe Updated",
+#   "firstName": "Jane",
+#   "lastName": "Doe Updated",
 #   "email": "jane.updated@example.com",
 #   "updatedAt": "2024-01-01T01:00:00.000Z"
 # }

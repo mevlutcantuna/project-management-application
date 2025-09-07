@@ -5,6 +5,7 @@ import WorkspaceSelectionPage from "@/pages/WorkspaceSelectionPage";
 import Dashboard from "@/pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import WorkspaceProvider from "../providers/WorkspaceProvider";
+import WorkspaceCreationPage from "@/pages/WorkspaceCreationPage";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
           {
             path: "/",
             element: <WorkspaceSelectionPage />,
+          },
+          {
+            path: "/join",
+            element: <WorkspaceCreationPage />,
           },
           {
             path: "/:workspaceId",

@@ -6,7 +6,8 @@ export interface DecodedUser {
 
 export interface User {
   id: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   profilePicture: string | null;
   createdAt: Date;

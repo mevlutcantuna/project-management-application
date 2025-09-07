@@ -1,7 +1,25 @@
+-- Types
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'issue_priority_type') THEN
+        CREATE TYPE issue_priority_type AS ENUM ('low', 'medium', 'high', 'urgent');
+    END IF;
+END
+$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'issue_activity_type') THEN
+        CREATE TYPE issue_activity_type AS ENUM ('created', 'updated', 'assigned', 'status_changed', 'commented');
+    END IF;
+END
+$$;
+
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  full_name VARCHAR(255) NOT NULL,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL, 
   profile_picture TEXT,
@@ -12,7 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Workspace table
 CREATE TABLE IF NOT EXISTS workspaces (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title VARCHAR(100) NOT NULL,
+  name VARCHAR(100) NOT NULL,
   description VARCHAR(255) NOT NULL,
   owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -43,7 +61,7 @@ CREATE TABLE IF NOT EXISTS workspace_invitations (
 CREATE TABLE IF NOT EXISTS teams (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  title VARCHAR(100) NOT NULL,
+  name VARCHAR(100) NOT NULL,
   description VARCHAR(255) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -63,7 +81,7 @@ CREATE TABLE IF NOT EXISTS issue_statuses (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(50) NOT NULL UNIQUE,
   icon_name VARCHAR(50),
-  color VARCHAR(7), -- Hex color code like #FF0000
+  color VARCHAR(7),
   sort_order INTEGER NOT NULL DEFAULT 0
 );
 
@@ -71,8 +89,8 @@ CREATE TABLE IF NOT EXISTS issue_statuses (
 CREATE TABLE IF NOT EXISTS issue_labels (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  title VARCHAR(100) NOT NULL,
-  color VARCHAR(7) NOT NULL, -- Hex color code
+  name VARCHAR(100) NOT NULL,
+  color VARCHAR(7) NOT NULL,
   is_frequently_used BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -80,7 +98,7 @@ CREATE TABLE IF NOT EXISTS issue_labels (
 -- Issues table
 CREATE TABLE IF NOT EXISTS issues (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
@@ -88,9 +106,9 @@ CREATE TABLE IF NOT EXISTS issues (
   created_by_id UUID REFERENCES users(id) ON DELETE SET NULL,
   status_id UUID NOT NULL REFERENCES issue_statuses(id),
   label_id UUID REFERENCES issue_labels(id) ON DELETE SET NULL,
-  priority VARCHAR(10) DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
+  priority issue_priority_type DEFAULT 'medium',
   parent_issue_id UUID REFERENCES issues(id) ON DELETE SET NULL,
-  due_date TIMESTAMPTZ,
+  due_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -124,8 +142,8 @@ CREATE TABLE IF NOT EXISTS issue_activities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  activity_type VARCHAR(50) NOT NULL, -- 'created', 'updated', 'assigned', 'status_changed', etc.
-  field_name VARCHAR(50), -- Which field was changed
+  activity_type issue_activity_type NOT NULL,
+  field_name VARCHAR(50),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -139,19 +157,65 @@ CREATE TABLE IF NOT EXISTS issue_comments (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace ON workspace_members(workspace_id);
-CREATE INDEX IF NOT EXISTS idx_workspace_members_user ON workspace_members(user_id);
-CREATE INDEX IF NOT EXISTS idx_issues_workspace ON issues(workspace_id);
-CREATE INDEX IF NOT EXISTS idx_issues_assignee ON issues(assignee_id);
-CREATE INDEX IF NOT EXISTS idx_issues_status ON issues(status_id);
-CREATE INDEX IF NOT EXISTS idx_issues_parent ON issues(parent_issue_id);
-CREATE INDEX IF NOT EXISTS idx_issue_activities_issue ON issue_activities(issue_id);
-CREATE INDEX IF NOT EXISTS idx_issue_comments_issue ON issue_comments(issue_id);
+-- Indexes
+
+-- Users 
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email); 
+
+-- Workspaces 
+CREATE INDEX IF NOT EXISTS idx_workspaces_owner_id ON workspaces(owner_id); 
+
+-- Workspace members 
+CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace_id ON workspace_members(workspace_id); 
+CREATE INDEX IF NOT EXISTS idx_workspace_members_user_id ON workspace_members(user_id); 
+CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace_user ON workspace_members(workspace_id, user_id); 
+
+-- Workspace invitations 
+CREATE INDEX IF NOT EXISTS idx_workspace_invitations_workspace_id ON workspace_invitations(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_workspace_invitations_email ON workspace_invitations(email);
+
+-- Teams 
+CREATE INDEX IF NOT EXISTS idx_teams_workspace_id ON teams(workspace_id);
+
+-- Team members 
+CREATE INDEX IF NOT EXISTS idx_team_members_team_id ON team_members(team_id);
+CREATE INDEX IF NOT EXISTS idx_team_members_user_id ON team_members(user_id);
+
+-- Issue labels 
+CREATE INDEX IF NOT EXISTS idx_issue_labels_workspace_id ON issue_labels(workspace_id);
+
+-- Issues 
+CREATE INDEX IF NOT EXISTS idx_issues_workspace_id ON issues(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_issues_team_id ON issues(team_id);
+CREATE INDEX IF NOT EXISTS idx_issues_created_by_id ON issues(created_by_id);
+CREATE INDEX IF NOT EXISTS idx_issues_status_id ON issues(status_id);
+CREATE INDEX IF NOT EXISTS idx_issues_label_id ON issues(label_id);
+CREATE INDEX IF NOT EXISTS idx_issues_parent_issue_id ON issues(parent_issue_id);
+
+-- Issue subscribers 
+CREATE INDEX IF NOT EXISTS idx_issue_subscribers_issue_id ON issue_subscribers(issue_id);
+CREATE INDEX IF NOT EXISTS idx_issue_subscribers_user_id ON issue_subscribers(user_id);
+
+-- Issue assignees 
+CREATE INDEX IF NOT EXISTS idx_issue_assignees_issue_id ON issue_assignees(issue_id);
+CREATE INDEX IF NOT EXISTS idx_issue_assignees_user_id ON issue_assignees(user_id);
+
+-- Sub issues 
+CREATE INDEX IF NOT EXISTS idx_sub_issues_issue_id ON sub_issues(issue_id);
+CREATE INDEX IF NOT EXISTS idx_sub_issues_sub_issue_id ON sub_issues(sub_issue_id);
+
+-- Issue activities 
+CREATE INDEX IF NOT EXISTS idx_issue_activities_issue_id ON issue_activities(issue_id);
+CREATE INDEX IF NOT EXISTS idx_issue_activities_user_id ON issue_activities(user_id);
+
+-- Issue comments 
+CREATE INDEX IF NOT EXISTS idx_issue_comments_issue_id ON issue_comments(issue_id);
+CREATE INDEX IF NOT EXISTS idx_issue_comments_user_id ON issue_comments(user_id);
 
 -- Function for updating updated_at field
 CREATE OR REPLACE FUNCTION set_updated_at()
-RETURNS trigger AS $$
+RETURNS trigger AS 
+$$
 BEGIN
   IF TG_OP = 'UPDATE' AND (NEW IS DISTINCT FROM OLD) THEN
     NEW.updated_at := clock_timestamp();
