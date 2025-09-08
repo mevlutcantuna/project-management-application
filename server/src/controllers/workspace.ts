@@ -38,6 +38,12 @@ class WorkspaceController {
     const user = await this.userService.getUserById(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
+    // Check if the workspace name already exists for the user
+    const existingWorkspace =
+      await this.workspaceService.getWorkspaceByName(name);
+    if (existingWorkspace)
+      throw new ConflictError("name", "Workspace name already exists");
+
     const workspace = await this.workspaceService.createWorkspace({
       name,
       description,

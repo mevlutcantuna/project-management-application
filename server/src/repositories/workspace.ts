@@ -50,6 +50,16 @@ class WorkspaceRepository {
     return camelcaseKeys(result.rows) as Workspace[];
   }
 
+  async getWorkspaceByName(name: string): Promise<Workspace | null> {
+    const query = `
+      SELECT id, name, description, owner_id, created_at, updated_at
+      FROM workspaces
+      WHERE name = $1
+    `;
+    const result = await this.db.query(query, [name]);
+    return result.rows[0] ? (camelcaseKeys(result.rows[0]) as Workspace) : null;
+  }
+
   async updateWorkspace(input: UpdateWorkspaceInput): Promise<Workspace> {
     const query = `
       UPDATE workspaces
