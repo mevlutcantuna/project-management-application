@@ -1,7 +1,11 @@
-import React from "react";
+import { useGetWorkspaceByIdQuery } from "@/features/workspace/api/queries";
+import { useParams } from "react-router-dom";
 
 const Dashboard = () => {
-  return <div>Dashboard</div>;
+  const { workspaceId } = useParams();
+  const { data: workspace } = useGetWorkspaceByIdQuery(workspaceId ?? "");
+
+  return <div> {JSON.stringify(workspace)}</div>;
 };
 
 export default Dashboard;

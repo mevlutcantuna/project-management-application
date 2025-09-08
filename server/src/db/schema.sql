@@ -15,6 +15,14 @@ BEGIN
 END
 $$;
 
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+        CREATE TYPE user_role AS ENUM ('admin', 'manager', 'member');
+    END IF;
+END
+$$;
+
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -43,6 +51,7 @@ CREATE TABLE IF NOT EXISTS workspace_members (
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  role user_role NOT NULL,
   UNIQUE(workspace_id, user_id)
 );
 

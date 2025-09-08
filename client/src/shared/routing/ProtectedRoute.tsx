@@ -5,20 +5,26 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { useGetMeQuery } from "@/features/auth/api/queries";
 
 const ProtectedRoute = () => {
-  const { user, setUser } = useAuthStore();
-  const { data, isPending } = useGetMeQuery();
+  const { setUser, logout } = useAuthStore();
+  const { data, isPending, isFetched, isError } = useGetMeQuery();
 
   useEffect(() => {
     if (data) {
-      setUser(data.data);
+      setUser(data);
     }
   }, [data, setUser]);
 
-  if (isPending) {
+  useEffect(() => {
+    if (isError) {
+      logout();
+    }
+  }, [isError, logout, setUser]);
+
+  if (isPending || !isFetched) {
     return <LoadingScreen />;
   }
 
-  if (!user) {
+  if (isError) {
     return <Navigate to="/login" />;
   }
 

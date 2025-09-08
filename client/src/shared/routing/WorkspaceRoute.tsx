@@ -7,7 +7,7 @@ import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useEffect } from "react";
 
-const WorkspaceProvider = () => {
+const WorkspaceRoute = () => {
   const { currentWorkspace, setCurrentWorkspace, setWorkspaces } =
     useWorkspaceStore();
   const { workspaceId } = useParams();
@@ -49,4 +49,4 @@ const WorkspaceProvider = () => {
   return <Outlet />;
 };
 
-export default WorkspaceProvider;
+export default WorkspaceRoute;

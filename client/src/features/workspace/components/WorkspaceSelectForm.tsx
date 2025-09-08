@@ -11,7 +11,7 @@ import WorkspaceSelect from "./WorkspaceSelect";
 import { Button } from "@/components/ui/button";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const workspaceSelectFormSchema = z.object({
   workspace: z.string().min(1, { message: "Workspace is required" }),
@@ -44,7 +44,9 @@ const WorkspaceSelectForm = () => {
                 <FormLabel>Workspace</FormLabel>
                 <FormControl>
                   <WorkspaceSelect
-                    onChange={field.onChange}
+                    onChange={(workspace) => {
+                      field.onChange(workspace?.id ?? "");
+                    }}
                     value={field.value}
                   />
                 </FormControl>
@@ -66,9 +68,9 @@ const WorkspaceSelectForm = () => {
       <div className="mt-10 text-center">
         <p className="text-muted-foreground text-sm">
           Don't have a workspace?{" "}
-          <a href="/join" className="text-primary font-medium hover:underline">
+          <Link to="/join" className="text-primary font-medium hover:underline">
             Create one
-          </a>
+          </Link>
         </p>
       </div>
     </div>

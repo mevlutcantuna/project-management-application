@@ -4,8 +4,8 @@ import SignupPage from "@/pages/SignupPage";
 import WorkspaceSelectionPage from "@/pages/WorkspaceSelectionPage";
 import Dashboard from "@/pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
-import WorkspaceProvider from "../providers/WorkspaceProvider";
 import WorkspaceCreationPage from "@/pages/WorkspaceCreationPage";
+import WorkspaceRoute from "./WorkspaceRoute";
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        element: <WorkspaceProvider />,
+        element: <WorkspaceRoute />,
         children: [
           {
             path: "/",

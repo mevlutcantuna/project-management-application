@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { useGetMyWorkspacesQuery } from "../api/queries";
 import { useWorkspaceStore } from "../store";
-import { Combobox } from "@/components/Combobox";
+import { Combobox } from "@/components/combobox";
 import { cn } from "@/shared/lib/utils";
+import type { Workspace } from "@/shared/types/workspace";
 
 interface WorkspaceSelectProps {
   className?: string;
-  onChange: (value: string) => void;
-  value: string;
+  onChange: (workspace: Workspace | null) => void;
+  value: Workspace["id"];
 }
 
 const WorkspaceSelect = ({
@@ -15,10 +16,7 @@ const WorkspaceSelect = ({
   onChange,
   value,
 }: WorkspaceSelectProps) => {
-  const selectedWorkspaceFromLocalStorage =
-    localStorage.getItem("currentWorkspace");
-  const { workspaces, setWorkspaces, setCurrentWorkspace } =
-    useWorkspaceStore();
+  const { workspaces, setWorkspaces } = useWorkspaceStore();
   const { data: allWorkspaces = [] } = useGetMyWorkspacesQuery();
 
   useEffect(() => {
@@ -27,26 +25,16 @@ const WorkspaceSelect = ({
     }
   }, [allWorkspaces, setWorkspaces]);
 
-  useEffect(() => {
-    const currentWorkspace = workspaces.find(
-      (workspace) => workspace.id === selectedWorkspaceFromLocalStorage
-    );
-
-    if (currentWorkspace) {
-      setCurrentWorkspace(currentWorkspace ?? null);
+  const handleChange = (value: Workspace["id"]) => {
+    const workspace = workspaces.find((workspace) => workspace.id === value);
+    if (workspace) {
+      onChange(workspace);
     } else {
-      setCurrentWorkspace(null);
-      localStorage.removeItem("currentWorkspace");
+      onChange(null);
     }
-  }, [selectedWorkspaceFromLocalStorage, setCurrentWorkspace, workspaces]);
-
-  const handleChange = (value: string) => {
-    localStorage.setItem("currentWorkspace", value);
-    setCurrentWorkspace(
-      workspaces.find((workspace) => workspace.id === value) ?? null
-    );
-    onChange(value);
   };
+
+  console.log({ value });
 
   return (
     <Combobox
