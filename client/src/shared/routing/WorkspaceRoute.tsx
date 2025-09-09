@@ -1,49 +1,61 @@
 import {
-  useGetMyWorkspacesQuery,
-  useGetWorkspaceByIdQuery,
-} from "@/features/workspace/api/queries";
-import { useWorkspaceStore } from "@/features/workspace/store";
-import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+import { useEffect, useMemo, type ReactElement } from "react";
+
 import LoadingScreen from "@/components/LoadingScreen";
-import { useEffect } from "react";
+import { useWorkspaceStore } from "@/features/workspace/store";
+import { useWorkspaces } from "../hooks/useWorkspaces";
+import { useWorkspace } from "../hooks/useWorkspace";
 
-const WorkspaceRoute = () => {
-  const { currentWorkspace, setCurrentWorkspace, setWorkspaces } =
-    useWorkspaceStore();
-  const { workspaceId } = useParams();
-  const {
-    data: workspace = null,
-    isPending: isPendingWorkspace,
-    isError: isErrorWorkspace,
-  } = useGetWorkspaceByIdQuery(workspaceId ?? "");
-  const { data: allWorkspaces } = useGetMyWorkspacesQuery();
+const WorkspaceRoute = (): ReactElement => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { workspaceId = "" } = useParams<{ workspaceId: string }>();
+
+  const { currentWorkspace, workspaces } = useWorkspaceStore();
+  const { isLoading: isLoadingWorkspace, isError: isErrorWorkspace } =
+    useWorkspace(workspaceId);
+  const { isPending: isPendingWorkspaces } = useWorkspaces();
+  const storedWorkspaceId = localStorage.getItem("currentWorkspace");
+
+  const isLoading = useMemo(
+    () => isLoadingWorkspace || isPendingWorkspaces,
+    [isLoadingWorkspace, isPendingWorkspaces]
+  );
 
   useEffect(() => {
-    if (workspace) {
-      setCurrentWorkspace(workspace);
-    }
-  }, [workspace, setCurrentWorkspace]);
+    if (!isLoading && location.pathname === "/" && workspaces.length > 0) {
+      const isExistingWorkspace = workspaces.some(
+        (workspace) => workspace.id === storedWorkspaceId
+      );
 
-  useEffect(() => {
-    if (allWorkspaces && allWorkspaces.length > 0) {
-      setWorkspaces(allWorkspaces);
+      if (isExistingWorkspace) {
+        navigate(`/${storedWorkspaceId}`);
+      } else {
+        navigate("/workspaces");
+      }
     }
-  }, [allWorkspaces, setWorkspaces]);
+  }, [
+    currentWorkspace,
+    navigate,
+    location.pathname,
+    workspaces,
+    storedWorkspaceId,
+    isLoading,
+    workspaces.length,
+  ]);
 
-  useEffect(() => {
-    if (isErrorWorkspace) {
-      setCurrentWorkspace(null);
-      navigate("/");
-    }
-  }, [isErrorWorkspace, navigate, setCurrentWorkspace]);
-
-  if (isPendingWorkspace) {
+  if (isLoading) {
     return <LoadingScreen />;
   }
 
   if (isErrorWorkspace && currentWorkspace) {
-    return <Navigate to={`/${currentWorkspace.id}`} />;
+    return <Navigate to={`/${currentWorkspace.id}`} replace />;
   }
 
   return <Outlet />;

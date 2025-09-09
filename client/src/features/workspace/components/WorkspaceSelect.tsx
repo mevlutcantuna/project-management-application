@@ -34,8 +34,6 @@ const WorkspaceSelect = ({
     }
   };
 
-  console.log({ value });
-
   return (
     <Combobox
       options={workspaces.map((workspace) => ({
