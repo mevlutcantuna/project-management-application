@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useGetMyWorkspacesQuery } from "../api/queries";
 import { useWorkspaceStore } from "../store";
-import { Combobox } from "@/components/combobox";
+import { Combobox } from "@/components/ui/combobox";
 import { cn } from "@/shared/lib/utils";
 import type { Workspace } from "@/shared/types/workspace";
 
