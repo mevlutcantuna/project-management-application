@@ -81,9 +81,13 @@ export class WorkspaceService {
   }
 
   async getWorkspaceMemberByUserId(
-    userId: string
+    userId: string,
+    workspaceId: string
   ): Promise<WorkspaceMember | null> {
-    return this.workspaceRepository.getWorkspaceMemberByUserId(userId);
+    return this.workspaceRepository.getWorkspaceMemberByUserId(
+      userId,
+      workspaceId
+    );
   }
 
   // Workspace Invitations

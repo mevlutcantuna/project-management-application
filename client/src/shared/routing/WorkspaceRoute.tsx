@@ -1,71 +1,62 @@
-import {
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import { useEffect, useMemo, type ReactElement } from "react";
-
-import LoadingScreen from "@/components/LoadingScreen";
+import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
+import { useMemo, type ReactElement } from "react";
 import { useWorkspaceStore } from "@/features/workspace/store";
 import { useWorkspaces } from "../hooks/useWorkspaces";
 import { useWorkspace } from "../hooks/useWorkspace";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const WorkspaceRoute = (): ReactElement => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { workspaceUrl = "" } = useParams<{ workspaceUrl: string }>();
-
-  const { currentWorkspace, workspaces } = useWorkspaceStore();
+  const { workspaces } = useWorkspaceStore();
   const { isLoading: isLoadingWorkspace, isError: isErrorWorkspace } =
     useWorkspace(workspaceUrl);
   const { isPending: isPendingWorkspaces } = useWorkspaces();
-  const storedWorkspaceUrl = localStorage.getItem("currentWorkspace");
 
+  // Always wait for workspaces and workspace to be loaded
   const isLoading = useMemo(
     () => isLoadingWorkspace || isPendingWorkspaces,
     [isLoadingWorkspace, isPendingWorkspaces]
   );
 
-  useEffect(() => {
-    if (!isLoading && location.pathname === "/" && workspaces.length > 0) {
-      const isExistingWorkspace = workspaces.some(
-        (workspace) => workspace.url === storedWorkspaceUrl
-      );
+  // Get stored workspace URL and find the workspace object
+  const storedWorkspaceUrl = localStorage.getItem("currentWorkspace");
+  const storedWorkspace = useMemo(() => {
+    return workspaces.find((workspace) => workspace.url === storedWorkspaceUrl);
+  }, [workspaces, storedWorkspaceUrl]);
 
-      if (isExistingWorkspace) {
-        navigate(`/${storedWorkspaceUrl}`);
-      } else {
-        navigate("/workspaces");
-      }
-    }
-  }, [
-    currentWorkspace,
-    navigate,
-    location.pathname,
-    workspaces,
-    storedWorkspaceUrl,
-    isLoading,
-    workspaces.length,
-  ]);
-
+  // Show loading screen while data is being fetched
   if (isLoading) {
     return <LoadingScreen />;
   }
 
-  if (isErrorWorkspace && currentWorkspace) {
-    return <Navigate to={`/${currentWorkspace.url}`} replace />;
+  const isEmptyUrl = location.pathname === "/";
+  const isWrongUrl = workspaceUrl && isErrorWorkspace;
+  const hasStoredWorkspace = storedWorkspace && storedWorkspaceUrl;
+
+  // Handle empty URL (user enters empty url)
+  if (isEmptyUrl) {
+    if (hasStoredWorkspace) {
+      // Check stored workspace URL if it is valid, redirect to it
+      return <Navigate to={`/${storedWorkspaceUrl}`} replace />;
+    } else {
+      // If not valid, redirect to workspaces page
+      return <Navigate to="/workspaces" replace />;
+    }
   }
 
-  if (isErrorWorkspace && !currentWorkspace && workspaces.length > 0) {
-    return <Navigate to={`/${workspaces[0].url}`} replace />;
+  // Handle wrong URL (user enters wrong url)
+  if (isWrongUrl) {
+    if (hasStoredWorkspace) {
+      // Check stored workspace URL if it is valid, redirect to it
+      return <Navigate to={`/${storedWorkspaceUrl}`} replace />;
+    } else {
+      // If not valid, redirect to workspaces page
+      return <Navigate to="/workspaces" replace />;
+    }
   }
 
-  if (isErrorWorkspace && !currentWorkspace && workspaces.length === 0) {
-    return <Navigate to="/workspaces" replace />;
-  }
-
+  // If we have a valid workspace URL and it's loading successfully, render the outlet
   return <Outlet />;
 };
 

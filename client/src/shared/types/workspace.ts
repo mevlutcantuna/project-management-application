@@ -11,4 +11,7 @@ export interface Workspace {
 export interface WorkspaceInvitation {
   id: string;
   workspaceId: string;
+  email: string;
+  invitedBy: string;
+  expiresAt: Date;
 }

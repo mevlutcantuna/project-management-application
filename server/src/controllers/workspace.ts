@@ -71,7 +71,7 @@ class WorkspaceController {
     await this.workspaceService.addUserToWorkspaceMember({
       workspaceId: workspace.id,
       userId: user.id,
-      role: USER_ROLES[0], // admin
+      role: USER_ROLES[0], // Admin
     });
 
     res.status(201).json(workspace);
@@ -271,14 +271,24 @@ class WorkspaceController {
     const workspace = await this.workspaceService.getWorkspaceById(id);
     if (!workspace) throw new NotFoundError("Workspace not found");
 
-    const invitedBy = await this.userService.getUserById(payload.sub);
-    if (!invitedBy) throw new UnauthorizedError("User not found");
+    const sender = await this.userService.getUserById(payload.sub);
+    if (!sender) throw new UnauthorizedError("Sender user not found");
 
-    const invitedUser = await this.userService.getUserByEmail(email);
-    if (!invitedUser) throw new NotFoundError("User not found");
+    const senderMember = await this.workspaceService.getWorkspaceMemberByUserId(
+      sender.id,
+      workspace.id
+    );
+    if (!senderMember) throw new UnauthorizedError("Sender user not found");
 
-    if (workspace.ownerId !== invitedBy.id)
-      throw new UnauthorizedError("You are not the owner of this workspace");
+    const receiver = await this.userService.getUserByEmail(email);
+    if (!receiver) throw new NotFoundError("Receiver user not found");
+
+    if (sender.id === receiver.id)
+      throw new ConflictError("email", "You cannot invite yourself");
+
+    // Check if invited by has a valid role such as Admin or Manager
+    if (senderMember.role !== "Admin" && senderMember.role !== "Manager")
+      throw new UnauthorizedError("You are not authorized to invite users");
 
     // check if the invitation already exists
     const existingInvitation =
@@ -289,7 +299,7 @@ class WorkspaceController {
     // check if the user is already a member of the workspace
     const workspaceMembers =
       await this.workspaceService.getWorkspaceMembers(id);
-    if (workspaceMembers.some((member) => member.userId === invitedUser.id))
+    if (workspaceMembers.some((member) => member.userId === receiver.id))
       throw new ConflictError(
         "email",
         "User is already a member of this workspace"
@@ -299,7 +309,7 @@ class WorkspaceController {
       workspaceId: id,
       email,
       role,
-      invitedBy: invitedBy.id,
+      invitedBy: sender.id,
     });
 
     res.status(200).json(invitation);

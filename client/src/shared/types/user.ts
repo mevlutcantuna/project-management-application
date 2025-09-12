@@ -1,3 +1,5 @@
+export type UserRole = "Admin" | "Manager" | "Member";
+
 export interface DecodedUser {
   sub: string;
   iat: number;

@@ -11,10 +11,16 @@ import { Button } from "@/components/ui/button";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 const workspaceFormSchema = z.object({
   name: z.string().min(1, { message: "Workspace is required" }),
-  url: z.string().min(1, { message: "URL is required" }),
+  url: z
+    .string()
+    .min(1, { message: "URL is required" })
+    .regex(/^[a-z0-9-]+$/, {
+      message: "URL must be lowercase letters, numbers, and hyphens only",
+    }),
   description: z.string().optional(),
 });
 
@@ -97,9 +103,12 @@ const WorkspaceForm = ({
       <div className="mt-10 text-center">
         <p className="text-muted-foreground text-sm">
           Already have a workspace?{" "}
-          <a href="/" className="text-primary font-medium hover:underline">
+          <Link
+            to="/workspaces"
+            className="text-primary font-medium hover:underline"
+          >
             Join one
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -152,16 +152,17 @@ class WorkspaceRepository {
   }
 
   async getWorkspaceMemberByUserId(
-    userId: string
+    userId: string,
+    workspaceId: string
   ): Promise<WorkspaceMember | null> {
     const query = `
-      SELECT id, user_id, role, email, first_name, last_name, profile_picture, created_at, updated_at
+      SELECT workspace_members.id, user_id, role, email, first_name, last_name, profile_picture, created_at, updated_at
       FROM workspace_members
       JOIN users ON workspace_members.user_id = users.id
-      WHERE user_id = $1
+      WHERE user_id = $1 AND workspace_id = $2
     `;
 
-    const result = await this.db.query(query, [userId]);
+    const result = await this.db.query(query, [userId, workspaceId]);
     return result.rows[0]
       ? (camelcaseKeys(result.rows[0]) as WorkspaceMember)
       : null;

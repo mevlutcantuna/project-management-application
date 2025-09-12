@@ -17,6 +17,12 @@ export const useWorkspace = (url: string) => {
     }
   }, [currentWorkspace, data, setCurrentWorkspace]);
 
+  useEffect(() => {
+    if (!url) {
+      setCurrentWorkspace(null, false);
+    }
+  }, [url, setCurrentWorkspace]);
+
   return {
     data,
     isPending,
