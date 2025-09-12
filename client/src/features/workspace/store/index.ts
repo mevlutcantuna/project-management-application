@@ -17,7 +17,7 @@ export const useWorkspaceStore = create<WorkspaceState>()((set) => ({
   setCurrentWorkspace: (workspace) => {
     set({ currentWorkspace: workspace });
     if (workspace) {
-      localStorage.setItem("currentWorkspace", workspace.id);
+      localStorage.setItem("currentWorkspace", workspace.url);
     } else {
       localStorage.removeItem("currentWorkspace");
     }

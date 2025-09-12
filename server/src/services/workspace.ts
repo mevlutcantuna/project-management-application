@@ -27,6 +27,10 @@ export class WorkspaceService {
     return this.workspaceRepository.getWorkspaceById(id);
   }
 
+  async getWorkspaceByUrl(url: string): Promise<Workspace | null> {
+    return this.workspaceRepository.getWorkspaceByUrl(url);
+  }
+
   async getWorkspacesByUserId(userId: string): Promise<Workspace[]> {
     return this.workspaceRepository.getWorkspacesByUserId(userId);
   }

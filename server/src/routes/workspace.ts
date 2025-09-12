@@ -19,6 +19,7 @@ const workspaceController = new WorkspaceController(
 router.get("/", workspaceController.getMyWorkspaces);
 router.post("/", workspaceController.createWorkspace);
 router.get("/:id", workspaceController.getWorkspaceById);
+router.get("/by-url/:url", workspaceController.getWorkspaceByUrl);
 router.put("/:id", workspaceController.updateWorkspace);
 router.delete("/:id", workspaceController.deleteWorkspace);
 router.get("/:id/members", workspaceController.getWorkspaceMembers);
