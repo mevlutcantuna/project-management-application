@@ -45,7 +45,7 @@ const WorkspaceSelectForm = () => {
                 <FormControl>
                   <WorkspaceSelect
                     onChange={(workspace) => {
-                      field.onChange(workspace?.id ?? "");
+                      field.onChange(workspace?.url ?? "");
                     }}
                     value={field.value}
                   />

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 
 const workspaceFormSchema = z.object({
   name: z.string().min(1, { message: "Workspace is required" }),
+  url: z.string().min(1, { message: "URL is required" }),
   description: z.string().optional(),
 });
 
@@ -28,6 +29,7 @@ const WorkspaceForm = ({
     resolver: zodResolver(workspaceFormSchema),
     defaultValues: {
       name: "",
+      url: "",
       description: "",
     },
   });
@@ -44,6 +46,20 @@ const WorkspaceForm = ({
                 <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="Name" className="w-full" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>URL</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="URL" className="w-full" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -36,7 +36,7 @@ export const router = createBrowserRouter([
             element: <WorkspaceCreationPage />,
           },
           {
-            path: "/:workspaceId",
+            path: "/:workspaceUrl",
             element: <Dashboard />,
           },
         ],

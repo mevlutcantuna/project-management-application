@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 export interface CreateWorkspaceInput {
   name: string;
   description: string;
+  url: string;
 }
 
 export const useCreateWorkspaceMutation = (

@@ -11,10 +11,11 @@ const WorkspaceSelectionPage = () => {
   const navigate = useNavigate();
   const { mutate: createWorkspace } = useCreateWorkspaceMutation({
     onSuccess: (data) => {
+      console.log(data);
       toast.success("Success", {
         description: "You have successfully created a workspace",
       });
-      navigate(`/${data.id}`);
+      navigate(`/${data.url}`);
     },
   });
 
@@ -22,6 +23,7 @@ const WorkspaceSelectionPage = () => {
     createWorkspace({
       name: data.name,
       description: data.description ?? "",
+      url: data.url,
     });
   };
 

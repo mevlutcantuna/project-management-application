@@ -25,8 +25,8 @@ const WorkspaceSelect = ({
     }
   }, [allWorkspaces, setWorkspaces]);
 
-  const handleChange = (value: Workspace["id"]) => {
-    const workspace = workspaces.find((workspace) => workspace.id === value);
+  const handleChange = (value: Workspace["url"]) => {
+    const workspace = workspaces.find((workspace) => workspace.url === value);
     if (workspace) {
       onChange(workspace);
     } else {
@@ -37,7 +37,7 @@ const WorkspaceSelect = ({
   return (
     <Combobox
       options={workspaces.map((workspace) => ({
-        value: workspace.id,
+        value: workspace.url,
         label: workspace.name,
       }))}
       value={value}

@@ -1,9 +1,9 @@
-import { useGetWorkspaceByIdQuery } from "@/features/workspace/api/queries";
+import { useGetWorkspaceByUrlQuery } from "@/features/workspace/api/queries";
 import { useParams } from "react-router-dom";
 
 const Dashboard = () => {
-  const { workspaceId } = useParams();
-  const { data: workspace } = useGetWorkspaceByIdQuery(workspaceId ?? "");
+  const { workspaceUrl } = useParams();
+  const { data: workspace } = useGetWorkspaceByUrlQuery(workspaceUrl ?? "");
 
   return <div> {JSON.stringify(workspace)}</div>;
 };

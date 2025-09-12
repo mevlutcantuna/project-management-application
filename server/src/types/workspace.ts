@@ -14,6 +14,7 @@ export interface CreateWorkspaceRequest extends Request {
   body: {
     name: string;
     description: string;
+    url: string;
   };
 }
 
@@ -47,6 +48,7 @@ export interface CreateWorkspaceInput {
   name: string;
   description: string;
   ownerId: string;
+  url: string;
 }
 
 export interface UpdateWorkspaceInput extends Partial<CreateWorkspaceInput> {
