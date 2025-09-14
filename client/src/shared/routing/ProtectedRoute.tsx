@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store";
-import LoadingScreen from "@/components/LoadingScreen";
 import { useGetMeQuery } from "@/features/auth/api/queries";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const ProtectedRoute = () => {
   const { setUser, logout } = useAuthStore();
