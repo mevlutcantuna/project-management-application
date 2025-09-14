@@ -41,7 +41,7 @@ const InvitationForm = ({
     resolver: zodResolver(invitationFormSchema),
     defaultValues: {
       email: "",
-      role: USER_ROLES[0],
+      role: undefined,
     },
   });
 
