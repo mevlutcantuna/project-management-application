@@ -1,11 +1,19 @@
+import { AppSidebar } from "@/components/common/sidebar/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useGetWorkspaceByUrlQuery } from "@/features/workspace/api/queries";
-import { useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 
 const Dashboard = () => {
   const { workspaceUrl } = useParams();
   const { data: workspace } = useGetWorkspaceByUrlQuery(workspaceUrl ?? "");
 
-  return <div> {JSON.stringify(workspace)}</div>;
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset />
+      <Outlet />
+    </SidebarProvider>
+  );
 };
 
 export default Dashboard;

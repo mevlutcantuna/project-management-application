@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/features/auth/store";
-import Layout from "@/features/workspace/components/Layout";
-import WorkspaceSelectForm from "@/features/workspace/components/WorkspaceSelectForm";
+import Layout from "@/features/workspace/components/layout";
+import WorkspaceSelectForm from "@/features/workspace/components/workspace-select-form";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

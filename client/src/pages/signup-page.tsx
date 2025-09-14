@@ -1,5 +1,5 @@
-import AuthLayout from "@/features/auth/components/Layout";
-import SignupForm from "@/features/auth/components/SignupForm";
+import AuthLayout from "@/features/auth/components/layout";
+import SignupForm from "@/features/auth/components/signup-form";
 import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {

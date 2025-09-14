@@ -1,8 +1,8 @@
 import { useWorkspaceStore } from "@/features/workspace/store";
-import WorkspaceLayout from "@/features/workspace/components/Layout";
+import WorkspaceLayout from "@/features/workspace/components/layout";
 import InvitationForm, {
   type InvitationFormSchema,
-} from "@/features/workspace/components/InvitationForm";
+} from "@/features/workspace/components/invitation-form";
 import { useSendWorkspaceInvitationMutation } from "@/features/workspace/api/mutations";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";

@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import WorkspaceSelect from "./WorkspaceSelect";
+import WorkspaceSelect from "./workspace-select";
 import { Button } from "@/components/ui/button";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

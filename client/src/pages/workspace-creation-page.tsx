@@ -1,8 +1,8 @@
 import { useCreateWorkspaceMutation } from "@/features/workspace/api/mutations";
-import Layout from "@/features/workspace/components/Layout";
+import Layout from "@/features/workspace/components/layout";
 import WorkspaceForm, {
   type WorkspaceFormSchema,
-} from "@/features/workspace/components/WorkspaceForm";
+} from "@/features/workspace/components/workspace-form";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";

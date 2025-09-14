@@ -1,13 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "@/pages/LoginPage";
-import SignupPage from "@/pages/SignupPage";
-import WorkspaceSelectionPage from "@/pages/WorkspaceSelectionPage";
-import Dashboard from "@/pages/Dashboard";
-import ProtectedRoute from "./ProtectedRoute";
-import WorkspaceCreationPage from "@/pages/WorkspaceCreationPage";
-import WorkspaceRoute from "./WorkspaceRoute";
-import WorkspaceInvitePage from "@/pages/WorkspaceInvitePage";
-import LoadingScreen from "@/components/LoadingScreen";
+import LoginPage from "@/pages/login-page";
+import SignupPage from "@/pages/signup-page";
+import WorkspaceSelectionPage from "@/pages/workspace-selection-page";
+import Dashboard from "@/pages/dashboard";
+import ProtectedRoute from "./protected-route";
+import WorkspaceCreationPage from "@/pages/workspace-creation-page";
+import WorkspaceRoute from "./workspace-route";
+import WorkspaceInvitePage from "@/pages/workspace-invite-page";
+import LoadingScreen from "@/components/common/loading/loading-screen";
 
 export const router = createBrowserRouter([
   {

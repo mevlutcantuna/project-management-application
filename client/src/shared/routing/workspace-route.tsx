@@ -1,9 +1,9 @@
 import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { useMemo, type ReactElement } from "react";
 import { useWorkspaceStore } from "@/features/workspace/store";
-import { useWorkspaces } from "../hooks/useWorkspaces";
-import { useWorkspace } from "../hooks/useWorkspace";
-import LoadingScreen from "@/components/LoadingScreen";
+import { useWorkspaces } from "../hooks/use-workspaces";
+import { useWorkspace } from "../hooks/use-workspace";
+import LoadingScreen from "@/components/common/loading/loading-screen";
 
 const WorkspaceRoute = (): ReactElement => {
   const location = useLocation();
