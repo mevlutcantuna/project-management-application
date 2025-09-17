@@ -45,6 +45,8 @@
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --container: #fff;
+  --icon-color: lch(38.893% 1 282.863 / 1);
+  --icon-color-hover: #1b1b1b;
 }
 
 .dark {
@@ -83,6 +85,8 @@
   --sidebar-link-hover: #202020;
   --sidebar-ring: oklch(0.442 0.017 285.786);
   --container: #101011;
+  --icon-color: lch(88.893% 1 282.863 / 1);
+  --icon-color-hover: #fff;
 }
 
 @theme inline {
@@ -125,6 +129,8 @@
   --color-sidebar-link-background: var(--sidebar-link-background);
   --color-sidebar-link-hover: var(--sidebar-link-hover);
   --color-container: var(--container);
+  --color-icon-color: var(--icon-color);
+  --color-icon-color-hover: var(--icon-color-hover);
 }
 
 @layer base {

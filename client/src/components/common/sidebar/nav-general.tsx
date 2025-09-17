@@ -12,9 +12,12 @@ export function NavGeneral({ items }: { items: SidebarItem[] }) {
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip={item.name}>
-              <a href={item.url}>
-                <item.icon />
+            <SidebarMenuButton size="sm" asChild tooltip={item.name}>
+              <a href={item.url} className="group/item">
+                <item.icon
+                  {...item.iconProps}
+                  className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200"
+                />
                 <span>{item.name}</span>
               </a>
             </SidebarMenuButton>

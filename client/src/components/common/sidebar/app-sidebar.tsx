@@ -26,6 +26,7 @@ import {
   ThumbsUp,
   Zap,
   type LucideIcon,
+  type LucideProps,
 } from "lucide-react";
 import { NavGeneral } from "@/components/common/sidebar/nav-general";
 import { NavWorkspace } from "@/components/common/sidebar/nav-workspace";
@@ -58,6 +59,7 @@ import { useNavigate } from "react-router-dom";
 
 export interface SidebarItem {
   icon: LucideIcon;
+  iconProps?: LucideProps;
   name: string;
   url: string;
 }
@@ -70,6 +72,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const generalSidebarItems: SidebarItem[] = [
     {
       icon: Zap,
+      iconProps: {
+        fill: "currentColor",
+      },
       name: "Pulse",
       url: "#",
     },
