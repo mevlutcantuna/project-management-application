@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-export function NavSecondary({
+export function NavTeams({
   items,
   ...props
 }: {

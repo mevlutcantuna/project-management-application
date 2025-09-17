@@ -4,25 +4,35 @@ import * as React from "react";
 import {
   BookOpen,
   Bot,
+  Box,
+  Check,
   ChevronDown,
   Command,
+  Ellipsis,
   Frame,
+  Inbox,
+  Laptop2,
+  LaptopMinimalCheck,
+  Layers2,
   LifeBuoy,
   Map,
+  Maximize,
   PieChart,
+  Search,
   Send,
   Settings2,
+  SquarePen,
   SquareTerminal,
+  ThumbsUp,
+  Zap,
+  type LucideIcon,
 } from "lucide-react";
-
-import { NavMain } from "@/components/common/sidebar/nav-main";
-import { NavProjects } from "@/components/common/sidebar/nav-projects";
-import { NavSecondary } from "@/components/common/sidebar/nav-secondary";
-import { NavUser } from "@/components/common/sidebar/nav-user";
+import { NavGeneral } from "@/components/common/sidebar/nav-general";
+import { NavWorkspace } from "@/components/common/sidebar/nav-workspace";
+import { NavTeams } from "@/components/common/sidebar/nav-teams";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -31,180 +41,159 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuthStore } from "@/features/auth/store";
+import { useWorkspaceStore } from "@/features/workspace/store";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-};
+export interface SidebarItem {
+  icon: LucideIcon;
+  name: string;
+  url: string;
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+  const { workspaces, currentWorkspace } = useWorkspaceStore();
+
+  const generalSidebarItems: SidebarItem[] = [
+    {
+      icon: Zap,
+      name: "Pulse",
+      url: "#",
+    },
+    {
+      icon: Inbox,
+      name: "Inbox",
+      url: `${currentWorkspace?.url}/inbox`,
+    },
+    {
+      icon: Maximize,
+      name: "My Issues",
+      url: `${currentWorkspace?.url}/my-issues`,
+    },
+  ];
+
+  const workspaceSidebarItems: SidebarItem[] = [
+    {
+      icon: Box,
+      name: "Projects",
+      url: "#",
+    },
+    {
+      icon: Layers2,
+      name: "Views",
+      url: "#",
+    },
+    {
+      icon: Ellipsis,
+      name: "More",
+      url: "#",
+    },
+  ];
+
+  const teamsSidebarItems: SidebarItem[] = [
+    {
+      icon: Laptop2,
+      name: "Development Team",
+      url: "#",
+    },
+    {
+      icon: ThumbsUp,
+      name: "Customer Success",
+      url: "#",
+    },
+    {
+      icon: LaptopMinimalCheck,
+      name: "Marketing Team",
+      url: "#",
+    },
+  ];
+
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader className="mt-1">
+      <SidebarHeader className="">
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  asChild
-                  className="h-7 w-fit rounded-sm pr-1.5 pl-1 outline-none hover:bg-[#f0f0f0] aria-expanded:bg-[#f0f0f0] dark:hover:bg-[#202020] dark:aria-expanded:bg-[#202020]"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-transparent text-gray-700">
-                      <Command className="size-4" />
-                    </div>
-                    <span className="text-sm font-semibold tracking-[-0.1px] text-gray-700">
-                      Peaka
-                    </span>
-
-                    <ChevronDown className="size-3" />
+          <div className="flex justify-between gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                asChild
+                className="hover:bg-sidebar-link-hover aria-expanded:bg-sidebar-link-hover h-7 w-fit rounded-sm pr-1.5 pl-1 outline-none"
+              >
+                <div className="flex items-center gap-1.5">
+                  <div className="text-primary flex h-5 w-5 items-center justify-center rounded-lg bg-transparent">
+                    <Command className="size-4" />
                   </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Billing</DropdownMenuItem>
-                  <DropdownMenuItem>Team</DropdownMenuItem>
-                  <DropdownMenuItem>Subscription</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+                  <span className="text-primary max-w-[100px] truncate text-sm font-semibold tracking-[-0.1px] whitespace-nowrap">
+                    {currentWorkspace?.name || ""}
+                  </span>
+
+                  <ChevronDown className="size-3" />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      Switch workspace
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
+                        {workspaces.map((workspace) => (
+                          <DropdownMenuItem
+                            className="flex items-center gap-2"
+                            key={workspace.url}
+                          >
+                            {workspace.name}
+                            <Check className="size-4" />
+                          </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>Account</DropdownMenuLabel>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            navigate("/workspace/create");
+                          }}
+                        >
+                          Create a workspace
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                </DropdownMenuGroup>
+                <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <div className="flex gap-2">
+              <Button className="h-7 w-7" variant="ghost" size="icon">
+                <Search className="size-3.5" />
+              </Button>
+
+              <Button className="h-7 w-7" variant="outline" size="icon">
+                <SquarePen className="size-3.5" />
+              </Button>
+            </div>
+          </div>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavGeneral items={generalSidebarItems} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
   );
 }
