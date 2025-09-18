@@ -56,7 +56,6 @@ import { useAuthStore } from "@/features/auth/store";
 import { useWorkspaceStore } from "@/features/workspace/store";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-
 export interface SidebarItem {
   icon: LucideIcon;
   iconProps?: LucideProps;
@@ -128,76 +127,76 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader className="">
-        <SidebarMenu>
-          <div className="flex justify-between gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                asChild
-                className="hover:bg-sidebar-link-hover aria-expanded:bg-sidebar-link-hover h-7 w-fit rounded-sm pr-1.5 pl-1 outline-none"
-              >
-                <div className="flex items-center gap-1.5">
-                  <div className="text-primary flex h-5 w-5 items-center justify-center rounded-lg bg-transparent">
-                    <Command className="size-4" />
-                  </div>
-                  <span className="text-primary max-w-[100px] truncate text-sm font-semibold tracking-[-0.1px] whitespace-nowrap">
-                    {currentWorkspace?.name || ""}
-                  </span>
-
-                  <ChevronDown className="size-3" />
+      <SidebarHeader className="pt-1.5">
+        <div className="flex justify-between gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              asChild
+              className="hover:bg-sidebar-link-hover aria-expanded:bg-sidebar-link-hover h-7 w-fit rounded-sm pr-1.5 pl-1 outline-none"
+            >
+              <div className="flex items-center gap-1.5">
+                <div className="text-primary flex h-5 w-5 items-center justify-center rounded-lg bg-transparent">
+                  <Command className="size-4" />
                 </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      Switch workspace
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
-                        {workspaces.map((workspace) => (
-                          <DropdownMenuItem
-                            className="flex items-center gap-2"
-                            key={workspace.url}
-                          >
-                            {workspace.name}
-                            <Check className="size-4" />
-                          </DropdownMenuItem>
-                        ))}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuLabel>Account</DropdownMenuLabel>
+                <span className="text-primary max-w-[100px] truncate text-sm font-semibold tracking-[-0.1px] whitespace-nowrap">
+                  {currentWorkspace?.name || ""}
+                </span>
+
+                <ChevronDown className="size-3" />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    Switch workspace
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
+                      {workspaces.map((workspace) => (
                         <DropdownMenuItem
-                          onClick={() => {
-                            navigate("/workspace/create");
-                          }}
+                          className="flex items-center gap-2"
+                          key={workspace.url}
                         >
-                          Create a workspace
+                          {workspace.name}
+                          <Check className="size-4" />
                         </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                </DropdownMenuGroup>
-                <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                      ))}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Account</DropdownMenuLabel>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          navigate("/workspace/create");
+                        }}
+                      >
+                        Create a workspace
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+              </DropdownMenuGroup>
+              <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-            <div className="flex gap-2">
-              <Button className="h-7 w-7" variant="ghost" size="icon">
-                <Search className="size-3.5" />
-              </Button>
+          <div className="flex gap-2">
+            <Button className="h-7 w-7" variant="ghost" size="icon">
+              <Search className="size-3.5" />
+            </Button>
 
-              <Button className="h-7 w-7" variant="outline" size="icon">
-                <SquarePen className="size-3.5" />
-              </Button>
-            </div>
+            <Button className="h-7 w-7" variant="outline" size="icon">
+              <SquarePen className="size-3.5" />
+            </Button>
           </div>
-        </SidebarMenu>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <NavGeneral items={generalSidebarItems} />
+        <NavWorkspace workspaces={workspaceSidebarItems} />
+        <NavTeams teams={teamsSidebarItems} />
       </SidebarContent>
     </Sidebar>
   );

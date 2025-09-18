@@ -18,7 +18,7 @@ export function NavGeneral({ items }: { items: SidebarItem[] }) {
                   {...item.iconProps}
                   className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200"
                 />
-                <span>{item.name}</span>
+                <span className="text-icon-color">{item.name}</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
