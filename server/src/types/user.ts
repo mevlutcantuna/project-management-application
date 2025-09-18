@@ -21,21 +21,11 @@ export interface CreateUserInput {
   profilePicture?: string;
 }
 
-export interface UpdateUserInput {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  profilePicture?: string;
-}
+export type UpdateUserInput = Partial<CreateUserInput>;
 
 export interface UpdateUserRequest extends Request {
   params: {
     id: string;
   };
-  body: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    profilePicture?: string;
-  };
+  body: UpdateUserInput;
 }

@@ -3,6 +3,7 @@ import { verifyToken, extractTokenFromHeader } from "@/utils/jwt";
 import { UnauthorizedError } from "@/utils/errors";
 import { UserService } from "@/services/user";
 import { db } from "@/config/dbClient";
+import { AuthenticatedRequest } from "@/types/common";
 
 export const authenticate = async (
   req: Request,
@@ -28,6 +29,8 @@ export const authenticate = async (
     if (!user) {
       throw new UnauthorizedError("User not found");
     }
+
+    (req as AuthenticatedRequest).user = user;
 
     next();
   } catch (error) {

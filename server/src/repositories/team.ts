@@ -1,0 +1,100 @@
+import Database from "@/config/db";
+import { CreateTeamInput, Team, UpdateTeamInput } from "@/types/team";
+import camelcaseKeys from "camelcase-keys";
+
+class TeamRepository {
+  constructor(private db: Database) {}
+
+  async createTeam(values: CreateTeamInput): Promise<Team> {
+    const query = `
+      INSERT INTO teams (name, description, workspace_id)
+      VALUES ($1, $2, $3)
+      RETURNING id, name, description, workspace_id, created_at, updated_at
+    `;
+
+    const result = await this.db.query(query, [
+      values.name,
+      values.description,
+      values.workspaceId,
+    ]);
+    return camelcaseKeys(result.rows[0]);
+  }
+
+  async updateTeam(id: string, values: UpdateTeamInput): Promise<Team> {
+    const query = `
+      UPDATE teams
+      SET name = $1, description = $2, workspace_id = $3
+      WHERE id = $4
+      RETURNING id, name, description, workspace_id, created_at, updated_at
+    `;
+
+    const result = await this.db.query(query, [
+      values.name,
+      values.description,
+      values.workspaceId,
+      id,
+    ]);
+    return camelcaseKeys(result.rows[0]);
+  }
+
+  async getTeamsByUserId(workspaceId: string, userId: string): Promise<Team[]> {
+    const query = `
+      SELECT id, name, description, workspace_id, created_at, updated_at
+      FROM teams
+      WHERE workspace_id = $1 AND id IN (
+        SELECT team_id
+        FROM team_members
+        WHERE user_id = $2
+      )
+    `;
+
+    const result = await this.db.query(query, [workspaceId, userId]);
+    return camelcaseKeys(result.rows);
+  }
+
+  async getTeamById(id: string): Promise<Team | null> {
+    const query = `
+      SELECT id, name, description, workspace_id, created_at, updated_at
+      FROM teams
+      WHERE id = $1
+    `;
+    const result = await this.db.query(query, [id]);
+    return result.rows[0] ? (camelcaseKeys(result.rows[0]) as Team) : null;
+  }
+
+  async deleteTeam(id: string): Promise<void> {
+    const query = `
+      DELETE FROM teams
+      WHERE id = $1
+    `;
+    await this.db.query(query, [id]);
+  }
+
+  async checkUserIsTeamMember(
+    userId: string,
+    teamId: string
+  ): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM team_members
+      WHERE user_id = $1 AND team_id = $2
+    `;
+    const result = await this.db.query(query, [userId, teamId]);
+    return parseInt(result.rows[0].count) > 0;
+  }
+
+  async checkUserIsTeamAdminOrManager(
+    userId: string,
+    teamId: string
+  ): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM team_members
+      WHERE user_id = $1 AND team_id = $2 AND (role = 'Admin' OR role = 'Manager')
+      `;
+    const result = await this.db.query(query, [userId, teamId]);
+    return parseInt(result.rows[0].count) > 0;
+  }
+}
+
+export default TeamRepository;
