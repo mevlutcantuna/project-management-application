@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 
 import {
   SidebarGroup,
@@ -27,9 +27,22 @@ export function NavTeams({
       <SidebarGroupContent>
         <Collapsible defaultOpen>
           <CollapsibleTrigger className="w-full data-[state=open]:[&_svg]:rotate-90">
-            <SidebarGroupLabel className="hover:bg-sidebar-link-hover flex h-6 w-full items-center gap-1">
-              Your Teams
-              <ChevronRight className="size-2 transition-transform duration-200" />
+            <SidebarGroupLabel className="hover:bg-sidebar-link-hover group/label flex h-6 w-full items-center justify-between gap-1">
+              <div className="flex items-center gap-1">
+                Your Teams
+                <ChevronRight className="size-2 transition-transform duration-200" />
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("add team");
+                }}
+                className="hover:text-sidebar-accent-foreground text-muted-foreground hidden group-hover/label:block"
+              >
+                <Plus className="size-4" />
+              </button>
             </SidebarGroupLabel>
           </CollapsibleTrigger>
           <CollapsibleContent>
