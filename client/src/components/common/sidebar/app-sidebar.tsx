@@ -2,27 +2,18 @@
 
 import * as React from "react";
 import {
-  BookOpen,
-  Bot,
   Box,
   Check,
   ChevronDown,
   Command,
   Ellipsis,
-  Frame,
   Inbox,
   Laptop2,
   LaptopMinimalCheck,
   Layers2,
-  LifeBuoy,
-  Map,
   Maximize,
-  PieChart,
   Search,
-  Send,
-  Settings2,
   SquarePen,
-  SquareTerminal,
   ThumbsUp,
   Zap,
   type LucideIcon,
@@ -35,9 +26,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
