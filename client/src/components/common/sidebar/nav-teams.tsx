@@ -30,7 +30,7 @@ export function NavTeams({
             <SidebarGroupLabel className="hover:bg-sidebar-link-hover group/label flex h-6 w-full items-center justify-between gap-1">
               <div className="flex items-center gap-1">
                 Your Teams
-                <ChevronRight className="size-2 transition-transform duration-200" />
+                <ChevronRight className="size-4 transition-transform duration-200" />
               </div>
 
               <button

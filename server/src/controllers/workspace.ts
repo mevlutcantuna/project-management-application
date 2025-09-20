@@ -15,7 +15,6 @@ import {
   AddWorkspaceMemberRequest,
   SendWorkspaceInvitationRequest,
 } from "@/types/workspace";
-import { USER_ROLES } from "@/utils/constants";
 import { createWorkspaceSchema } from "@/schemas/workspace";
 
 class WorkspaceController {
@@ -65,13 +64,6 @@ class WorkspaceController {
       description,
       ownerId: user.id,
       url: url.toLowerCase().trim(),
-    });
-
-    // add the owner to the workspace members
-    await this.workspaceService.addUserToWorkspaceMember({
-      workspaceId: workspace.id,
-      userId: user.id,
-      role: USER_ROLES[0], // Admin
     });
 
     res.status(201).json(workspace);
