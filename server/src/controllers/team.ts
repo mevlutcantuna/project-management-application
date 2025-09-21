@@ -9,7 +9,6 @@ import {
 import { NotFoundError, UnauthorizedError } from "@/utils/errors";
 import { Response } from "express";
 import { UserService } from "@/services/user";
-import { AuthenticatedRequest } from "@/types/common";
 
 class TeamController {
   private teamService: TeamService;
@@ -20,10 +19,7 @@ class TeamController {
     this.userService = userService;
   }
 
-  createTeam = async (
-    req: CreateTeamRequest & AuthenticatedRequest,
-    res: Response
-  ) => {
+  createTeam = async (req: CreateTeamRequest, res: Response) => {
     const { name, description, workspaceId } = req.body;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
@@ -36,10 +32,7 @@ class TeamController {
     res.status(201).json(team);
   };
 
-  updateTeam = async (
-    req: UpdateTeamRequest & AuthenticatedRequest,
-    res: Response
-  ) => {
+  updateTeam = async (req: UpdateTeamRequest, res: Response) => {
     const { id } = req.params;
     const { name, description, workspaceId } = req.body;
 
@@ -54,10 +47,7 @@ class TeamController {
   };
 
   // Returns all teams which user is a member of
-  getTeamsByUserId = async (
-    req: GetTeamsByWorkspaceRequest & AuthenticatedRequest,
-    res: Response
-  ) => {
+  getTeamsByUserId = async (req: GetTeamsByWorkspaceRequest, res: Response) => {
     const { workspaceId } = req.query;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
@@ -72,10 +62,7 @@ class TeamController {
     res.status(200).json(teams);
   };
 
-  getTeamById = async (
-    req: GetTeamByIdRequest & AuthenticatedRequest,
-    res: Response
-  ) => {
+  getTeamById = async (req: GetTeamByIdRequest, res: Response) => {
     const { id } = req.params;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
@@ -84,10 +71,7 @@ class TeamController {
     res.status(200).json(team);
   };
 
-  deleteTeam = async (
-    req: DeleteTeamRequest & AuthenticatedRequest,
-    res: Response
-  ) => {
+  deleteTeam = async (req: DeleteTeamRequest, res: Response) => {
     const { id } = req.params;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");

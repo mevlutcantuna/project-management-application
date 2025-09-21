@@ -8,7 +8,6 @@ import {
   RefreshTokenRequest,
   SignupRequest,
 } from "@/types/auth";
-import { extractTokenFromHeader, verifyToken } from "@/utils/jwt";
 
 class AuthController {
   private authService: AuthService;
@@ -57,16 +56,14 @@ class AuthController {
   };
 
   getMe = async (req: GetMeRequest, res: Response) => {
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
+    const user = req.user;
 
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.authService.getMe(payload.sub);
     if (!user) throw new UnauthorizedError("User not found");
 
-    res.status(200).json(user);
+    const userData = await this.authService.getMe(user.id);
+    if (!userData) throw new UnauthorizedError("User not found");
+
+    res.status(200).json(userData);
   };
 }
 
