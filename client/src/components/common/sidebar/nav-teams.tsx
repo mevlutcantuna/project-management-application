@@ -49,7 +49,7 @@ export function NavTeams({
             <SidebarMenu className="pt-0">
               {teams.map((item, index) => (
                 <SidebarMenuItem key={index}>
-                  <SidebarMenuButton asChild size="sm">
+                  <SidebarMenuButton asChild>
                     <a href={item.url} className="group/item">
                       <item.icon className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200" />
                       <span className="text-icon-color">{item.name}</span>
