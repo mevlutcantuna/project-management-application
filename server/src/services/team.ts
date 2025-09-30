@@ -18,8 +18,8 @@ export class TeamService {
     return this.teamRepository.updateTeam(id, values);
   }
 
-  async getTeamsByUserId(workspaceId: string, userId: string): Promise<Team[]> {
-    return this.teamRepository.getTeamsByUserId(workspaceId, userId);
+  async getTeams(workspaceId: string): Promise<Team[]> {
+    return this.teamRepository.getTeams(workspaceId);
   }
 
   async getTeamById(id: string, userId: string): Promise<Team | null> {

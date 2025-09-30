@@ -37,6 +37,17 @@ class UserRepository {
     return result.rows[0] ? (camelcaseKeys(result.rows[0]) as User) : null;
   }
 
+  async getUsersByIds(ids: string[]): Promise<Omit<User, "passwordHash">[]> {
+    const query = `
+      SELECT id, first_name, last_name, email, profile_picture, created_at, updated_at
+      FROM users
+      WHERE id = ANY($1)
+    `;
+
+    const result = await this.db.query(query, [ids]);
+    return result.rows.map((row) => camelcaseKeys(row) as User);
+  }
+
   async getUserByEmail(email: string): Promise<User | null> {
     const query = `
       SELECT id, first_name, last_name, email, profile_picture, created_at, updated_at, password_hash

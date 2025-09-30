@@ -9,6 +9,6 @@ const router = Router();
 router.use("/auth", authRouter);
 router.use("/users", userRouter);
 router.use("/workspaces", workspaceRouter);
-router.use("/:workspaceId/teams", teamRouter);
+router.use("/workspace/:workspaceId/teams", teamRouter);
 
 export default router;

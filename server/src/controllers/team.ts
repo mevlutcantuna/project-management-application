@@ -20,14 +20,20 @@ class TeamController {
   }
 
   createTeam = async (req: CreateTeamRequest, res: Response) => {
-    const { name, description, workspaceId } = req.body;
+    const { name, description, workspaceId, userIds } = req.body;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
+
+    // Check if the userIds are valid
+    const users = await this.userService.getUsersByIds(userIds);
+    if (users.length !== userIds.length)
+      throw new UnauthorizedError("Invalid user IDs");
 
     const team = await this.teamService.createTeam({
       name,
       description,
       workspaceId,
+      userIds,
     });
     res.status(201).json(team);
   };
@@ -46,19 +52,15 @@ class TeamController {
     res.status(200).json(team);
   };
 
-  // Returns all teams which user is a member of
-  getTeamsByUserId = async (req: GetTeamsByWorkspaceRequest, res: Response) => {
-    const { workspaceId } = req.query;
+  getTeams = async (req: GetTeamsByWorkspaceRequest, res: Response) => {
+    const { workspaceId } = req.params;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
     if (!workspaceId || typeof workspaceId !== "string") {
       throw new UnauthorizedError("Workspace ID is required");
     }
 
-    const teams = await this.teamService.getTeamsByUserId(
-      workspaceId,
-      req.user.id
-    );
+    const teams = await this.teamService.getTeams(workspaceId);
     res.status(200).json(teams);
   };
 

@@ -33,6 +33,10 @@ export class UserService {
     return this.userRepository.getUserById(id);
   }
 
+  async getUsersByIds(ids: string[]): Promise<Omit<User, "passwordHash">[]> {
+    return this.userRepository.getUsersByIds(ids);
+  }
+
   async getUserByEmail(email: string): Promise<User | null> {
     return this.userRepository.getUserByEmail(email);
   }

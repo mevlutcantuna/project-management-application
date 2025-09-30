@@ -37,25 +37,21 @@ class TeamRepository {
     return camelcaseKeys(result.rows[0]);
   }
 
-  async getTeamsByUserId(workspaceId: string, userId: string): Promise<Team[]> {
+  async getTeams(workspaceId: string): Promise<Team[]> {
     const query = `
-      SELECT id, name, description, workspace_id, created_at, updated_at
-      FROM teams
-      WHERE workspace_id = $1 AND id IN (
-        SELECT team_id
-        FROM team_members
-        WHERE user_id = $2
-      )
+      SELECT id, name, description, workspace_id, created_at, updated_at, users
+      FROM teams_with_members
+      WHERE workspace_id = $1
     `;
 
-    const result = await this.db.query(query, [workspaceId, userId]);
+    const result = await this.db.query(query, [workspaceId]);
     return camelcaseKeys(result.rows);
   }
 
   async getTeamById(id: string): Promise<Team | null> {
     const query = `
-      SELECT id, name, description, workspace_id, created_at, updated_at
-      FROM teams
+      SELECT id, name, description, workspace_id, created_at, updated_at, users
+      FROM teams_with_members
       WHERE id = $1
     `;
     const result = await this.db.query(query, [id]);

@@ -1,4 +1,5 @@
 import { AuthenticatedRequest } from "./common";
+import { User } from "./user";
 
 export interface Team {
   id: string;
@@ -7,12 +8,14 @@ export interface Team {
   description: string;
   createdAt: Date;
   updatedAt: Date;
+  users: Omit<User, "createdAt" | "updatedAt" | "passwordHash">[];
 }
 
 export interface CreateTeamInput {
   workspaceId: string;
   name: string;
   description: string;
+  userIds: string[];
 }
 
 export type UpdateTeamInput = Partial<CreateTeamInput>;
