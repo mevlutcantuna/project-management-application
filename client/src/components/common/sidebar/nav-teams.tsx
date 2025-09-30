@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, LaptopMinimalCheck, Plus } from "lucide-react";
 
 import {
   SidebarGroup,
@@ -14,19 +14,22 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import type { SidebarItem } from "./app-sidebar";
+import type { Team } from "@/shared/types/team";
 
 export function NavTeams({
   teams,
   ...props
 }: {
-  teams: SidebarItem[];
+  teams: Team[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <Collapsible defaultOpen>
-          <CollapsibleTrigger className="w-full data-[state=open]:[&_svg]:rotate-90">
+          <CollapsibleTrigger
+            asChild
+            className="w-full data-[state=open]:[&_svg]:rotate-90"
+          >
             <SidebarGroupLabel className="hover:bg-sidebar-link-hover group/label flex h-6 w-full items-center justify-between gap-1">
               <div className="flex items-center gap-1">
                 Your Teams
@@ -50,8 +53,11 @@ export function NavTeams({
               {teams.map((item, index) => (
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url} className="group/item">
-                      <item.icon className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200" />
+                    <a
+                      href={`/workspaces/${item.workspaceId}/teams/${item.id}`}
+                      className="group/item"
+                    >
+                      <LaptopMinimalCheck className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200" />
                       <span className="text-icon-color">{item.name}</span>
                     </a>
                   </SidebarMenuButton>

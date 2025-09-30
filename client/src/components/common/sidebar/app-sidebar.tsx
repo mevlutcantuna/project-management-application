@@ -8,13 +8,10 @@ import {
   Command,
   Ellipsis,
   Inbox,
-  Laptop2,
-  LaptopMinimalCheck,
   Layers2,
   Maximize,
   Search,
   SquarePen,
-  ThumbsUp,
   Zap,
   type LucideIcon,
   type LucideProps,
@@ -44,6 +41,7 @@ import { useAuthStore } from "@/features/auth/store";
 import { useWorkspaceStore } from "@/features/workspace/store";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useTeamStore } from "@/features/teams/store";
 export interface SidebarItem {
   icon: LucideIcon;
   iconProps?: LucideProps;
@@ -55,6 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const { workspaces, currentWorkspace } = useWorkspaceStore();
+  const { teams } = useTeamStore();
 
   const generalSidebarItems: SidebarItem[] = [
     {
@@ -91,24 +90,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       icon: Ellipsis,
       name: "More",
-      url: "#",
-    },
-  ];
-
-  const teamsSidebarItems: SidebarItem[] = [
-    {
-      icon: Laptop2,
-      name: "Development Team",
-      url: "#",
-    },
-    {
-      icon: ThumbsUp,
-      name: "Customer Success",
-      url: "#",
-    },
-    {
-      icon: LaptopMinimalCheck,
-      name: "Marketing Team",
       url: "#",
     },
   ];
@@ -184,7 +165,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavGeneral items={generalSidebarItems} />
         <NavWorkspace workspaces={workspaceSidebarItems} />
-        <NavTeams teams={teamsSidebarItems} />
+        <NavTeams teams={teams} />
       </SidebarContent>
     </Sidebar>
   );

@@ -4,6 +4,7 @@ import { useWorkspaceStore } from "@/features/workspace/store";
 import { useWorkspaces } from "../hooks/use-workspaces";
 import { useWorkspace } from "../hooks/use-workspace";
 import LoadingScreen from "@/components/common/loading/loading-screen";
+import { useTeams } from "../hooks/use-teams";
 
 const WorkspaceRoute = (): ReactElement => {
   const location = useLocation();
@@ -13,10 +14,11 @@ const WorkspaceRoute = (): ReactElement => {
     useWorkspace(workspaceUrl);
   const { isPending: isPendingWorkspaces } = useWorkspaces();
   const storedWorkspaceUrl = localStorage.getItem("currentWorkspace");
+  const { isLoading: isLoadingTeams } = useTeams();
 
   const isLoading = useMemo(
-    () => isLoadingWorkspace || isPendingWorkspaces,
-    [isLoadingWorkspace, isPendingWorkspaces]
+    () => isLoadingWorkspace || isPendingWorkspaces || isLoadingTeams,
+    [isLoadingWorkspace, isPendingWorkspaces, isLoadingTeams]
   );
 
   const storedWorkspace = useMemo(() => {

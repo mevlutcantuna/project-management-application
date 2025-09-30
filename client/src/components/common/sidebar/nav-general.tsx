@@ -10,8 +10,8 @@ export function NavGeneral({ items }: { items: SidebarItem[] }) {
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem>
+        {items.map((item, index) => (
+          <SidebarMenuItem key={index}>
             <SidebarMenuButton size="sm" asChild tooltip={item.name}>
               <a href={item.url} className="group/item">
                 <item.icon

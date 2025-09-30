@@ -8,6 +8,7 @@ const SCHEMA_FILES = [
   "03-indexes.sql",
   "04-functions.sql",
   "05-triggers.sql",
+  "06-views.sql",
 ];
 
 async function executeFile(filename: string): Promise<void> {
