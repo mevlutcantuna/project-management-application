@@ -15,12 +15,17 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type { Team } from "@/shared/types/team";
+import { Link } from "react-router-dom";
+
+interface NavTeamSidebarItem extends Team {
+  url: string;
+}
 
 export function NavTeams({
   teams,
   ...props
 }: {
-  teams: Team[];
+  teams: NavTeamSidebarItem[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
     <SidebarGroup {...props}>
@@ -53,13 +58,10 @@ export function NavTeams({
               {teams.map((item, index) => (
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton asChild>
-                    <a
-                      href={`/workspaces/${item.workspaceId}/teams/${item.id}`}
-                      className="group/item"
-                    >
+                    <Link to={item.url} className="group/item">
                       <LaptopMinimalCheck className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200" />
                       <span className="text-icon-color">{item.name}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

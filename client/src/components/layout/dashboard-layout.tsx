@@ -7,11 +7,14 @@ const Dashboard = () => {
   const { workspaceUrl } = useParams();
   const { data: workspace } = useGetWorkspaceByUrlQuery(workspaceUrl ?? "");
 
+  console.log(workspace);
+
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset />
-      <Outlet />
+      <SidebarInset>
+        <Outlet />
+      </SidebarInset>
     </SidebarProvider>
   );
 };

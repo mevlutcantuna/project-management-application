@@ -165,7 +165,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavGeneral items={generalSidebarItems} />
         <NavWorkspace workspaces={workspaceSidebarItems} />
-        <NavTeams teams={teams} />
+        <NavTeams
+          teams={teams.map((team) => ({
+            ...team,
+            url: `/${currentWorkspace?.url}/teams/${team.id}`,
+          }))}
+        />
       </SidebarContent>
     </Sidebar>
   );
