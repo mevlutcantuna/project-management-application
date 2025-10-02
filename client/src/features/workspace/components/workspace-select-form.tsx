@@ -68,7 +68,10 @@ const WorkspaceSelectForm = () => {
       <div className="mt-10 text-center">
         <p className="text-muted-foreground text-sm">
           Don't have a workspace?{" "}
-          <Link to="/join" className="text-primary font-medium hover:underline">
+          <Link
+            to="/create"
+            className="text-primary font-medium hover:underline"
+          >
             Create one
           </Link>
         </p>

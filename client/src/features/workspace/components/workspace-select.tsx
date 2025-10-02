@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useGetMyWorkspacesQuery } from "../api/queries";
 import { useWorkspaceStore } from "../store";
 import { Combobox } from "@/components/ui/combobox";
 import { cn } from "@/shared/lib/utils";
@@ -16,14 +14,7 @@ const WorkspaceSelect = ({
   onChange,
   value,
 }: WorkspaceSelectProps) => {
-  const { workspaces, setWorkspaces } = useWorkspaceStore();
-  const { data: allWorkspaces = [] } = useGetMyWorkspacesQuery();
-
-  useEffect(() => {
-    if (allWorkspaces && allWorkspaces.length > 0) {
-      setWorkspaces(allWorkspaces);
-    }
-  }, [allWorkspaces, setWorkspaces]);
+  const { workspaces } = useWorkspaceStore();
 
   const handleChange = (value: Workspace["url"]) => {
     const workspace = workspaces.find((workspace) => workspace.url === value);

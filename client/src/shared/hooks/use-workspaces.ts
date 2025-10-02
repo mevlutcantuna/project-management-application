@@ -4,12 +4,10 @@ import { useEffect } from "react";
 
 export const useWorkspaces = () => {
   const { workspaces, setWorkspaces } = useWorkspaceStore();
-  const { data, isPending, isLoading, isError } = useGetMyWorkspacesQuery({
-    enabled: !workspaces.length,
-  });
+  const { data, isPending, isLoading, isError } = useGetMyWorkspacesQuery();
 
   useEffect(() => {
-    if (data && data.length > 0 && workspaces.length === 0) {
+    if (data && data.length > 0) {
       setWorkspaces(data);
     } else if (data && data.length === 0) {
       setWorkspaces([]);

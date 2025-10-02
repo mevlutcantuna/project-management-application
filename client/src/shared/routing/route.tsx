@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
             element: <WorkspaceSelectionPage />,
           },
           {
-            path: "/join",
+            path: "/create",
             element: <WorkspaceCreationPage />,
           },
           {

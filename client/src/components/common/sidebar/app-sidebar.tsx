@@ -115,7 +115,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate(`/${currentWorkspace?.url}/settings`)}
+              >
+                Settings
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuSub>
@@ -129,16 +133,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <DropdownMenuItem
                           className="flex items-center gap-2"
                           key={workspace.url}
+                          onClick={() => {
+                            if (workspace.id === currentWorkspace?.id) {
+                              return;
+                            }
+                            navigate(`/${workspace.url}`);
+                          }}
                         >
                           {workspace.name}
-                          <Check className="size-4" />
+                          {workspace.id === currentWorkspace?.id && (
+                            <Check className="size-4" />
+                          )}
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuSeparator />
                       <DropdownMenuLabel>Account</DropdownMenuLabel>
                       <DropdownMenuItem
                         onClick={() => {
-                          navigate("/workspace/create");
+                          navigate("/create");
                         }}
                       >
                         Create a workspace

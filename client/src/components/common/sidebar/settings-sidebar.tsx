@@ -50,7 +50,7 @@ export function SettingsSidebar({
     <Sidebar variant="inset" {...props}>
       <SidebarHeader className="pt-1.5">
         <button
-          className="text-icon-color hover:bg-sidebar-link-hover hover:text-sidebar-accent-foreground flex h-7 items-center gap-1.5 rounded-sm pr-0.5 pl-1.5 text-sm"
+          className="text-icon-color hover:bg-sidebar-link-hover hover:text-sidebar-accent-foreground flex h-7 w-fit cursor-pointer items-center gap-1.5 rounded-sm pr-2 pl-1.5 text-sm"
           onClick={() => navigate("/")}
         >
           <ChevronLeft className="size-4" />
