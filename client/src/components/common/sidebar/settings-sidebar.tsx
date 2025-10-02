@@ -60,6 +60,7 @@ export function SettingsSidebar({
       <SidebarContent>
         <NavGeneral items={generalSettingsItems} />
         <NavTeams
+          enableAddTeam={false}
           teams={teams.map((team) => ({
             ...team,
             url: `/${currentWorkspace?.url}/settings/team/${team.id}`,

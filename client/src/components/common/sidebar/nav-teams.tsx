@@ -15,18 +15,27 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type { Team } from "@/shared/types/team";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useWorkspaceStore } from "@/features/workspace/store";
 
 interface NavTeamSidebarItem extends Team {
   url: string;
 }
 
+interface NavTeamSidebarProps
+  extends React.ComponentPropsWithoutRef<typeof SidebarGroup> {
+  teams: NavTeamSidebarItem[];
+  enableAddTeam?: boolean;
+}
+
 export function NavTeams({
   teams,
+  enableAddTeam = true,
   ...props
-}: {
-  teams: NavTeamSidebarItem[];
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+}: NavTeamSidebarProps) {
+  const navigate = useNavigate();
+  const { currentWorkspace } = useWorkspaceStore();
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
@@ -41,16 +50,17 @@ export function NavTeams({
                 <ChevronRight className="size-4 transition-transform duration-200" />
               </div>
 
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log("add team");
-                }}
-                className="hover:text-sidebar-accent-foreground text-muted-foreground hidden group-hover/label:block"
-              >
-                <Plus className="size-4" />
-              </button>
+              {enableAddTeam && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/${currentWorkspace?.url}/settings/team/create`);
+                  }}
+                  className="hover:text-sidebar-accent-foreground text-muted-foreground hidden group-hover/label:block"
+                >
+                  <Plus className="size-4" />
+                </button>
+              )}
             </SidebarGroupLabel>
           </CollapsibleTrigger>
           <CollapsibleContent>
