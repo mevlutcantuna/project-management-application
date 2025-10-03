@@ -35,8 +35,7 @@ interface LoginForm {
 const LoginForm = ({ className, onSuccess, onError }: LoginForm) => {
   const [formError, setFormError] = useState<string | null>(null);
   const { login: loginStore } = useAuthStore();
-  const { setAccessToken, setRefreshToken, setTokenExpiry } =
-    new TokenService();
+  const { setAccessToken, setRefreshToken, setTokenExpiry } = TokenService;
 
   const { mutate: login, isPending } = useLoginMutation({
     onSuccess: (data) => {

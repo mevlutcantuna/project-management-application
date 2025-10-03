@@ -14,7 +14,7 @@ export const uninterceptedApi = axios.create({
 // Add token to requests
 api.interceptors.request.use(
   (config) => {
-    const { getAccessToken } = new TokenService();
+    const { getAccessToken } = TokenService;
 
     const token = getAccessToken();
     if (token) {
@@ -30,21 +30,23 @@ api.interceptors.request.use(
 api.interceptors.request.use(
   async (config) => {
     const {
-      isAccessTokenExpired,
+      isTokenExpired,
       getRefreshToken,
       setAccessToken,
+      setTokenExpiry,
       removeTokens,
-    } = new TokenService();
+    } = TokenService;
 
-    if (isAccessTokenExpired()) {
+    if (isTokenExpired()) {
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
           const response = await uninterceptedApi.post("/auth/refresh", {
             token: refreshToken,
           });
-          const { accessToken } = response.data;
+          const { accessToken, expiresIn } = response.data;
           setAccessToken(accessToken);
+          setTokenExpiry(expiresIn);
         } catch (error) {
           removeTokens();
           window.location.href = "/login";
