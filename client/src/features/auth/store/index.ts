@@ -21,8 +21,7 @@ export const useAuthStore = create<AuthState>()(
     isAuthenticated: false,
     login: (user, token) => set({ user, token, isAuthenticated: true }),
     logout: () => {
-      const { removeTokens } = new TokenService();
-      removeTokens();
+      TokenService.removeTokens();
       set({ user: null, token: null, isAuthenticated: false });
 
       // Clear workspace store

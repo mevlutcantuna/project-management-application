@@ -2,8 +2,8 @@ import cookie from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import type { DecodedUser } from "../types/user";
 
-export class TokenService {
-  public decodeToken(token: string) {
+export const TokenService = {
+  decodeToken: (token: string) => {
     try {
       const decoded = jwtDecode<DecodedUser>(token);
       return decoded;
@@ -11,70 +11,56 @@ export class TokenService {
       console.warn(error);
       return {} as DecodedUser;
     }
-  }
+  },
 
-  public getAccessToken() {
+  getAccessToken: () => {
     return cookie.get("access_token");
-  }
+  },
 
-  public getRefreshToken() {
+  getRefreshToken: () => {
     return cookie.get("refresh_token");
-  }
+  },
 
-  public setAccessToken(token: string) {
+  getTokenExpiry: () => {
+    return parseInt(cookie.get("token_expiry") as string);
+  },
+
+  setAccessToken: (token: string) => {
     cookie.set("access_token", token);
-  }
+  },
 
-  public setRefreshToken(token: string) {
+  setRefreshToken: (token: string) => {
     cookie.set("refresh_token", token);
-  }
+  },
 
-  public setTokenExpiry(expiry: number) {
-    cookie.set("token_expiry", expiry.toString());
-  }
+  setTokenExpiry: (expiry: number) => {
+    cookie.set("token_expiry", expiry.toString(), { expires: 7 });
+  },
 
-  public removeAccessToken() {
+  removeAccessToken: () => {
     cookie.remove("access_token");
-  }
+  },
 
-  public removeRefreshToken() {
+  removeRefreshToken: () => {
     cookie.remove("refresh_token");
-  }
+  },
 
-  public removeTokenExpiry() {
+  removeTokenExpiry: () => {
     cookie.remove("token_expiry");
-  }
+  },
 
-  public removeTokens() {
+  removeTokens: () => {
     cookie.remove("access_token");
     cookie.remove("refresh_token");
     cookie.remove("token_expiry");
-  }
+  },
 
-  public getAuthHeader() {
-    const token = this.getAccessToken();
+  getAuthHeader: () => {
+    const token = TokenService.getAccessToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
-  }
+  },
 
-  public isAccessTokenExpired() {
-    try {
-      const token = this.getAccessToken();
-      if (!token) return true;
-      const decoded = JSON.parse(atob(token.split(".")[1]));
-      return decoded.exp < Date.now() / 1000;
-    } catch {
-      return true;
-    }
-  }
-
-  public isRefreshTokenExpired() {
-    try {
-      const token = this.getRefreshToken();
-      if (!token) return true;
-      const decoded = JSON.parse(atob(token.split(".")[1]));
-      return decoded.exp < Date.now() / 1000;
-    } catch {
-      return true;
-    }
-  }
-}
+  isTokenExpired: () => {
+    return TokenService.getTokenExpiry() * 1000 < Date.now();
+  },
+};
