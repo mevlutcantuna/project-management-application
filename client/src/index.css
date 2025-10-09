@@ -46,7 +46,7 @@
   --accent-foreground: oklch(0.21 0.006 285.885);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
+  --border: lch(84.025 0 282.863);
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.871 0.006 286.286);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -70,6 +70,7 @@
   --container: #fff;
   --icon-color: lch(38.893% 1 282.863 / 1);
   --icon-color-hover: #1b1b1b;
+  --active-tab: lch(49.5 49.927 286.91);
 }
 
 .dark {
@@ -110,6 +111,7 @@
   --container: #101011;
   --icon-color: lch(88.893% 1 282.863 / 1);
   --icon-color-hover: #fff;
+  --active-tab: lch(49.5 49.927 286.91);
 }
 
 @theme inline {
@@ -150,6 +152,7 @@
   --color-container: var(--container);
   --color-icon-color: var(--icon-color);
   --color-icon-color-hover: var(--icon-color-hover);
+  --color-active-tab: var(--active-tab);
 }
 
 @layer base {
