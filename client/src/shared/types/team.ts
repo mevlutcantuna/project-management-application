@@ -5,6 +5,8 @@ export interface Team {
   name: string;
   description: string;
   workspaceId: string;
+  iconName: string;
+  color: string;
   createdAt: Date;
   updatedAt: Date;
   users: Omit<User, "createdAt" | "updatedAt">[];

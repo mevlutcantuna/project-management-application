@@ -6,6 +6,8 @@ export interface Team {
   workspaceId: string;
   name: string;
   description: string;
+  iconName: string;
+  color: string;
   createdAt: Date;
   updatedAt: Date;
   users: Omit<User, "createdAt" | "updatedAt" | "passwordHash">[];
@@ -15,6 +17,8 @@ export interface CreateTeamInput {
   workspaceId: string;
   name: string;
   description: string;
+  iconName: string;
+  color: string;
   userIds: string[];
 }
 

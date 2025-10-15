@@ -7,15 +7,17 @@ class TeamRepository {
 
   async createTeam(values: CreateTeamInput): Promise<Team> {
     const query = `
-      INSERT INTO teams (name, description, workspace_id)
-      VALUES ($1, $2, $3)
-      RETURNING id, name, description, workspace_id, created_at, updated_at
+      INSERT INTO teams (name, description, workspace_id, icon_name, color)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id, name, description, workspace_id, icon_name, color, created_at, updated_at
     `;
 
     const result = await this.db.query(query, [
       values.name,
       values.description,
       values.workspaceId,
+      values.iconName,
+      values.color,
     ]);
     return camelcaseKeys(result.rows[0]);
   }
@@ -23,15 +25,17 @@ class TeamRepository {
   async updateTeam(id: string, values: UpdateTeamInput): Promise<Team> {
     const query = `
       UPDATE teams
-      SET name = $1, description = $2, workspace_id = $3
-      WHERE id = $4
-      RETURNING id, name, description, workspace_id, created_at, updated_at
+      SET name = $1, description = $2, workspace_id = $3, icon_name = $4, color = $5
+      WHERE id = $6
+      RETURNING id, name, description, workspace_id, icon_name, color, created_at, updated_at
     `;
 
     const result = await this.db.query(query, [
       values.name,
       values.description,
       values.workspaceId,
+      values.iconName,
+      values.color,
       id,
     ]);
     return camelcaseKeys(result.rows[0]);
@@ -39,7 +43,7 @@ class TeamRepository {
 
   async getTeams(workspaceId: string): Promise<Team[]> {
     const query = `
-      SELECT id, name, description, workspace_id, created_at, updated_at, users
+      SELECT id, name, description, workspace_id, icon_name, color, created_at, updated_at, users
       FROM teams_with_members
       WHERE workspace_id = $1
     `;
@@ -50,9 +54,9 @@ class TeamRepository {
 
   async getTeamById(id: string): Promise<Team | null> {
     const query = `
-      SELECT id, name, description, workspace_id, created_at, updated_at, users
+      SELECT id, name, description, workspace_id, icon_name, color, created_at, updated_at, users
       FROM teams_with_members
-      WHERE id = $1
+      WHERE id = $1 
     `;
     const result = await this.db.query(query, [id]);
     return result.rows[0] ? (camelcaseKeys(result.rows[0]) as Team) : null;

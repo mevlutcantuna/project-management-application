@@ -17,11 +17,11 @@ RETURNS TRIGGER AS $$
 BEGIN
   RAISE NOTICE 'Trigger fired for workspace: %', NEW.id;
   
-  INSERT INTO teams (workspace_id, name, description) VALUES
-    (NEW.id, 'Engineering', 'Software development and technical tasks'),
-    (NEW.id, 'Design', 'UI/UX design and creative work'),
-    (NEW.id, 'Marketing', 'Marketing campaigns and content creation'),
-    (NEW.id, 'General', 'General workspace discussions and tasks');
+  INSERT INTO teams (workspace_id, name, description, icon_name, color) VALUES
+    (NEW.id, 'Engineering', 'Software development and technical tasks' , 'Briefcase', 'lch(70.313 19.321 31.72)'),
+    (NEW.id, 'Design', 'UI/UX design and creative work' , 'Palette', 'lch(70.313 62.082 61.651)'),
+    (NEW.id, 'Marketing', 'Marketing campaigns and content creation' , 'BarChart', 'lch(48 59.31 288.43)'),
+    (NEW.id, 'General', 'General workspace discussions and tasks' , 'Building', 'lch(70.313 3.577 260.65)');
   
   RAISE NOTICE 'Teams created for workspace: %', NEW.id;
   
@@ -30,6 +30,6 @@ BEGIN
   
   RAISE NOTICE 'Workspace member added for workspace: %', NEW.id;
   
-  RETURN NEW;
-END;
+  
+END;RETURN NEW;
 $$ LANGUAGE plpgsql;

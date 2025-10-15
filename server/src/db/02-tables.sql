@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS teams (
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   name VARCHAR(100) NOT NULL,
   description VARCHAR(255) NOT NULL,
+  icon_name VARCHAR(50) NOT NULL,
+  color VARCHAR(20) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -60,6 +62,7 @@ CREATE TABLE IF NOT EXISTS team_members (
   joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(team_id, user_id)
 );
+
 
 -- Issue statuses (predefined statuses)
 CREATE TABLE IF NOT EXISTS issue_statuses (

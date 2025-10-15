@@ -20,7 +20,8 @@ class TeamController {
   }
 
   createTeam = async (req: CreateTeamRequest, res: Response) => {
-    const { name, description, workspaceId, userIds } = req.body;
+    const { name, description, workspaceId, iconName, color, userIds } =
+      req.body;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
 
@@ -33,6 +34,8 @@ class TeamController {
       name,
       description,
       workspaceId,
+      iconName,
+      color,
       userIds,
     });
     res.status(201).json(team);
@@ -40,7 +43,7 @@ class TeamController {
 
   updateTeam = async (req: UpdateTeamRequest, res: Response) => {
     const { id } = req.params;
-    const { name, description, workspaceId } = req.body;
+    const { name, description, workspaceId, iconName, color } = req.body;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
 
@@ -48,6 +51,8 @@ class TeamController {
       name,
       description,
       workspaceId,
+      iconName,
+      color,
     });
     res.status(200).json(team);
   };
