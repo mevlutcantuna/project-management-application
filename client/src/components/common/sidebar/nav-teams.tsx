@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChevronRight, LaptopMinimalCheck, Plus } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 
 import {
   SidebarGroup,
@@ -17,6 +17,7 @@ import {
 import type { Team } from "@/shared/types/team";
 import { Link, useNavigate } from "react-router-dom";
 import { useWorkspaceStore } from "@/features/workspace/store";
+import { ICONS } from "../icon-picker/constants";
 
 interface NavTeamSidebarItem extends Team {
   url: string;
@@ -65,16 +66,22 @@ export function NavTeams({
           </CollapsibleTrigger>
           <CollapsibleContent>
             <SidebarMenu className="pt-0">
-              {teams.map((item, index) => (
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuButton asChild>
-                    <Link to={item.url} className="group/item">
-                      <LaptopMinimalCheck className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200" />
-                      <span className="text-icon-color">{item.name}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {teams.map((item, index) => {
+                const Icon = ICONS[item.iconName as keyof typeof ICONS];
+                return (
+                  <SidebarMenuItem key={index}>
+                    <SidebarMenuButton asChild>
+                      <Link to={item.url} className="group/item">
+                        <Icon
+                          color={item.color}
+                          className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200"
+                        />
+                        <span className="text-icon-color">{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </CollapsibleContent>
         </Collapsible>
