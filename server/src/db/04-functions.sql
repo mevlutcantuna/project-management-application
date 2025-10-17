@@ -30,6 +30,6 @@ BEGIN
   
   RAISE NOTICE 'Workspace member added for workspace: %', NEW.id;
   
-  
-END;RETURN NEW;
+  RETURN NEW;
+END;
 $$ LANGUAGE plpgsql;

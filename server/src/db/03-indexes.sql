@@ -40,10 +40,6 @@ CREATE INDEX IF NOT EXISTS idx_issue_subscribers_user_id ON issue_subscribers(us
 CREATE INDEX IF NOT EXISTS idx_issue_assignees_issue_id ON issue_assignees(issue_id);
 CREATE INDEX IF NOT EXISTS idx_issue_assignees_user_id ON issue_assignees(user_id);
 
--- Sub issues 
-CREATE INDEX IF NOT EXISTS idx_sub_issues_issue_id ON sub_issues(issue_id);
-CREATE INDEX IF NOT EXISTS idx_sub_issues_sub_issue_id ON sub_issues(sub_issue_id);
-
 -- Issue activities 
 CREATE INDEX IF NOT EXISTS idx_issue_activities_issue_id ON issue_activities(issue_id);
 CREATE INDEX IF NOT EXISTS idx_issue_activities_user_id ON issue_activities(user_id);

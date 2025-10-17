@@ -117,14 +117,6 @@ CREATE TABLE IF NOT EXISTS issue_assignees (
   UNIQUE(issue_id, user_id)
 );
 
--- Sub issues junction table (many-to-many relationship)
-CREATE TABLE IF NOT EXISTS sub_issues (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
-  sub_issue_id UUID NOT NULL REFERENCES issues(id) ON DELETE CASCADE,
-  UNIQUE(issue_id, sub_issue_id)
-);
-
 -- Issue activities log
 CREATE TABLE IF NOT EXISTS issue_activities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
