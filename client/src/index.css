@@ -32,9 +32,11 @@
 }
 
 :root {
-  --card: oklch(1 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: lch(100 0 282.863);
   --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
+  --popover: lch(100 0 282.863);
   --popover-foreground: oklch(0.141 0.005 285.823);
   --primary: oklch(0.21 0.006 285.885);
   --primary-foreground: oklch(0.985 0 0);
@@ -56,6 +58,7 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
   --sidebar: #f6f6f6;
+  --sidebar-inset: #fcfcfc;
   --sidebar-foreground: oklch(0.141 0.005 285.823);
   --sidebar-primary: oklch(0.21 0.006 285.885);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -65,8 +68,6 @@
   --sidebar-link-background: oklch(0.92 0 282.863);
   --sidebar-link-hover: #f0f0f0;
   --sidebar-ring: oklch(0.871 0.006 286.286);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
   --container: #fff;
   --icon-color: lch(38.893% 1 282.863 / 1);
   --icon-color-hover: #1b1b1b;
@@ -76,9 +77,9 @@
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.005 285.823);
+  --card: lch(8.3 1.867 272);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.141 0.005 285.823);
+  --popover: lch(8.3 1.867 272);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.21 0.006 285.885);
@@ -99,6 +100,7 @@
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-inset: #0a0a0a;
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -140,6 +142,7 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
+  --color-sidebar-inset: var(--sidebar-inset);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
@@ -162,5 +165,9 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  .text-sm {
+    font-size: 0.8125rem;
   }
 }

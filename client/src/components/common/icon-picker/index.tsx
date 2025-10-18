@@ -68,7 +68,7 @@ function IconPickerContent({
       data-slot="icon-picker-content"
       {...props}
     >
-      <div className="border-active-tab relative mx-2 -mb-px h-full w-fit border-b-2 px-3 pt-[7px] pb-1 text-[13px]">
+      <div className="border-active-tab relative mx-2 -mb-px h-full w-fit border-b-2 px-3 pt-[7px] pb-1 text-sm">
         Icons
       </div>
 
@@ -77,6 +77,7 @@ function IconPickerContent({
       <div className="grid grid-cols-8 gap-2 px-4">
         {Object.values(COLORS).map((color) => (
           <button
+            key={color}
             style={{
               backgroundColor: color,
               outlineColor: color,
@@ -94,7 +95,7 @@ function IconPickerContent({
       <div className="px-2 py-[5px]">
         <input
           placeholder="Search icons..."
-          className="h-7 w-full px-2.5 py-1.5 text-[13px] outline-none"
+          className="h-7 w-full px-2.5 py-1.5 text-sm outline-none"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -106,7 +107,7 @@ function IconPickerContent({
         {filteredIcons.map((icon) => {
           const Icon = ICONS[icon as keyof typeof ICONS];
           return (
-            <PopoverClose asChild>
+            <PopoverClose key={icon} asChild>
               <button
                 style={{
                   color: value.color,
@@ -117,7 +118,6 @@ function IconPickerContent({
                   ["--hover-bg" as string]: `color-mix(in srgb, ${value.color} 10%, transparent)`,
                 }}
                 className="hover:!text-primary flex h-7 w-7 items-center justify-center rounded-md p-1.5 transition-colors duration-150 hover:[background-color:var(--hover-bg)]"
-                key={icon}
                 onClick={() =>
                   onChange({
                     icon: icon as keyof typeof ICONS,

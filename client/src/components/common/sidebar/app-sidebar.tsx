@@ -10,8 +10,10 @@ import {
   Inbox,
   Layers2,
   Maximize,
+  Moon,
   Search,
   SquarePen,
+  Sun,
   Zap,
   type LucideIcon,
   type LucideProps,
@@ -42,6 +44,7 @@ import { useWorkspaceStore } from "@/features/workspace/store";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useTeamStore } from "@/features/teams/store";
+import { useTheme } from "@/shared/hooks/use-theme";
 export interface SidebarItem {
   icon: LucideIcon;
   iconProps?: LucideProps;
@@ -54,6 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user, logout } = useAuthStore();
   const { workspaces, currentWorkspace } = useWorkspaceStore();
   const { teams } = useTeamStore();
+  const { setTheme } = useTheme();
 
   const generalSidebarItems: SidebarItem[] = [
     {
@@ -164,6 +168,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </DropdownMenu>
 
           <div className="flex gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="h-7 w-7" variant="ghost" size="icon">
+                  <Sun className="size-3.5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                  <Moon className="absolute size-3.5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                  <span className="sr-only">Toggle theme</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                  Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>
+                  System
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Button className="h-7 w-7" variant="ghost" size="icon">
               <Search className="size-3.5" />
             </Button>
