@@ -24,6 +24,12 @@ CREATE TRIGGER set_updated_at_teams
 BEFORE UPDATE ON teams
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
+-- Trigger to add team creator as team member
+DROP TRIGGER IF EXISTS trigger_add_team_creator ON teams;
+CREATE TRIGGER trigger_add_team_creator
+AFTER INSERT ON teams
+FOR EACH ROW EXECUTE FUNCTION add_team_creator_to_team_members();
+
 -- Issues trigger
 DROP TRIGGER IF EXISTS set_updated_at_issues ON issues;
 CREATE TRIGGER set_updated_at_issues
