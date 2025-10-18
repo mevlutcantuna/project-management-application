@@ -72,10 +72,18 @@ export function NavTeams({
                   <SidebarMenuItem key={index}>
                     <SidebarMenuButton asChild>
                       <Link to={item.url} className="group/item">
-                        <Icon
-                          color={item.color}
-                          className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200"
-                        />
+                        <div
+                          style={{
+                            backgroundColor: `color-mix(in srgb, ${item.color} 20%, transparent)`,
+                          }}
+                          className="flex h-4.5 w-4.5 items-center justify-center rounded-sm"
+                        >
+                          <Icon
+                            color={item.color}
+                            className="text-icon-color group-hover/item:text-icon-color-hover size-3.5 transition-colors duration-200"
+                          />
+                        </div>
+
                         <span className="text-icon-color">{item.name}</span>
                       </Link>
                     </SidebarMenuButton>
