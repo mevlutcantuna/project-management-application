@@ -5,7 +5,7 @@ export interface Team {
   id: string;
   workspaceId: string;
   name: string;
-  description: string;
+  identifier: string;
   iconName: string;
   color: string;
   createdAt: Date;
@@ -16,10 +16,10 @@ export interface Team {
 export interface CreateTeamInput {
   workspaceId: string;
   name: string;
-  description: string;
+  identifier: string;
   iconName: string;
   color: string;
-  userIds: string[];
+  userIds?: string[];
 }
 
 export type UpdateTeamInput = Partial<CreateTeamInput>;

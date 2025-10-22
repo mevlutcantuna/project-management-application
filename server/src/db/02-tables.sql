@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS teams (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   name VARCHAR(100) NOT NULL,
-  description VARCHAR(255) NOT NULL,
+  identifier VARCHAR(50) NOT NULL,
   icon_name VARCHAR(50) NOT NULL,
   color VARCHAR(50) NOT NULL,
   created_by_id UUID REFERENCES users(id) ON DELETE SET NULL,

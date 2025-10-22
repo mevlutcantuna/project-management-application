@@ -18,9 +18,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
       {...props}
       toastOptions={{
         classNames: {
-          success: "!text-green-500",
-          error: "!text-red-500",
-          description: "!text-slate-900",
+          success: "!text-primary",
+          error: "!text-destructive",
+          description: "!text-foreground",
         },
       }}
     />

@@ -5,21 +5,21 @@ import { useEffect } from "react";
 
 export const useTeams = () => {
   const { currentWorkspace } = useWorkspaceStore();
-  const { teams, setTeams } = useTeamStore();
+  const { setTeams } = useTeamStore();
   const { data, isPending, isLoading, isError } = useGetWorkspaceTeamsQuery(
     currentWorkspace?.id || "",
     {
-      enabled: !!currentWorkspace?.id && !teams.length,
+      enabled: !!currentWorkspace?.id,
     }
   );
 
   useEffect(() => {
-    if (data && data.length > 0 && teams.length === 0) {
+    if (data && data.length > 0) {
       setTeams(data);
     } else if (data && data.length === 0) {
       setTeams([]);
     }
-  }, [data, setTeams, teams.length]);
+  }, [data, setTeams]);
 
   return {
     data,

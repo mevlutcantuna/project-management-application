@@ -7,14 +7,14 @@ class TeamRepository {
 
   async createTeam(values: CreateTeamInput): Promise<Team> {
     const query = `
-      INSERT INTO teams (name, description, workspace_id, icon_name, color)
+      INSERT INTO teams (name, identifier, workspace_id, icon_name, color)
       VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, name, description, workspace_id, icon_name, color, created_at, updated_at
+      RETURNING id, name, identifier, workspace_id, icon_name, color, created_at, updated_at
     `;
 
     const result = await this.db.query(query, [
       values.name,
-      values.description,
+      values.identifier,
       values.workspaceId,
       values.iconName,
       values.color,
@@ -25,14 +25,14 @@ class TeamRepository {
   async updateTeam(id: string, values: UpdateTeamInput): Promise<Team> {
     const query = `
       UPDATE teams
-      SET name = $1, description = $2, workspace_id = $3, icon_name = $4, color = $5
+      SET name = $1, identifier = $2, workspace_id = $3, icon_name = $4, color = $5
       WHERE id = $6
-      RETURNING id, name, description, workspace_id, icon_name, color, created_at, updated_at
+      RETURNING id, name, identifier, workspace_id, icon_name, color, created_at, updated_at
     `;
 
     const result = await this.db.query(query, [
       values.name,
-      values.description,
+      values.identifier,
       values.workspaceId,
       values.iconName,
       values.color,
@@ -43,7 +43,7 @@ class TeamRepository {
 
   async getTeams(workspaceId: string): Promise<Team[]> {
     const query = `
-      SELECT id, name, description, workspace_id, icon_name, color, created_at, updated_at, users
+      SELECT id, name, identifier, workspace_id, icon_name, color, created_at, updated_at, users
       FROM teams_with_members
       WHERE workspace_id = $1
     `;
@@ -54,7 +54,7 @@ class TeamRepository {
 
   async getTeamById(id: string): Promise<Team | null> {
     const query = `
-      SELECT id, name, description, workspace_id, icon_name, color, created_at, updated_at, users
+      SELECT id, name, identifier, workspace_id, icon_name, color, created_at, updated_at, users
       FROM teams_with_members
       WHERE id = $1 
     `;
@@ -93,6 +93,38 @@ class TeamRepository {
       WHERE user_id = $1 AND team_id = $2 AND (role = 'Admin' OR role = 'Manager')
       `;
     const result = await this.db.query(query, [userId, teamId]);
+    return parseInt(result.rows[0].count) > 0;
+  }
+
+  async checkTeamIdentifierExistsForWorkspace(
+    workspaceId: string,
+    identifier: string
+  ): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM teams
+      WHERE workspace_id = $1 AND identifier = $2 
+    `;
+
+    const result = await this.db.query(query, [workspaceId, identifier]);
+    return parseInt(result.rows[0].count) > 0;
+  }
+
+  async checkTeamIdentifierExistsForWorkspaceExceptCurrentTeam(
+    workspaceId: string,
+    identifier: string,
+    currentTeamId: string
+  ): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM teams
+      WHERE workspace_id = $1 AND identifier = $2 AND id != $3
+    `;
+    const result = await this.db.query(query, [
+      workspaceId,
+      identifier,
+      currentTeamId,
+    ]);
     return parseInt(result.rows[0].count) > 0;
   }
 }

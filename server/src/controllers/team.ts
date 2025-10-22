@@ -6,7 +6,12 @@ import {
   DeleteTeamRequest,
   GetTeamsByWorkspaceRequest,
 } from "@/types/team";
-import { NotFoundError, UnauthorizedError } from "@/utils/errors";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+} from "@/utils/errors";
 import { Response } from "express";
 import { UserService } from "@/services/user";
 
@@ -20,19 +25,39 @@ class TeamController {
   }
 
   createTeam = async (req: CreateTeamRequest, res: Response) => {
-    const { name, description, workspaceId, iconName, color, userIds } =
+    const { name, identifier, workspaceId, iconName, color, userIds } =
       req.body;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
 
+    // Check if the identifier already exists
+    const existingTeam =
+      await this.teamService.checkTeamIdentifierExistsForWorkspace(
+        workspaceId,
+        identifier
+      );
+    if (existingTeam)
+      throw new ConflictError(
+        "identifier",
+        "Team identifier already exists for this workspace"
+      );
+
     // Check if the userIds are valid
-    const users = await this.userService.getUsersByIds(userIds);
-    if (users.length !== userIds.length)
-      throw new UnauthorizedError("Invalid user IDs");
+    if (userIds && userIds.length > 0) {
+      const users = await this.userService.getUsersByIds(userIds);
+
+      if (users.length !== userIds.length)
+        throw new BadRequestError("Invalid user IDs", [
+          {
+            field: "userIds",
+            message: "Invalid user IDs",
+          },
+        ]);
+    }
 
     const team = await this.teamService.createTeam({
       name,
-      description,
+      identifier,
       workspaceId,
       iconName,
       color,
@@ -43,13 +68,42 @@ class TeamController {
 
   updateTeam = async (req: UpdateTeamRequest, res: Response) => {
     const { id } = req.params;
-    const { name, description, workspaceId, iconName, color } = req.body;
+    const { name, identifier, workspaceId, iconName, color, userIds } =
+      req.body;
 
     if (!req.user) throw new UnauthorizedError("User not authenticated");
 
+    // Check if the identifier already exists
+    if (identifier && identifier !== "" && workspaceId) {
+      const existingTeam =
+        await this.teamService.checkTeamIdentifierExistsForWorkspaceExceptCurrentTeam(
+          workspaceId,
+          identifier,
+          id
+        );
+      if (existingTeam)
+        throw new ConflictError(
+          "identifier",
+          "Team identifier already exists for this workspace"
+        );
+    }
+
+    // Check if the userIds are valid
+    if (userIds && userIds.length > 0) {
+      const users = await this.userService.getUsersByIds(userIds);
+
+      if (users.length !== userIds.length)
+        throw new BadRequestError("Invalid user IDs", [
+          {
+            field: "userIds",
+            message: "Invalid user IDs",
+          },
+        ]);
+    }
+
     const team = await this.teamService.updateTeam(id, {
       name,
-      description,
+      identifier,
       workspaceId,
       iconName,
       color,

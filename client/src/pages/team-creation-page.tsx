@@ -7,17 +7,83 @@ import {
 import { COLORS, ICONS } from "@/components/common/icon-picker/constants";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useCreateTeamMutation } from "@/features/teams/api/mutations";
+import { useWorkspaceStore } from "@/features/workspace/store";
+import { getErrorMessage } from "@/shared/lib/utils";
+import type { ErrorResponse } from "@/shared/types/error";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
+
+const formSchema = z.object({
+  name: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters long" }),
+  identifier: z
+    .string()
+    .min(1, { message: "Identifier must be at least 1 character long" }),
+  icon: z.object({
+    icon: z.string().min(1),
+    color: z.string().min(1),
+  }),
+});
+
+type FormSchema = z.infer<typeof formSchema>;
 
 const TeamCreationPage = () => {
-  const [value, setValue] = useState<IconPickerValue>({
-    icon: "Briefcase",
-    color: COLORS.blueGray,
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { currentWorkspace } = useWorkspaceStore();
+  const { mutate: createTeam } = useCreateTeamMutation({
+    onSuccess: (data) => {
+      toast.success("Team created successfully");
+      navigate(`/${currentWorkspace?.url}/settings/team/${data.id}`);
+      queryClient.invalidateQueries({ queryKey: ["workspace-teams"] });
+    },
+    onError: (error) => {
+      toast.error("Failed to create team", {
+        description: getErrorMessage(error as ErrorResponse),
+      });
+    },
+  });
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      identifier: "",
+      icon: {
+        icon: "Building",
+        color: COLORS.blueGray,
+      },
+    },
   });
 
-  const Icon = ICONS[value.icon];
+  const onSubmit = (data: FormSchema) => {
+    console.log(data);
+
+    if (!currentWorkspace?.id) return;
+
+    createTeam({
+      name: data.name,
+      identifier: data.identifier,
+      iconName: data.icon.icon,
+      color: data.icon.color,
+      workspaceId: currentWorkspace.id,
+    });
+  };
 
   return (
     <div className="mx-10 my-16 flex items-start justify-center">
@@ -32,50 +98,113 @@ const TeamCreationPage = () => {
           </p>
         </div>
 
-        <Card className="gap-0 px-4 py-0">
-          <div className="flex items-center justify-between py-3">
-            <label htmlFor="icon" className="text-primary text-sm">
-              Team icon
-            </label>
+        <Form {...form}>
+          <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
+            <Card className="gap-0 px-4 py-0">
+              <FormField
+                control={form.control}
+                name="icon"
+                render={({ field }) => {
+                  const Icon = ICONS[field.value.icon as keyof typeof ICONS];
 
-            <IconPicker value={value} onChange={setValue}>
-              <IconPickerTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="bg-secondary group aspect-square h-8 w-8 rounded-sm p-0"
-                  style={{
-                    color: value.color,
-                  }}
-                >
-                  <Icon className="group-hover:text-primary size-6 transition-colors duration-100" />
-                </Button>
-              </IconPickerTrigger>
-              <IconPickerContent />
-            </IconPicker>
-          </div>
+                  return (
+                    <div className="flex items-center justify-between py-3">
+                      <label htmlFor="icon" className="text-primary text-sm">
+                        Team icon
+                      </label>
+                      <IconPicker
+                        value={field.value as IconPickerValue}
+                        onChange={(e) => {
+                          field.onChange({
+                            icon: e.icon,
+                            color: e.color,
+                          });
+                        }}
+                      >
+                        <IconPickerTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="bg-secondary group aspect-square h-8 w-8 rounded-sm p-0"
+                            style={{
+                              color: field.value.color,
+                            }}
+                          >
+                            <Icon className="group-hover:text-primary size-6 transition-colors duration-100" />
+                          </Button>
+                        </IconPickerTrigger>
+                        <IconPickerContent />
+                      </IconPicker>
+                    </div>
+                  );
+                }}
+              />
 
-          <Separator />
+              <Separator />
 
-          <div className="flex items-center justify-between py-3">
-            <label htmlFor="name" className="text-primary text-sm">
-              Team name
-            </label>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <div className="flex items-center justify-between py-3">
+                        <div className="flex flex-col gap-1">
+                          <FormLabel>Team name</FormLabel>
+                          <FormMessage />
+                        </div>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            inputSize="sm"
+                            className="max-w-44"
+                            placeholder="e.g. Engineering"
+                          />
+                        </FormControl>
+                      </div>
+                    </FormItem>
+                  );
+                }}
+              />
 
-            <Input
-              className="max-w-44"
-              id="name"
-              placeholder="e.g. Engineering"
-            />
-          </div>
-        </Card>
+              <Separator />
 
-        <IconPicker value={value} onChange={setValue}>
-          <IconPickerTrigger asChild>
-            <Button variant="outline">deneme</Button>
-          </IconPickerTrigger>
-          <IconPickerContent />
-        </IconPicker>
+              <FormField
+                control={form.control}
+                name="identifier"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <div className="flex items-center justify-between py-3">
+                        <div className="flex flex-col gap-1">
+                          <FormLabel>Identifier</FormLabel>
+                          <FormMessage />
+                        </div>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e.target.value.toUpperCase());
+                            }}
+                            inputSize="sm"
+                            className="max-w-44"
+                            placeholder="e.g. ENG"
+                          />
+                        </FormControl>
+                      </div>
+                    </FormItem>
+                  );
+                }}
+              />
+            </Card>
+
+            <div className="mt-12 flex justify-end">
+              <Button variant="primary" type="submit" size="sm">
+                Create Team
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

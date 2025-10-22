@@ -51,4 +51,26 @@ export class TeamService {
   ): Promise<boolean> {
     return this.teamRepository.checkUserIsTeamMember(userId, teamId);
   }
+
+  async checkTeamIdentifierExistsForWorkspace(
+    workspaceId: string,
+    identifier: string
+  ): Promise<boolean> {
+    return this.teamRepository.checkTeamIdentifierExistsForWorkspace(
+      workspaceId,
+      identifier
+    );
+  }
+
+  async checkTeamIdentifierExistsForWorkspaceExceptCurrentTeam(
+    workspaceId: string,
+    identifier: string,
+    currentTeamId: string
+  ): Promise<boolean> {
+    return this.teamRepository.checkTeamIdentifierExistsForWorkspaceExceptCurrentTeam(
+      workspaceId,
+      identifier,
+      currentTeamId
+    );
+  }
 }

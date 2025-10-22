@@ -3,7 +3,7 @@ CREATE OR REPLACE VIEW teams_with_members AS
 SELECT 
   t.id,
   t.name,
-  t.description,
+  t.identifier,
   t.workspace_id,
   t.icon_name,
   t.color,
@@ -28,4 +28,4 @@ SELECT
 FROM teams t
 LEFT JOIN team_members tm ON t.id = tm.team_id
 LEFT JOIN users u ON tm.user_id = u.id
-GROUP BY t.id, t.name, t.description, t.workspace_id, t.icon_name, t.color, t.created_at, t.updated_at;
+GROUP BY t.id, t.name, t.identifier, t.workspace_id, t.icon_name, t.color, t.created_at, t.updated_at;
