@@ -34,6 +34,24 @@ export class TeamService {
     return this.teamRepository.getTeamById(id);
   }
 
+  async getTeamByIdentifier(
+    identifier: string,
+    workspaceId: string,
+    userId: string
+  ): Promise<Team | null> {
+    const isUserTeamMember =
+      await this.teamRepository.checkUserIsTeamMemberWithTeamIdentifier(
+        userId,
+        identifier,
+        workspaceId
+      );
+
+    if (!isUserTeamMember)
+      throw new UnauthorizedError("User is not a member of the team");
+
+    return this.teamRepository.getTeamByIdentifier(identifier, workspaceId);
+  }
+
   async deleteTeam(id: string): Promise<void> {
     return this.teamRepository.deleteTeam(id);
   }

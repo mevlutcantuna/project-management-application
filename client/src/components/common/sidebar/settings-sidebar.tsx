@@ -63,7 +63,7 @@ export function SettingsSidebar({
           enableAddTeam={false}
           teams={teams.map((team) => ({
             ...team,
-            url: `/${currentWorkspace?.url}/settings/team/${team.id}`,
+            url: `/${currentWorkspace?.url}/settings/team/${team.identifier}`,
           }))}
         />
       </SidebarContent>

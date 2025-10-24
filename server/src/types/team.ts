@@ -20,6 +20,7 @@ export interface CreateTeamInput {
   iconName: string;
   color: string;
   userIds?: string[];
+  createdById: string;
 }
 
 export type UpdateTeamInput = Partial<CreateTeamInput>;
@@ -50,5 +51,12 @@ export interface GetTeamByIdRequest extends AuthenticatedRequest {
 export interface DeleteTeamRequest extends AuthenticatedRequest {
   params: {
     id: string;
+  };
+}
+
+export interface GetTeamByIdentifierRequest extends AuthenticatedRequest {
+  params: {
+    identifier: string;
+    workspaceId: string;
   };
 }

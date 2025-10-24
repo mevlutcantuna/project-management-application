@@ -12,9 +12,13 @@ export interface Team {
   users: Omit<User, "createdAt" | "updatedAt">[];
 }
 
-export type CreateTeamInput = Omit<
-  Team,
-  "id" | "createdAt" | "updatedAt" | "users"
->;
+export interface CreateTeamInput {
+  workspaceId: string;
+  name: string;
+  identifier: string;
+  iconName: string;
+  color: string;
+  userIds?: string[];
+}
 
 export type UpdateTeamInput = Partial<CreateTeamInput>;

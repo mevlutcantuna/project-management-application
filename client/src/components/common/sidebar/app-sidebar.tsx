@@ -205,7 +205,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavTeams
           teams={teams.map((team) => ({
             ...team,
-            url: `/${currentWorkspace?.url}/settings/team/${team.id}`,
+            url: `/${currentWorkspace?.url}/settings/team/${team.identifier}`,
           }))}
         />
       </SidebarContent>

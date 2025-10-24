@@ -5,6 +5,7 @@ import {
   GetTeamByIdRequest,
   DeleteTeamRequest,
   GetTeamsByWorkspaceRequest,
+  GetTeamByIdentifierRequest,
 } from "@/types/team";
 import {
   BadRequestError,
@@ -62,6 +63,7 @@ class TeamController {
       iconName,
       color,
       userIds,
+      createdById: req.user.id,
     });
     res.status(201).json(team);
   };
@@ -131,6 +133,24 @@ class TeamController {
     if (!req.user) throw new UnauthorizedError("User not authenticated");
 
     const team = await this.teamService.getTeamById(id, req.user.id);
+    res.status(200).json(team);
+  };
+
+  getTeamByIdentifier = async (
+    req: GetTeamByIdentifierRequest,
+    res: Response
+  ) => {
+    const { identifier, workspaceId } = req.params;
+
+    if (!req.user) throw new UnauthorizedError("User not authenticated");
+
+    const team = await this.teamService.getTeamByIdentifier(
+      identifier,
+      workspaceId,
+      req.user.id
+    );
+    if (!team) throw new NotFoundError("Team not found");
+
     res.status(200).json(team);
   };
 

@@ -17,6 +17,7 @@ router.post("/", teamController.createTeam);
 router.put("/:id", teamController.updateTeam);
 router.get("/", teamController.getTeams);
 router.get("/:id", teamController.getTeamById);
+router.get("/by-identifier/:identifier", teamController.getTeamByIdentifier);
 router.delete("/:id", teamController.deleteTeam);
 
 export default router;

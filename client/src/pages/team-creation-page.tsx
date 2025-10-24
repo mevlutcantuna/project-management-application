@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useAuthStore } from "@/features/auth/store";
 import { useCreateTeamMutation } from "@/features/teams/api/mutations";
 import { useWorkspaceStore } from "@/features/workspace/store";
 import { getErrorMessage } from "@/shared/lib/utils";
@@ -47,10 +48,11 @@ const TeamCreationPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { currentWorkspace } = useWorkspaceStore();
+  const { user: currentUser } = useAuthStore();
   const { mutate: createTeam } = useCreateTeamMutation({
     onSuccess: (data) => {
       toast.success("Team created successfully");
-      navigate(`/${currentWorkspace?.url}/settings/team/${data.id}`);
+      navigate(`/${currentWorkspace?.url}/settings/team/${data.identifier}`);
       queryClient.invalidateQueries({ queryKey: ["workspace-teams"] });
     },
     onError: (error) => {
@@ -72,9 +74,7 @@ const TeamCreationPage = () => {
   });
 
   const onSubmit = (data: FormSchema) => {
-    console.log(data);
-
-    if (!currentWorkspace?.id) return;
+    if (!currentWorkspace?.id || !currentUser?.id) return;
 
     createTeam({
       name: data.name,

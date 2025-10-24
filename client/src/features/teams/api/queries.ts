@@ -7,9 +7,26 @@ export const useGetWorkspaceTeamsQuery = (
   options?: Omit<Parameters<typeof useQuery<Team[]>>[0], "queryKey" | "queryFn">
 ) => {
   return useQuery<Team[]>({
-    queryKey: ["workspace-teams"],
+    queryKey: ["worksace-teams", workspaceId],
     queryFn: async () => {
       const response = await api.get(`workspaces/${workspaceId}/teams`);
+      return response.data;
+    },
+    ...options,
+  });
+};
+
+export const useGetTeamByIdentifierQuery = (
+  identifier: string,
+  workspaceId: string,
+  options?: Omit<Parameters<typeof useQuery<Team>>[0], "queryKey" | "queryFn">
+) => {
+  return useQuery<Team>({
+    queryKey: ["team-by-identifier", identifier, workspaceId],
+    queryFn: async () => {
+      const response = await api.get(
+        `workspaces/${workspaceId}/teams/by-identifier/${identifier}`
+      );
       return response.data;
     },
     ...options,

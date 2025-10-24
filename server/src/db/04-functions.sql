@@ -17,11 +17,11 @@ RETURNS TRIGGER AS $$
 BEGIN
   RAISE NOTICE 'Trigger fired for workspace: %', NEW.id;
   
-  INSERT INTO teams (workspace_id, name, identifier, icon_name, color) VALUES
-    (NEW.id, 'General', 'GEN' , 'Building', 'lch(70.313 3.577 260.65)'),
-    (NEW.id, 'Engineering', 'ENG' , 'Briefcase', 'lch(70.313 19.321 31.72)'),
-    (NEW.id, 'Marketing', 'MKT' , 'BarChart', 'lch(48 59.31 288.43)'),
-    (NEW.id, 'Design', 'DES' , 'Palette', 'lch(70.313 62.082 61.651)');
+  INSERT INTO teams (workspace_id, name, identifier, icon_name, color, created_by_id) VALUES
+    (NEW.id, 'General', 'GEN' , 'Building', 'lch(70.313 3.577 260.65)', NEW.owner_id),
+    (NEW.id, 'Engineering', 'ENG' , 'Briefcase', 'lch(70.313 19.321 31.72)', NEW.owner_id),
+    (NEW.id, 'Marketing', 'MKT' , 'BarChart', 'lch(48 59.31 288.43)', NEW.owner_id),
+    (NEW.id, 'Design', 'DES' , 'Palette', 'lch(70.313 62.082 61.651)', NEW.owner_id);
   
   RAISE NOTICE 'Teams created for workspace: %', NEW.id;
   
@@ -38,10 +38,13 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION add_team_creator_to_team_members()
 RETURNS TRIGGER AS $$
 BEGIN
+RAISE NOTICE 'Trigger fired for team: %', NEW;
   IF NEW.created_by_id IS NOT NULL THEN
     INSERT INTO team_members (team_id, user_id)
     VALUES (NEW.id, NEW.created_by_id);
   END IF;
+
+  RAISE NOTICE 'Team creator added to team_members: %', NEW.id;
   
   RETURN NEW;
 END;
