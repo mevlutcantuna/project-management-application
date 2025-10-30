@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Activity } from "react";
 import { ChevronRight, Ellipsis, Plus, Settings } from "lucide-react";
 
 import {
@@ -84,7 +85,9 @@ export function NavTeams({
                           {item.name}
                         </span>
 
-                        {!disableSettings && (
+                        <Activity
+                          mode={!disableSettings ? "visible" : "hidden"}
+                        >
                           <DropdownMenu>
                             <DropdownMenuTrigger className="text-icon-color/50 data-[state=open]:text-icon-color-hover invisible ml-auto transition-colors duration-200 group-hover/item:visible data-[state=open]:visible">
                               <Ellipsis className="size-3" />
@@ -96,14 +99,14 @@ export function NavTeams({
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
-                        )}
+                        </Activity>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
               })}
 
-              {enableAddTeam && (
+              <Activity mode={enableAddTeam ? "visible" : "hidden"}>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     onClick={(e) => {
@@ -121,7 +124,7 @@ export function NavTeams({
                     </span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              )}
+              </Activity>
             </SidebarMenu>
           </CollapsibleContent>
         </Collapsible>

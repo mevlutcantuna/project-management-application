@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/shared/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo } from "react";
+import { Activity, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -39,7 +39,7 @@ const teamFormSchema = z.object({
 export type TeamFormSchema = z.infer<typeof teamFormSchema>;
 
 interface TeamFormProps {
-  layoutType: "horizontal" | "vertical";
+  layoutType?: "horizontal" | "vertical";
   onSubmit: (data: TeamFormSchema) => void;
   defaultValues?: Partial<TeamFormSchema>;
   submitButtonText?: string;
@@ -147,7 +147,9 @@ const TeamForm = ({
                 }}
               />
 
-              {!isHorizontal && <Separator />}
+              <Activity mode={!isHorizontal ? "visible" : "hidden"}>
+                <Separator />
+              </Activity>
 
               <FormField
                 control={form.control}
@@ -161,12 +163,12 @@ const TeamForm = ({
                           isHorizontal && "pt-0"
                         )}
                       >
-                        {!isHorizontal && (
+                        <Activity mode={!isHorizontal ? "visible" : "hidden"}>
                           <div className="flex flex-col gap-1">
                             <FormLabel>Team name</FormLabel>
                             <FormMessage />
                           </div>
-                        )}
+                        </Activity>
 
                         <FormControl>
                           <Input
@@ -184,7 +186,9 @@ const TeamForm = ({
             </div>
           </div>
 
-          {!isHorizontal && <Separator />}
+          <Activity mode={!isHorizontal ? "visible" : "hidden"}>
+            <Separator />
+          </Activity>
 
           <FormField
             control={form.control}
@@ -221,7 +225,9 @@ const TeamForm = ({
             }}
           />
 
-          {isHorizontal && form.formState.isDirty && (
+          <Activity
+            mode={isHorizontal && form.formState.isDirty ? "visible" : "hidden"}
+          >
             <div className="flex items-end py-3">
               <Button
                 variant="primary"
@@ -232,7 +238,7 @@ const TeamForm = ({
                 {submitButtonText}
               </Button>
             </div>
-          )}
+          </Activity>
         </Card>
 
         <div className={cn("mt-12 flex justify-end", isHorizontal && "hidden")}>

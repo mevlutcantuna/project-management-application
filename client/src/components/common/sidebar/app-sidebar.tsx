@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Activity } from "react";
 import {
   Box,
   Check,
@@ -136,9 +137,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           }}
                         >
                           {workspace.name}
-                          {workspace.id === currentWorkspace?.id && (
+                          <Activity
+                            mode={
+                              workspace.id === currentWorkspace?.id
+                                ? "visible"
+                                : "hidden"
+                            }
+                          >
                             <Check className="size-4" />
-                          )}
+                          </Activity>
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuSeparator />

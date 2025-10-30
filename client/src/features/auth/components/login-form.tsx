@@ -2,6 +2,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn, getErrorMessage } from "@/shared/lib/utils";
+import { Activity } from "react";
 import {
   Form,
   FormControl,
@@ -98,9 +99,9 @@ const LoginForm = ({ className, onSuccess, onError }: LoginForm) => {
                   <Input type="password" className="h-10" {...field} />
                 </FormControl>
                 <FormMessage />
-                {formError && (
+                <Activity mode={formError ? "visible" : "hidden"}>
                   <p className="text-destructive text-sm">{formError}</p>
-                )}
+                </Activity>
               </FormItem>
             )}
           />
