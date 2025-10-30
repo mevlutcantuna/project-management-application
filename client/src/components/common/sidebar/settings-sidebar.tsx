@@ -60,6 +60,7 @@ export function SettingsSidebar({
       <SidebarContent>
         <NavGeneral items={generalSettingsItems} />
         <NavTeams
+          enableAddTeamButton={true}
           enableAddTeam={false}
           teams={teams.map((team) => ({
             ...team,

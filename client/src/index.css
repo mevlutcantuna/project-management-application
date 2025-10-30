@@ -70,6 +70,7 @@
   --sidebar-link-background: oklch(0.92 0 282.863);
   --sidebar-link-hover: #f0f0f0;
   --sidebar-ring: oklch(0.871 0.006 286.286);
+  --sidebar-item-color: lch(18.988 1 282.863);
   --container: #fff;
   --icon-color: lch(38.893% 1 282.863 / 1);
   --icon-color-hover: #1b1b1b;
@@ -101,8 +102,8 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-inset: #0a0a0a;
+  --sidebar: #0a0a0a;
+  --sidebar-inset: oklch(0.21 0.006 285.885);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -112,8 +113,9 @@
   --sidebar-link-background: oklch(0.25 0 282.863);
   --sidebar-link-hover: #202020;
   --sidebar-ring: oklch(0.442 0.017 285.786);
+  --sidebar-item-color: lch(90.421 1 272);
   --container: #101011;
-  --icon-color: lch(88.893% 1 282.863 / 1);
+  --icon-color: lch(61.683% 1 272 / 1);
   --icon-color-hover: #fff;
   --active-tab: lch(49.5 49.927 286.91);
 }
@@ -154,6 +156,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-link-background: var(--sidebar-link-background);
   --color-sidebar-link-hover: var(--sidebar-link-hover);
+  --color-sidebar-item-color: var(--sidebar-item-color);
   --color-container: var(--container);
   --color-icon-color: var(--icon-color);
   --color-icon-color-hover: var(--icon-color-hover);

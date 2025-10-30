@@ -27,11 +27,13 @@ interface NavTeamSidebarProps
   extends React.ComponentPropsWithoutRef<typeof SidebarGroup> {
   teams: NavTeamSidebarItem[];
   enableAddTeam?: boolean;
+  enableAddTeamButton?: boolean;
 }
 
 export function NavTeams({
   teams,
   enableAddTeam = true,
+  enableAddTeamButton = false,
   ...props
 }: NavTeamSidebarProps) {
   const navigate = useNavigate();
@@ -84,12 +86,34 @@ export function NavTeams({
                           />
                         </div>
 
-                        <span className="text-icon-color">{item.name}</span>
+                        <span className="text-sidebar-item-color">
+                          {item.name}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
               })}
+
+              {enableAddTeamButton && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(
+                        `/${currentWorkspace?.url}/settings/team/create`
+                      );
+                    }}
+                  >
+                    <div className="flex h-4.5 w-4.5 items-center justify-center rounded-sm">
+                      <Plus className="text-icon-color group-hover/item:text-icon-color-hover size-3.5 transition-colors duration-200" />
+                    </div>
+                    <span className="text-sidebar-item-color">
+                      Create a team
+                    </span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </CollapsibleContent>
         </Collapsible>

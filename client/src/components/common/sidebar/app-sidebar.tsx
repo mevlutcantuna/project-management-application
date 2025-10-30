@@ -61,14 +61,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const generalSidebarItems: SidebarItem[] = [
     {
-      icon: Zap,
-      iconProps: {
-        fill: "currentColor",
-      },
-      name: "Pulse",
-      url: "#",
-    },
-    {
       icon: Inbox,
       name: "Inbox",
       url: `${currentWorkspace?.url}/inbox`,

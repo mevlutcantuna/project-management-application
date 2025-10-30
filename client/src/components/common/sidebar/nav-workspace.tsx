@@ -32,7 +32,7 @@ export function NavWorkspace({ workspaces }: { workspaces: SidebarItem[] }) {
                 <SidebarMenuButton asChild>
                   <Link to={item.url} className="group/item">
                     <item.icon className="text-icon-color group-hover/item:text-icon-color-hover transition-colors duration-200" />
-                    <span className="text-icon-color">{item.name}</span>
+                    <span className="text-sidebar-item-color">{item.name}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
