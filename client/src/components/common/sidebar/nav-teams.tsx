@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, Ellipsis, Plus, Settings } from "lucide-react";
 
 import {
   SidebarGroup,
@@ -18,6 +18,12 @@ import type { Team } from "@/shared/types/team";
 import { Link, useNavigate } from "react-router-dom";
 import { useWorkspaceStore } from "@/features/workspace/store";
 import { ICONS } from "../icon-picker/constants";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface NavTeamSidebarItem extends Team {
   url: string;
@@ -27,13 +33,13 @@ interface NavTeamSidebarProps
   extends React.ComponentPropsWithoutRef<typeof SidebarGroup> {
   teams: NavTeamSidebarItem[];
   enableAddTeam?: boolean;
-  enableAddTeamButton?: boolean;
+  disableSettings?: boolean;
 }
 
 export function NavTeams({
   teams,
-  enableAddTeam = true,
-  enableAddTeamButton = false,
+  enableAddTeam = false,
+  disableSettings = false,
   ...props
 }: NavTeamSidebarProps) {
   const navigate = useNavigate();
@@ -52,18 +58,6 @@ export function NavTeams({
                 Your Teams
                 <ChevronRight className="size-4 transition-transform duration-200" />
               </div>
-
-              {enableAddTeam && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/${currentWorkspace?.url}/settings/team/create`);
-                  }}
-                  className="hover:text-sidebar-accent-foreground text-muted-foreground hidden group-hover/label:block"
-                >
-                  <Plus className="size-4" />
-                </button>
-              )}
             </SidebarGroupLabel>
           </CollapsibleTrigger>
           <CollapsibleContent>
@@ -73,7 +67,7 @@ export function NavTeams({
                 return (
                   <SidebarMenuItem key={index}>
                     <SidebarMenuButton asChild>
-                      <Link to={item.url} className="group/item">
+                      <Link to={item.url} className="group/item relative">
                         <div
                           style={{
                             backgroundColor: `color-mix(in srgb, ${item.color} 20%, transparent)`,
@@ -89,13 +83,27 @@ export function NavTeams({
                         <span className="text-sidebar-item-color">
                           {item.name}
                         </span>
+
+                        {!disableSettings && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger className="text-icon-color/50 data-[state=open]:text-icon-color-hover invisible ml-auto transition-colors duration-200 group-hover/item:visible data-[state=open]:visible">
+                              <Ellipsis className="size-3" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start">
+                              <DropdownMenuItem>
+                                <Settings />
+                                Team Settings
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
               })}
 
-              {enableAddTeamButton && (
+              {enableAddTeam && (
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     onClick={(e) => {
