@@ -14,7 +14,6 @@ import {
   Search,
   SquarePen,
   Sun,
-  Zap,
   type LucideIcon,
   type LucideProps,
 } from "lucide-react";
