@@ -21,4 +21,7 @@ export interface CreateTeamInput {
   userIds?: string[];
 }
 
-export type UpdateTeamInput = Partial<CreateTeamInput>;
+export interface UpdateTeamInput extends Partial<CreateTeamInput> {
+  id: string;
+  workspaceId: string;
+}

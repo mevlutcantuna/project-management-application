@@ -3,15 +3,27 @@ import { useGetTeamByIdentifierQuery } from "@/features/teams/api/queries";
 import TeamForm from "@/features/teams/components/team-form";
 import { useWorkspaceStore } from "@/features/workspace/store";
 import { ChevronRight, Users2 } from "lucide-react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { useUpdateTeamMutation } from "../api/mutations";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const TeamDetailsPage = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { currentWorkspace } = useWorkspaceStore();
   const { identifier } = useParams();
   const { data: team, isLoading } = useGetTeamByIdentifierQuery(
     identifier as string,
     currentWorkspace?.id as string
   );
+  const { mutate: updateTeam, isPending: isUpdating } = useUpdateTeamMutation({
+    onSuccess: (data) => {
+      toast.success("Team updated successfully");
+      navigate(`/${currentWorkspace?.url}/settings/team/${data.identifier}`);
+      queryClient.invalidateQueries({ queryKey: ["workspace-teams"] });
+    },
+  });
 
   const settingsItems = [
     {
@@ -55,10 +67,19 @@ export const TeamDetailsPage = () => {
               : undefined
           }
           onSubmit={(data) => {
-            console.log(data);
+            if (!currentWorkspace?.id || !team?.id) return;
+
+            updateTeam({
+              name: data.name,
+              identifier: data.identifier,
+              iconName: data.icon.icon,
+              color: data.icon.color,
+              id: team.id,
+              workspaceId: currentWorkspace.id,
+            });
           }}
           submitButtonText="Save"
-          isSubmitting={false}
+          isSubmitting={isUpdating}
         />
 
         <Card className="mt-3 p-0 [&>a:first-child]:rounded-t-sm [&>a:last-child]:rounded-b-sm">
