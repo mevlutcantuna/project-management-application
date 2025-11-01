@@ -205,6 +205,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             ...team,
             url: `/${currentWorkspace?.url}/settings/team/${team.identifier}`,
           }))}
+          enableSubMenu={true}
         />
       </SidebarContent>
     </Sidebar>

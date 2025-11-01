@@ -1,6 +1,14 @@
 import * as React from "react";
 import { Activity } from "react";
-import { ChevronRight, Ellipsis, Plus, Settings } from "lucide-react";
+import {
+  ChevronRight,
+  Copy,
+  Ellipsis,
+  Play,
+  Plus,
+  Radius,
+  Settings,
+} from "lucide-react";
 
 import {
   SidebarGroup,
@@ -25,9 +33,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/shared/lib/utils";
 
 interface NavTeamSidebarItem extends Team {
-  url: string;
+  url?: string;
 }
 
 interface NavTeamSidebarProps
@@ -35,12 +44,14 @@ interface NavTeamSidebarProps
   teams: NavTeamSidebarItem[];
   enableAddTeam?: boolean;
   disableSettings?: boolean;
+  enableSubMenu?: boolean;
 }
 
 export function NavTeams({
   teams,
   enableAddTeam = false,
   disableSettings = false,
+  enableSubMenu = false,
   ...props
 }: NavTeamSidebarProps) {
   const navigate = useNavigate();
@@ -64,43 +75,21 @@ export function NavTeams({
           <CollapsibleContent>
             <SidebarMenu className="pt-0">
               {teams.map((item, index) => {
-                const Icon = ICONS[item.iconName as keyof typeof ICONS];
                 return (
                   <SidebarMenuItem key={index}>
-                    <SidebarMenuButton asChild>
-                      <Link to={item.url} className="group/item relative">
-                        <div
-                          style={{
-                            backgroundColor: `color-mix(in srgb, ${item.color} 20%, transparent)`,
-                          }}
-                          className="flex h-4.5 w-4.5 items-center justify-center rounded-sm"
-                        >
-                          <Icon
-                            color={item.color}
-                            className="text-icon-color group-hover/item:text-icon-color-hover size-3.5 transition-colors duration-200"
-                          />
+                    <SidebarMenuButton
+                      asChild={!!item.url}
+                      className="group/item h-auto py-[calc(4px-0.782px)] hover:bg-transparent active:bg-transparent"
+                    >
+                      {enableSubMenu ? (
+                        <div>
+                          <TeamItem team={item} />
                         </div>
-
-                        <span className="text-sidebar-item-color">
-                          {item.name}
-                        </span>
-
-                        <Activity
-                          mode={!disableSettings ? "visible" : "hidden"}
-                        >
-                          <DropdownMenu>
-                            <DropdownMenuTrigger className="text-icon-color/50 data-[state=open]:text-icon-color-hover invisible ml-auto transition-colors duration-200 group-hover/item:visible data-[state=open]:visible">
-                              <Ellipsis className="size-3" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start">
-                              <DropdownMenuItem>
-                                <Settings />
-                                Team Settings
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </Activity>
-                      </Link>
+                      ) : (
+                        <Link to={item.url ?? "#"}>
+                          <TeamItem team={item} />
+                        </Link>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -117,7 +106,7 @@ export function NavTeams({
                     }}
                   >
                     <div className="flex h-4.5 w-4.5 items-center justify-center rounded-sm">
-                      <Plus className="text-icon-color group-hover/item:text-icon-color-hover size-3.5 transition-colors duration-200" />
+                      <Plus className="sub-menu-icon" />
                     </div>
                     <span className="text-sidebar-item-color">
                       Create a team
@@ -131,4 +120,82 @@ export function NavTeams({
       </SidebarGroupContent>
     </SidebarGroup>
   );
+
+  function TeamItem({ team }: { team: NavTeamSidebarItem }) {
+    const Icon = ICONS[team.iconName as keyof typeof ICONS];
+    const [open, setOpen] = React.useState(false);
+
+    return (
+      <Collapsible
+        open={open}
+        onOpenChange={(open) => setOpen(enableSubMenu && open)}
+        className="w-full"
+      >
+        <CollapsibleTrigger className="w-full data-[state=open]:[&_.arrow-icon]:rotate-90">
+          <div
+            className={cn("relative flex h-5 w-full items-center gap-2", {
+              "cursor-default": enableSubMenu,
+            })}
+          >
+            <div
+              style={{
+                backgroundColor: `color-mix(in srgb, ${team.color} 20%, transparent)`,
+              }}
+              className="flex h-4.5 w-4.5 items-center justify-center rounded-sm"
+            >
+              <Icon color={team.color} className="sub-menu-icon" />
+            </div>
+
+            <span className="text-sidebar-item-color">{team.name}</span>
+
+            <Activity mode={enableSubMenu ? "visible" : "hidden"}>
+              <Play className="arrow-icon fill-sidebar-foreground text-sidebar-foreground size-1.5 transition-transform duration-200" />
+            </Activity>
+
+            <Activity mode={!disableSettings ? "visible" : "hidden"}>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-icon-color/50 hover:text-icon-color-hover data-[state=open]:text-icon-color-hover invisible ml-auto transition-colors duration-200 group-hover/item:visible data-[state=open]:visible">
+                  <Ellipsis className="size-3" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(
+                        `/${currentWorkspace?.url}/settings/team/${team.identifier}`
+                      );
+                    }}
+                  >
+                    <Settings />
+                    Team Settings
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </Activity>
+          </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenu className="p-0">
+            <SidebarMenuItem className="group/menu-sub">
+              <SidebarMenuButton className="pl-3">
+                <div className="flex h-4.5 w-4.5 items-center justify-center rounded-sm">
+                  <Radius className="sub-menu-icon" />
+                </div>
+                <span className="text-sidebar-item-color">Triage</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem className="group/menu-sub">
+              <SidebarMenuButton className="pl-3">
+                <div className="flex h-4.5 w-4.5 items-center justify-center rounded-sm">
+                  <Copy className="sub-menu-icon" />
+                </div>
+                <span className="text-sidebar-item-color">Issues</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </CollapsibleContent>
+      </Collapsible>
+    );
+  }
 }
