@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  ChevronLeft,
   CircleUserRound,
   SlidersHorizontal,
   type LucideIcon,
@@ -18,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useTeamStore } from "@/features/teams/store";
 import { NavGeneral } from "./nav-general";
 import { useWorkspaceStore } from "@/features/workspace/store";
+import BackButton from "../back-button";
 
 export interface SidebarItem {
   icon: LucideIcon;
@@ -49,13 +49,7 @@ export function SettingsSidebar({
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader className="pt-1.5">
-        <button
-          className="text-icon-color hover:bg-sidebar-link-hover hover:text-sidebar-accent-foreground flex h-7 w-fit cursor-pointer items-center gap-1.5 rounded-sm pr-2 pl-1.5 text-sm"
-          onClick={() => navigate("/")}
-        >
-          <ChevronLeft className="size-4" />
-          Back to app
-        </button>
+        <BackButton onClick={() => navigate("/")}>Back to app</BackButton>
       </SidebarHeader>
       <SidebarContent>
         <NavGeneral items={generalSettingsItems} />

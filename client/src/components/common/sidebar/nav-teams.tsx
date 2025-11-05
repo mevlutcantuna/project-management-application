@@ -34,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/shared/lib/utils";
+import TeamIcon from "../team-icon";
 
 interface NavTeamSidebarItem extends Team {
   url?: string;
@@ -122,7 +123,6 @@ export function NavTeams({
   );
 
   function TeamItem({ team }: { team: NavTeamSidebarItem }) {
-    const Icon = ICONS[team.iconName as keyof typeof ICONS];
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -137,14 +137,10 @@ export function NavTeams({
               "cursor-default": enableSubMenu,
             })}
           >
-            <div
-              style={{
-                backgroundColor: `color-mix(in srgb, ${team.color} 20%, transparent)`,
-              }}
-              className="flex h-4.5 w-4.5 items-center justify-center rounded-sm"
-            >
-              <Icon color={team.color} className="sub-menu-icon" />
-            </div>
+            <TeamIcon
+              iconName={team.iconName as keyof typeof ICONS}
+              color={team.color}
+            />
 
             <span className="text-sidebar-item-color">{team.name}</span>
 
