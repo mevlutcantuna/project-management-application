@@ -27,7 +27,7 @@ export const authenticate = async (
     const user = await userService.getUserById(payload.sub);
 
     if (!user) {
-      throw new UnauthorizedError("User not found");
+      throw new UnauthorizedError("User is not authenticated");
     }
 
     (req as AuthenticatedRequest).user = user;

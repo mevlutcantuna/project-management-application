@@ -29,3 +29,19 @@ FROM teams t
 LEFT JOIN team_members tm ON t.id = tm.team_id
 LEFT JOIN users u ON tm.user_id = u.id
 GROUP BY t.id, t.name, t.identifier, t.workspace_id, t.icon_name, t.color, t.created_at, t.updated_at;
+
+
+-- Team members with user details view
+CREATE OR REPLACE VIEW team_members_with_user_details AS
+SELECT
+  tm.id,
+  tm.team_id,
+  tm.role,
+  u.id as user_id,
+  u.first_name,
+  u.last_name,
+  u.email,
+  u.profile_picture
+FROM team_members tm
+JOIN users u ON tm.user_id = u.id
+GROUP BY tm.id, tm.team_id, tm.role, u.id, u.first_name, u.last_name, u.email, u.profile_picture;

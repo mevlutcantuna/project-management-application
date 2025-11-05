@@ -1,10 +1,6 @@
 import { Request } from "express";
+import { User } from "./user";
 
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
+  user: Omit<User, "passwordHash">;
 }

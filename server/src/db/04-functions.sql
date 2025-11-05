@@ -40,8 +40,8 @@ RETURNS TRIGGER AS $$
 BEGIN
 RAISE NOTICE 'Trigger fired for team: %', NEW;
   IF NEW.created_by_id IS NOT NULL THEN
-    INSERT INTO team_members (team_id, user_id)
-    VALUES (NEW.id, NEW.created_by_id);
+    INSERT INTO team_members (team_id, user_id, role)
+    VALUES (NEW.id, NEW.created_by_id, 'Admin');
   END IF;
 
   RAISE NOTICE 'Team creator added to team_members: %', NEW.id;

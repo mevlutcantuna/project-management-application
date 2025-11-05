@@ -29,8 +29,6 @@ class TeamController {
     const { name, identifier, workspaceId, iconName, color, userIds } =
       req.body;
 
-    if (!req.user) throw new UnauthorizedError("User not authenticated");
-
     // Check if the identifier already exists
     const existingTeam =
       await this.teamService.checkTeamIdentifierExistsForWorkspace(
@@ -72,8 +70,6 @@ class TeamController {
     const { id } = req.params;
     const { name, identifier, workspaceId, iconName, color, userIds } =
       req.body;
-
-    if (!req.user) throw new UnauthorizedError("User not authenticated");
 
     // Check if the identifier already exists
     if (identifier && identifier !== "" && workspaceId) {
@@ -118,7 +114,6 @@ class TeamController {
 
     console.log("getTeams", workspaceId);
 
-    if (!req.user) throw new UnauthorizedError("User not authenticated");
     if (!workspaceId || typeof workspaceId !== "string") {
       throw new UnauthorizedError("Workspace ID is required");
     }
@@ -130,8 +125,6 @@ class TeamController {
   getTeamById = async (req: GetTeamByIdRequest, res: Response) => {
     const { id } = req.params;
 
-    if (!req.user) throw new UnauthorizedError("User not authenticated");
-
     const team = await this.teamService.getTeamById(id, req.user.id);
     res.status(200).json(team);
   };
@@ -141,8 +134,6 @@ class TeamController {
     res: Response
   ) => {
     const { identifier, workspaceId } = req.params;
-
-    if (!req.user) throw new UnauthorizedError("User not authenticated");
 
     const team = await this.teamService.getTeamByIdentifier(
       identifier,
@@ -156,9 +147,6 @@ class TeamController {
 
   deleteTeam = async (req: DeleteTeamRequest, res: Response) => {
     const { id } = req.params;
-
-    if (!req.user) throw new UnauthorizedError("User not authenticated");
-
     const team = await this.teamService.getTeamById(id, req.user.id);
     if (!team) throw new NotFoundError("Team not found");
 
