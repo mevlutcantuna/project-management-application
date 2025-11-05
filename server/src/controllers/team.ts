@@ -112,8 +112,6 @@ class TeamController {
   getTeams = async (req: GetTeamsByWorkspaceRequest, res: Response) => {
     const { workspaceId } = req.params;
 
-    console.log("getTeams", workspaceId);
-
     if (!workspaceId || typeof workspaceId !== "string") {
       throw new UnauthorizedError("Workspace ID is required");
     }
