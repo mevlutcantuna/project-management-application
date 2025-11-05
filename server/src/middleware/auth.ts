@@ -3,7 +3,6 @@ import { verifyToken, extractTokenFromHeader } from "@/utils/jwt";
 import { UnauthorizedError } from "@/utils/errors";
 import { UserService } from "@/services/user";
 import { db } from "@/config/dbClient";
-import { AuthenticatedRequest } from "@/types/common";
 
 export const authenticate = async (
   req: Request,
@@ -30,7 +29,7 @@ export const authenticate = async (
       throw new UnauthorizedError("User is not authenticated");
     }
 
-    (req as AuthenticatedRequest).user = user;
+    req.user = user;
 
     next();
   } catch (error) {

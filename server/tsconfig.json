@@ -9,10 +9,11 @@
     "outDir": "./dist",
     "rootDir": "./",
     "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,4 +1,4 @@
-import { AuthenticatedRequest } from "./common";
+import { Request } from "express";
 import { User } from "./user";
 
 export interface Team {
@@ -25,36 +25,36 @@ export interface CreateTeamInput {
 
 export type UpdateTeamInput = Partial<CreateTeamInput>;
 
-export interface CreateTeamRequest extends AuthenticatedRequest {
+export interface CreateTeamRequest extends Request {
   body: CreateTeamInput;
 }
 
-export interface UpdateTeamRequest extends AuthenticatedRequest {
+export interface UpdateTeamRequest extends Request {
   params: {
     id: string;
   };
   body: UpdateTeamInput;
 }
 
-export interface GetTeamsByWorkspaceRequest extends AuthenticatedRequest {
+export interface GetTeamsByWorkspaceRequest extends Request {
   query: {
     workspaceId: string;
   };
 }
 
-export interface GetTeamByIdRequest extends AuthenticatedRequest {
+export interface GetTeamByIdRequest extends Request {
   params: {
     id: string;
   };
 }
 
-export interface DeleteTeamRequest extends AuthenticatedRequest {
+export interface DeleteTeamRequest extends Request {
   params: {
     id: string;
   };
 }
 
-export interface GetTeamByIdentifierRequest extends AuthenticatedRequest {
+export interface GetTeamByIdentifierRequest extends Request {
   params: {
     identifier: string;
     workspaceId: string;

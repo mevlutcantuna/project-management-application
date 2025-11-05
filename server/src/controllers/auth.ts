@@ -1,13 +1,8 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { loginSchema, signupSchema } from "../schemas/auth";
 import { ValidationError, UnauthorizedError } from "../utils/errors";
 import { AuthService } from "@/services/auth";
-import {
-  GetMeRequest,
-  LoginRequest,
-  RefreshTokenRequest,
-  SignupRequest,
-} from "@/types/auth";
+import { LoginRequest, RefreshTokenRequest, SignupRequest } from "@/types/auth";
 
 class AuthController {
   private authService: AuthService;
@@ -55,12 +50,10 @@ class AuthController {
     });
   };
 
-  getMe = async (req: GetMeRequest, res: Response) => {
-    const user = req.user;
+  getMe = async (req: Request, res: Response) => {
+    if (!req.user) throw new UnauthorizedError("User not found");
 
-    if (!user) throw new UnauthorizedError("User not found");
-
-    const userData = await this.authService.getMe(user.id);
+    const userData = await this.authService.getMe(req.user.id);
     if (!userData) throw new UnauthorizedError("User not found");
 
     res.status(200).json(userData);

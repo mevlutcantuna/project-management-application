@@ -1,6 +1,5 @@
 import { Request } from "express";
 import { User } from "./user";
-import { AuthenticatedRequest } from "./common";
 
 export interface SignupRequest extends Request {
   body: {
@@ -23,8 +22,6 @@ export interface RefreshTokenRequest extends Request {
     token: string;
   };
 }
-
-export type GetMeRequest = AuthenticatedRequest;
 
 export interface LoginResponse {
   accessToken: string;

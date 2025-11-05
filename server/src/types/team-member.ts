@@ -1,4 +1,4 @@
-import { AuthenticatedRequest } from "./common";
+import { Request } from "express";
 import { User, UserRole } from "./user";
 
 export interface TeamMember
@@ -9,7 +9,7 @@ export interface TeamMember
   role: UserRole;
 }
 
-export interface AddUserToTeamRequest extends AuthenticatedRequest {
+export interface AddUserToTeamRequest extends Request {
   body: {
     teamId: string;
     userId: string;
@@ -17,14 +17,14 @@ export interface AddUserToTeamRequest extends AuthenticatedRequest {
   };
 }
 
-export interface DeleteTeamMemberRequest extends AuthenticatedRequest {
+export interface DeleteTeamMemberRequest extends Request {
   params: {
     teamId: string;
     userId: string;
   };
 }
 
-export interface UpdateTeamMemberRoleRequest extends AuthenticatedRequest {
+export interface UpdateTeamMemberRoleRequest extends Request {
   params: {
     teamId: string;
     userId: string;
