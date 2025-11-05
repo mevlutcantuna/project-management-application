@@ -42,6 +42,14 @@ class TeamRepository {
     return camelcaseKeys(result.rows[0]);
   }
 
+  async deleteTeam(id: string): Promise<void> {
+    const query = `
+      DELETE FROM teams
+      WHERE id = $1
+    `;
+    await this.db.query(query, [id]);
+  }
+
   async getTeams(workspaceId: string): Promise<Team[]> {
     const query = `
       SELECT id, name, identifier, workspace_id, icon_name, color, created_at, updated_at, users
@@ -74,14 +82,6 @@ class TeamRepository {
     `;
     const result = await this.db.query(query, [identifier, workspaceId]);
     return result.rows[0] ? (camelcaseKeys(result.rows[0]) as Team) : null;
-  }
-
-  async deleteTeam(id: string): Promise<void> {
-    const query = `
-      DELETE FROM teams
-      WHERE id = $1
-    `;
-    await this.db.query(query, [id]);
   }
 
   async checkUserIsTeamMember(
