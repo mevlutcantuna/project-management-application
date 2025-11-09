@@ -75,12 +75,15 @@ export function NavTeams({
           </CollapsibleTrigger>
           <CollapsibleContent>
             <SidebarMenu className="pt-0">
-              {teams.map((item, index) => {
+              {teams.map((item) => {
                 return (
-                  <SidebarMenuItem key={index}>
+                  <SidebarMenuItem key={item.identifier}>
                     <SidebarMenuButton
                       asChild={!!item.url}
-                      className="group/item h-auto py-[calc(4px-0.782px)] hover:bg-transparent active:bg-transparent"
+                      className={cn("group/item h-auto py-1", {
+                        "hover:bg-transparent active:bg-transparent":
+                          enableSubMenu,
+                      })}
                     >
                       {enableSubMenu ? (
                         <div>
@@ -131,7 +134,10 @@ export function NavTeams({
         onOpenChange={(open) => setOpen(enableSubMenu && open)}
         className="w-full"
       >
-        <CollapsibleTrigger className="w-full data-[state=open]:[&_.arrow-icon]:rotate-90">
+        <CollapsibleTrigger
+          asChild
+          className="w-full data-[state=open]:[&_.arrow-icon]:rotate-90"
+        >
           <div
             className={cn("relative flex h-5 w-full items-center gap-2", {
               "cursor-default": enableSubMenu,

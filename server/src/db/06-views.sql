@@ -18,7 +18,8 @@ SELECT
             'first_name', u.first_name,
             'last_name', u.last_name,
             'email', u.email,
-            'profile_picture', u.profile_picture
+            'profile_picture', u.profile_picture,
+            'role', tm.role
           )
         ELSE NULL
       END
@@ -29,7 +30,6 @@ FROM teams t
 LEFT JOIN team_members tm ON t.id = tm.team_id
 LEFT JOIN users u ON tm.user_id = u.id
 GROUP BY t.id, t.name, t.identifier, t.workspace_id, t.icon_name, t.color, t.created_at, t.updated_at;
-
 
 -- Team members with user details view
 CREATE OR REPLACE VIEW team_members_with_user_details AS

@@ -8,8 +8,6 @@
   --font-mono: var(--font-geist-mono);
   --animate-collapsible-down: collapsible-down 0.1s linear;
   --animate-collapsible-up: collapsible-up 0.1s linear;
-  --indigo-400: lch(53.751 61.636 288.421);
-  --indigo-500: lch(47.918 59.303 288.421);
 
   @keyframes collapsible-down {
     from {
@@ -50,7 +48,7 @@
   --accent-foreground: oklch(0.21 0.006 285.885);
   --destructive: lch(50 80 29);
   --destructive-foreground: lch(50 80 29);
-  --border: lch(84.025 0 282.863);
+  --border: lch(87.817 0 282.863);
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.871 0.006 286.286);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -75,6 +73,9 @@
   --icon-color: lch(38.893% 1 282.863 / 1);
   --icon-color-hover: #1b1b1b;
   --active-tab: lch(49.5 49.927 286.91);
+  --primary-border: lch(49.5 49.927 286.91);
+  --primary-bg: lch(53 52.26 286.91);
+  --primary-hover: lch(47.918 59.303 288.421);
 }
 
 .dark {
@@ -118,6 +119,9 @@
   --icon-color: lch(61.683% 1 272 / 1);
   --icon-color-hover: #fff;
   --active-tab: lch(49.5 49.927 286.91);
+  --primary-border: lch(49.5 49.927 286.91);
+  --primary-bg: lch(53 52.26 286.91);
+  --primary-hover: lch(47.918 59.303 288.421);
 }
 
 @theme inline {
@@ -161,6 +165,9 @@
   --color-icon-color: var(--icon-color);
   --color-icon-color-hover: var(--icon-color-hover);
   --color-active-tab: var(--active-tab);
+  --color-primary-border: var(--primary-border);
+  --color-primary-bg: var(--primary-bg);
+  --color-primary-hover: var(--primary-hover);
 }
 
 @layer base {

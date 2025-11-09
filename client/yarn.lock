@@ -224,17 +224,17 @@
   integrity sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw==
 
 "@emnapi/core@^1.4.3", "@emnapi/core@^1.4.5":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@emnapi/core/-/core-1.6.0.tgz#517f65d1c8270d5d5aa1aad660d5acb897430dca"
-  integrity sha512-zq/ay+9fNIJJtJiZxdTnXS20PllcYMX3OE23ESc4HK/bdYu3cOWYVhsOhVnXALfU/uqJIxn5NBPd9z4v+SfoSg==
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@emnapi/core/-/core-1.7.0.tgz#135de4e8858763989112281bdf38ca02439db7c3"
+  integrity sha512-pJdKGq/1iquWYtv1RRSljZklxHCOCAJFJrImO5ZLKPJVJlVUcs8yFwNQlqS0Lo8xT1VAXXTCZocF9n26FWEKsw==
   dependencies:
     "@emnapi/wasi-threads" "1.1.0"
     tslib "^2.4.0"
 
 "@emnapi/runtime@^1.4.3", "@emnapi/runtime@^1.4.5":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@emnapi/runtime/-/runtime-1.6.0.tgz#8fe297e0090f6e89a57a1f31f1c440bdbc3c01d8"
-  integrity sha512-obtUmAHTMjll499P+D9A3axeJFlhdjOWdKUNs/U6QIGT7V5RjcUW1xToAzjvmgTSQhDbYn/NwfTRoJcQ2rNBxA==
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@emnapi/runtime/-/runtime-1.7.0.tgz#d7ef3832df8564fe5903bf0567aedbd19538ecbe"
+  integrity sha512-oAYoQnCYaQZKVS53Fq23ceWMRxq5EhQsE0x0RdQ55jT7wagMu5k+fS39v1fiSLrtrLQlXwVINenqhLMtTrV/1Q==
   dependencies:
     tslib "^2.4.0"
 
@@ -980,10 +980,17 @@
   dependencies:
     "@radix-ui/react-primitive" "2.1.3"
 
-"@radix-ui/react-slot@1.2.3", "@radix-ui/react-slot@^1.2.3":
+"@radix-ui/react-slot@1.2.3":
   version "1.2.3"
   resolved "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.2.3.tgz"
   integrity sha512-aeNmHnBxbi2St0au6VBVC7JXFlhLlOnvIIlePNniyUNAClzmtAUEY8/pBiK3iHjufOlwA+c20/8jngo7xcrg8A==
+  dependencies:
+    "@radix-ui/react-compose-refs" "1.1.2"
+
+"@radix-ui/react-slot@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.2.4.tgz"
+  integrity sha512-Jl+bCv8HxKnlTLVrcDE8zTMJ09R9/ukw4qBs/oZClOfoQk/cOTbDn+NceXfV7j09YPVQUryJPHurafcSg6EVKA==
   dependencies:
     "@radix-ui/react-compose-refs" "1.1.2"
 
@@ -1343,6 +1350,18 @@
   dependencies:
     "@tanstack/query-core" "5.87.4"
 
+"@tanstack/react-table@^8.21.3":
+  version "8.21.3"
+  resolved "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.21.3.tgz"
+  integrity sha512-5nNMTSETP4ykGegmVkhjcS8tTLW6Vl4axfEGQN3v0zdHYbK4UfoqfPChclTrJ4EoK9QynqAu9oUf8VEmrpZ5Ww==
+  dependencies:
+    "@tanstack/table-core" "8.21.3"
+
+"@tanstack/table-core@8.21.3":
+  version "8.21.3"
+  resolved "https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.21.3.tgz"
+  integrity sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==
+
 "@testing-library/dom@^10.4.0":
   version "10.4.1"
   resolved "https://registry.npmjs.org/@testing-library/dom/-/dom-10.4.1.tgz"
@@ -1502,7 +1521,7 @@
 
 "@types/react-dom@^19.2.2":
   version "19.2.2"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-19.2.2.tgz#a4cc874797b7ddc9cb180ef0d5dc23f596fc2332"
+  resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.2.2.tgz"
   integrity sha512-9KQPoO6mZCi7jcIStSnlOWn2nEF3mNmyr3rIAsGnAbQKYbRLyqmeSc39EVgtxXVia+LMT8j3knZLAZAh+xLmrw==
 
 "@types/react@^19.2.2":

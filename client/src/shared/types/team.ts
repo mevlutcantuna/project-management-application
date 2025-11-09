@@ -1,4 +1,4 @@
-import type { User } from "./user";
+import type { User, UserRole } from "./user";
 
 export interface Team {
   id: string;
@@ -9,7 +9,7 @@ export interface Team {
   color: string;
   createdAt: Date;
   updatedAt: Date;
-  users: Omit<User, "createdAt" | "updatedAt">[];
+  users: (Omit<User, "createdAt" | "updatedAt"> & { role: UserRole })[];
 }
 
 export interface CreateTeamInput {

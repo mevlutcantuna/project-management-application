@@ -85,6 +85,7 @@ export const TeamDetailsPage = () => {
         <Card className="mt-3 p-0 [&>a:first-child]:rounded-t-sm [&>a:last-child]:rounded-b-sm">
           {settingsItems.map((item) => (
             <Link
+              key={item.url}
               to={item.url}
               className="hover:bg-accent/20 flex items-center justify-between px-4 py-3 transition-colors duration-100"
             >

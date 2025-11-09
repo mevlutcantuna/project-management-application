@@ -58,7 +58,7 @@ class TeamRepository {
     `;
 
     const result = await this.db.query(query, [workspaceId]);
-    return camelcaseKeys(result.rows);
+    return camelcaseKeys(result.rows, { deep: true }) as Team[];
   }
 
   async getTeamById(id: string): Promise<Team | null> {
@@ -68,7 +68,9 @@ class TeamRepository {
       WHERE id = $1 
     `;
     const result = await this.db.query(query, [id]);
-    return result.rows[0] ? (camelcaseKeys(result.rows[0]) as Team) : null;
+    return result.rows[0]
+      ? (camelcaseKeys(result.rows[0], { deep: true }) as Team)
+      : null;
   }
 
   async getTeamByIdentifier(
@@ -81,7 +83,10 @@ class TeamRepository {
       WHERE identifier = $1 AND workspace_id = $2
     `;
     const result = await this.db.query(query, [identifier, workspaceId]);
-    return result.rows[0] ? (camelcaseKeys(result.rows[0]) as Team) : null;
+    console.log(result.rows[0]);
+    return result.rows[0]
+      ? (camelcaseKeys(result.rows[0], { deep: true }) as Team)
+      : null;
   }
 
   async checkUserIsTeamMember(
