@@ -49,3 +49,18 @@ RAISE NOTICE 'Trigger fired for team: %', NEW;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Function to delete teams with no members
+CREATE OR REPLACE FUNCTION delete_empty_teams()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM team_members 
+    WHERE team_id = OLD.team_id
+  ) THEN
+    DELETE FROM teams WHERE id = OLD.team_id;
+  END IF;
+  
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;

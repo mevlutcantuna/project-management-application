@@ -42,3 +42,9 @@ CREATE TRIGGER set_updated_at_issue_comments
 BEFORE UPDATE ON issue_comments
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
+-- Trigger to delete teams with no members
+DROP TRIGGER IF EXISTS trigger_delete_empty_teams ON team_members;
+CREATE TRIGGER trigger_delete_empty_teams
+AFTER DELETE ON team_members
+FOR EACH ROW EXECUTE FUNCTION delete_empty_teams();
+
