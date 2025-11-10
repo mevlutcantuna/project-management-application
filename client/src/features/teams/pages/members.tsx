@@ -29,9 +29,16 @@ import {
 import { useAuthStore } from "@/features/auth/store";
 import { Activity } from "react";
 import type { Team } from "@/shared/types/team";
+import {
+  useLeaveTeamMutation,
+  useRemoveUserFromTeamMutation,
+} from "../api/mutations";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const TeamMembersPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { currentWorkspace } = useWorkspaceStore();
   const { identifier } = useParams();
   const { data: team, isLoading } = useGetTeamByIdentifierQuery(
@@ -39,6 +46,21 @@ export const TeamMembersPage = () => {
     currentWorkspace?.id as string
   );
   const { user: currentUser } = useAuthStore();
+
+  const { mutate: removeUserFromTeam } = useRemoveUserFromTeamMutation({
+    onSuccess: () => {
+      toast.success("User removed from team successfully");
+      queryClient.invalidateQueries({ queryKey: ["workspace-teams"] });
+    },
+  });
+  const { mutate: leaveTeam } = useLeaveTeamMutation({
+    onSuccess: () => {
+      toast.success("You have left the team successfully");
+      queryClient.invalidateQueries({ queryKey: ["workspace-teams"] });
+      navigate(`/${currentWorkspace?.url}/settings/team/create`);
+    },
+  });
+
   const users = team?.users ?? [];
 
   const isCurrentUserTeamAdminOrManager = users.some(
@@ -52,15 +74,22 @@ export const TeamMembersPage = () => {
       hidden: (user: Team["users"][number]) =>
         !isCurrentUserTeamAdminOrManager || user.id === currentUser?.id,
       label: "Remove",
-      onClick: () => {
-        console.log("remove");
+      onClick: (user: Team["users"][number]) => {
+        removeUserFromTeam({
+          workspaceId: currentWorkspace?.id as string,
+          teamId: team?.id as string,
+          userId: user.id,
+        });
       },
     },
     {
       hidden: (user: Team["users"][number]) => user.id !== currentUser?.id,
       label: "Leave Team",
       onClick: () => {
-        console.log("leave team");
+        leaveTeam({
+          workspaceId: currentWorkspace?.id as string,
+          teamId: team?.id as string,
+        });
       },
     },
   ];
@@ -157,7 +186,7 @@ export const TeamMembersPage = () => {
                             >
                               <DropdownMenuItem
                                 key={action.label}
-                                onClick={action.onClick}
+                                onClick={() => action.onClick(user)}
                               >
                                 {action.label}
                               </DropdownMenuItem>

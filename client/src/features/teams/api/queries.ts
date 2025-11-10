@@ -7,7 +7,7 @@ export const useGetWorkspaceTeamsQuery = (
   options?: Omit<Parameters<typeof useQuery<Team[]>>[0], "queryKey" | "queryFn">
 ) => {
   return useQuery<Team[]>({
-    queryKey: ["worksace-teams", workspaceId],
+    queryKey: ["workspace-teams", workspaceId],
     queryFn: async () => {
       const response = await api.get(`workspaces/${workspaceId}/teams`);
       return response.data;

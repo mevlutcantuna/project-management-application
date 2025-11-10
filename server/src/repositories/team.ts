@@ -50,14 +50,19 @@ class TeamRepository {
     await this.db.query(query, [id]);
   }
 
-  async getTeams(workspaceId: string): Promise<Team[]> {
+  async getTeams(workspaceId: string, userId: string): Promise<Team[]> {
     const query = `
       SELECT id, name, identifier, workspace_id, icon_name, color, created_at, updated_at, users
       FROM teams_with_members
-      WHERE workspace_id = $1
+      WHERE workspace_id = $1 
+      AND id IN (
+        SELECT team_id 
+        FROM team_members 
+        WHERE user_id = $2
+      )
     `;
 
-    const result = await this.db.query(query, [workspaceId]);
+    const result = await this.db.query(query, [workspaceId, userId]);
     return camelcaseKeys(result.rows, { deep: true }) as Team[];
   }
 
@@ -83,7 +88,6 @@ class TeamRepository {
       WHERE identifier = $1 AND workspace_id = $2
     `;
     const result = await this.db.query(query, [identifier, workspaceId]);
-    console.log(result.rows[0]);
     return result.rows[0]
       ? (camelcaseKeys(result.rows[0], { deep: true }) as Team)
       : null;

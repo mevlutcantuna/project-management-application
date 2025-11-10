@@ -25,3 +25,14 @@ export interface UpdateTeamInput extends Partial<CreateTeamInput> {
   id: string;
   workspaceId: string;
 }
+
+export interface RemoveUserFromTeamInput {
+  workspaceId: string;
+  teamId: string;
+  userId: string;
+}
+
+export interface LeaveTeamInput {
+  workspaceId: string;
+  teamId: string;
+}

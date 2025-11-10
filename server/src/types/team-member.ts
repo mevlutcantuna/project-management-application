@@ -33,3 +33,10 @@ export interface UpdateTeamMemberRoleRequest extends Request {
     role: UserRole;
   };
 }
+
+export interface RemoveUserFromTeamRequest extends Request {
+  params: {
+    teamId: string;
+    userId: string;
+  };
+}

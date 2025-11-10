@@ -1,8 +1,9 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { TeamMemberService } from "@/services/team-member";
 import {
   AddUserToTeamRequest,
   DeleteTeamMemberRequest,
+  RemoveUserFromTeamRequest,
   UpdateTeamMemberRoleRequest,
 } from "@/types/team-member";
 import { TeamService } from "@/services/team";
@@ -82,6 +83,45 @@ class TeamMemberController {
       throw new UnauthorizedError(
         "You are not authorized to delete this team member"
       );
+
+    await this.teamMemberService.deleteTeamMember(teamId, userId);
+    res.status(200).json({ message: "success" });
+  };
+
+  removeUserFromTeam = async (
+    req: RemoveUserFromTeamRequest,
+    res: Response
+  ) => {
+    const { teamId, userId } = req.params;
+
+    const team = await this.teamService.getTeamById(teamId, req.user.id);
+    if (!team) throw new NotFoundError("Team not found");
+
+    const isUserTeamAdminOrManager =
+      await this.teamService.checkUserIsTeamAdminOrManager(req.user.id, teamId);
+    if (!isUserTeamAdminOrManager)
+      throw new UnauthorizedError(
+        "You are not authorized to remove this user from the team"
+      );
+
+    await this.teamMemberService.deleteTeamMember(teamId, userId);
+    res.status(200).json({ message: "success" });
+  };
+
+  leaveTeam = async (req: Request, res: Response) => {
+    const { teamId } = req.params;
+    const userId = req.user.id;
+
+    const team = await this.teamService.getTeamById(teamId, req.user.id);
+    if (!team) throw new NotFoundError("Team not found");
+
+    const isUserTeamMember = await this.teamService.checkUserIsTeamMember(
+      userId,
+      teamId
+    );
+
+    if (!isUserTeamMember)
+      throw new UnauthorizedError("You are not a member of this team");
 
     await this.teamMemberService.deleteTeamMember(teamId, userId);
     res.status(200).json({ message: "success" });
