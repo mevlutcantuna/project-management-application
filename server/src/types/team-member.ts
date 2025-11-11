@@ -1,19 +1,19 @@
 import { Request } from "express";
 import { User, UserRole } from "./user";
 
-export interface TeamMember
-  extends Partial<Omit<User, "passwordHash" | "createdAt" | "updatedAt">> {
+export interface TeamMember {
   id: string;
   teamId: string;
   userId: string;
   role: UserRole;
+  user: Omit<User, "passwordHash" | "createdAt" | "updatedAt">;
 }
 
 export interface AddUserToTeamRequest extends Request {
   body: {
     teamId: string;
-    userId: string;
-    role: UserRole;
+    email: string;
+    role?: UserRole;
   };
 }
 

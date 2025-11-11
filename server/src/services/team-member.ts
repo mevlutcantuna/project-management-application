@@ -8,19 +8,9 @@ export class TeamMemberService {
   async addUserToTeam(
     teamId: string,
     userId: string,
-    role: UserRole
+    role?: UserRole
   ): Promise<TeamMember> {
-    const teamMember = await this.teamMemberRepository.addUserToTeam(
-      teamId,
-      userId,
-      role
-    );
-    return {
-      id: teamMember.id,
-      teamId: teamMember.teamId,
-      userId: teamMember.userId,
-      role: teamMember.role,
-    };
+    return await this.teamMemberRepository.addUserToTeam(teamId, userId, role);
   }
 
   async deleteTeamMember(teamId: string, userId: string): Promise<void> {

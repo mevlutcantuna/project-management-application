@@ -76,6 +76,8 @@
   --primary-border: lch(49.5 49.927 286.91);
   --primary-bg: lch(53 52.26 286.91);
   --primary-hover: lch(47.918 59.303 288.421);
+  --placeholder: rgb(157, 158, 159);
+  --border-hover: lch(76.025 0 282.863);
 }
 
 .dark {
@@ -122,6 +124,8 @@
   --primary-border: lch(49.5 49.927 286.91);
   --primary-bg: lch(53 52.26 286.91);
   --primary-hover: lch(47.918 59.303 288.421);
+  --placeholder: rgb(89, 90, 94);
+  --border-hover: lch(32.833 9.707 272);
 }
 
 @theme inline {
@@ -168,6 +172,8 @@
   --color-primary-border: var(--primary-border);
   --color-primary-bg: var(--primary-bg);
   --color-primary-hover: var(--primary-hover);
+  --color-placeholder: var(--placeholder);
+  --color-border-hover: var(--border-hover);
 }
 
 @layer base {
@@ -186,4 +192,8 @@
 
 .text-sm {
   font-size: 0.8125rem;
+}
+
+.text-base {
+  font-size: 0.9375rem;
 }

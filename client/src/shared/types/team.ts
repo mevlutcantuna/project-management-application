@@ -36,3 +36,18 @@ export interface LeaveTeamInput {
   workspaceId: string;
   teamId: string;
 }
+
+export interface AddUserToTeamInput {
+  workspaceId: string;
+  teamId: string;
+  email: string;
+  role?: UserRole;
+}
+
+export interface TeamMember {
+  id: string;
+  teamId: string;
+  userId: string;
+  role: UserRole;
+  user: Omit<User, "createdAt" | "updatedAt">;
+}

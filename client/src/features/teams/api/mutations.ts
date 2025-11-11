@@ -1,9 +1,11 @@
 import { api } from "@/shared/lib/api";
 import type {
+  AddUserToTeamInput,
   CreateTeamInput,
   LeaveTeamInput,
   RemoveUserFromTeamInput,
   Team,
+  TeamMember,
   UpdateTeamInput,
 } from "@/shared/types/team";
 import { useMutation } from "@tanstack/react-query";
@@ -75,6 +77,32 @@ export const useLeaveTeamMutation = (
     mutationFn: async ({ workspaceId, teamId }: LeaveTeamInput) => {
       const response = await api.post(
         `/workspaces/${workspaceId}/teams/${teamId}/members/leave`
+      );
+      return response.data;
+    },
+    ...options,
+  });
+};
+
+export const useAddUserToTeamMutation = (
+  options?: Omit<
+    Parameters<typeof useMutation<TeamMember, Error, AddUserToTeamInput>>[0],
+    "mutationFn"
+  >
+) => {
+  return useMutation<TeamMember, Error, AddUserToTeamInput>({
+    mutationFn: async ({
+      workspaceId,
+      teamId,
+      email,
+      role,
+    }: AddUserToTeamInput) => {
+      const response = await api.post(
+        `/workspaces/${workspaceId}/teams/${teamId}/members`,
+        {
+          email,
+          role,
+        }
       );
       return response.data;
     },

@@ -43,5 +43,4 @@ SELECT
   u.email,
   u.profile_picture
 FROM team_members tm
-JOIN users u ON tm.user_id = u.id
-GROUP BY tm.id, tm.team_id, tm.role, u.id, u.first_name, u.last_name, u.email, u.profile_picture;
+JOIN users u ON tm.user_id = u.id;

@@ -7,19 +7,31 @@ import {
   UpdateTeamMemberRoleRequest,
 } from "@/types/team-member";
 import { TeamService } from "@/services/team";
-import { NotFoundError, UnauthorizedError } from "@/utils/errors";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from "@/utils/errors";
+import { UserService } from "@/services/user";
 
 class TeamMemberController {
   private teamMemberService: TeamMemberService;
   private teamService: TeamService;
+  private userService: UserService;
 
-  constructor(teamMemberService: TeamMemberService, teamService: TeamService) {
+  constructor(
+    teamMemberService: TeamMemberService,
+    teamService: TeamService,
+    userService: UserService
+  ) {
     this.teamMemberService = teamMemberService;
     this.teamService = teamService;
+    this.userService = userService;
   }
 
   addUserToTeam = async (req: AddUserToTeamRequest, res: Response) => {
-    const { teamId, userId, role } = req.body;
+    const { email, role } = req.body;
+    const { teamId } = req.params;
 
     // Check if the team exists
     const team = await this.teamService.getTeamById(teamId, req.user.id);
@@ -33,9 +45,21 @@ class TeamMemberController {
         "You are not authorized to add users to this team"
       );
 
+    const user = await this.userService.getUserByEmail(email);
+    if (!user) throw new NotFoundError("User not found");
+
+    // Check if the user is still in the current team
+    const isUserInTeam = await this.teamService.checkUserIsTeamMember(
+      user.id,
+      teamId
+    );
+
+    if (isUserInTeam)
+      throw new BadRequestError("User is already a member of this team");
+
     const member = await this.teamMemberService.addUserToTeam(
       teamId,
-      userId,
+      user.id,
       role
     );
 

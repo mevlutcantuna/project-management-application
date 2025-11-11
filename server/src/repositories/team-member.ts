@@ -10,26 +10,36 @@ class TeamMemberRepository {
   async addUserToTeam(
     teamId: string,
     userId: string,
-    role: UserRole
+    role?: UserRole
   ): Promise<TeamMember> {
     const query = `
-      WITH inserted_member AS (
-        INSERT INTO team_members (team_id, user_id, role)
-        VALUES ($1, $2, $3)
-        RETURNING id
-      )
-      SELECT *
-      FROM team_members_with_user_details
-      WHERE id = (SELECT id FROM inserted_member)
-    `;
+    INSERT INTO team_members (team_id, user_id, role)
+    VALUES ($1, $2, $3)
+    RETURNING 
+      id,
+      team_id,
+      role,
+      user_id,
+      json_build_object(
+        'id', (SELECT id FROM users WHERE id = $2),
+        'first_name', (SELECT first_name FROM users WHERE id = $2),
+        'last_name', (SELECT last_name FROM users WHERE id = $2),
+        'email', (SELECT email FROM users WHERE id = $2),
+        'profile_picture', (SELECT profile_picture FROM users WHERE id = $2)
+      ) as user
+  `;
 
-    const result = await this.db.query(query, [teamId, userId, role]);
+    const result = await this.db.query(query, [
+      teamId,
+      userId,
+      role ?? "Member",
+    ]);
 
     if (!result.rows.length) {
       throw new NotFoundError("User or team not found");
     }
 
-    return camelcaseKeys(result.rows[0]) as TeamMember;
+    return camelcaseKeys(result.rows[0], { deep: true }) as TeamMember;
   }
 
   async deleteTeamMember(teamId: string, userId: string): Promise<void> {
@@ -46,16 +56,22 @@ class TeamMemberRepository {
     role: UserRole
   ): Promise<TeamMember> {
     const query = `
-      WITH updated_member AS (
-        UPDATE team_members
-        SET role = $3
-        WHERE team_id = $1 AND user_id = $2
-        RETURNING id
-      )
-      SELECT *
-      FROM team_members_with_user_details
-      WHERE id = (SELECT id FROM updated_member)
-    `;
+    UPDATE team_members 
+    SET role = $3
+    WHERE team_id = $1 AND user_id = $2
+    RETURNING 
+      id,
+      team_id,
+      role,
+      user_id,
+      json_build_object(
+        'id', (SELECT id FROM users WHERE id = $2),
+        'first_name', (SELECT first_name FROM users WHERE id = $2),
+        'last_name', (SELECT last_name FROM users WHERE id = $2),
+        'email', (SELECT email FROM users WHERE id = $2),
+        'profile_picture', (SELECT profile_picture FROM users WHERE id = $2)
+      ) as user
+  `;
 
     const result = await this.db.query(query, [teamId, userId, role]);
 
@@ -63,7 +79,7 @@ class TeamMemberRepository {
       throw new NotFoundError("Team member not found");
     }
 
-    return camelcaseKeys(result.rows[0]) as TeamMember;
+    return camelcaseKeys(result.rows[0], { deep: true }) as TeamMember;
   }
 }
 
