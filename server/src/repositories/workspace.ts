@@ -279,6 +279,19 @@ class WorkspaceRepository {
     const result = await this.db.query(query, [userId, workspaceId]);
     return parseInt(result.rows[0].count) > 0;
   }
+
+  async checkUserIsWorkspaceAdminOrManager(
+    userId: string,
+    workspaceId: string
+  ): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM workspace_members
+      WHERE user_id = $1 AND workspace_id = $2 AND (role = 'Admin' OR role = 'Manager')
+    `;
+    const result = await this.db.query(query, [userId, workspaceId]);
+    return parseInt(result.rows[0].count) > 0;
+  }
 }
 
 export default WorkspaceRepository;

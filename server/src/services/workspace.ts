@@ -141,4 +141,14 @@ export class WorkspaceService {
       workspaceId
     );
   }
+
+  async checkUserIsWorkspaceAdminOrManager(
+    userId: string,
+    workspaceId: string
+  ): Promise<boolean> {
+    return this.workspaceRepository.checkUserIsWorkspaceAdminOrManager(
+      userId,
+      workspaceId
+    );
+  }
 }

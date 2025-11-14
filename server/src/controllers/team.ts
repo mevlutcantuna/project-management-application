@@ -15,19 +15,45 @@ import {
 } from "@/utils/errors";
 import { Response } from "express";
 import { UserService } from "@/services/user";
+import { WorkspaceService } from "@/services/workspace";
 
 class TeamController {
   private teamService: TeamService;
   private userService: UserService;
+  private workspaceService: WorkspaceService;
 
-  constructor(teamService: TeamService, userService: UserService) {
+  constructor(
+    teamService: TeamService,
+    userService: UserService,
+    workspaceService: WorkspaceService
+  ) {
     this.teamService = teamService;
     this.userService = userService;
+    this.workspaceService = workspaceService;
   }
 
   createTeam = async (req: CreateTeamRequest, res: Response) => {
     const { name, identifier, workspaceId, iconName, color, userIds } =
       req.body;
+
+    // Check creator is in the workspace and is a admin or manager
+    const isUserInWorkspace =
+      await this.workspaceService.checkUserIsWorkspaceMember(
+        req.user.id,
+        workspaceId
+      );
+    if (!isUserInWorkspace)
+      throw new UnauthorizedError("User is not a member of the workspace");
+
+    const isUserAdminOrManager =
+      await this.workspaceService.checkUserIsWorkspaceAdminOrManager(
+        req.user.id,
+        workspaceId
+      );
+    if (!isUserAdminOrManager)
+      throw new UnauthorizedError(
+        "User is not a admin or manager of the workspace"
+      );
 
     // Check if the identifier already exists
     const existingTeam =
