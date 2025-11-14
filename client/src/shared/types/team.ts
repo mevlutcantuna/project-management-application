@@ -51,3 +51,8 @@ export interface TeamMember {
   role: UserRole;
   user: Omit<User, "createdAt" | "updatedAt">;
 }
+
+export interface DeleteTeamInput {
+  workspaceId: string;
+  teamId: string;
+}

@@ -4,8 +4,6 @@ import TeamForm, {
   type TeamFormSchema,
 } from "@/features/teams/components/team-form";
 import { useWorkspaceStore } from "@/features/workspace/store";
-import { getErrorMessage } from "@/shared/lib/utils";
-import type { ErrorResponse } from "@/shared/types/error";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -20,11 +18,6 @@ export const TeamCreationPage = () => {
       toast.success("Team created successfully");
       navigate(`/${currentWorkspace?.url}/settings/team/${data.identifier}`);
       queryClient.invalidateQueries({ queryKey: ["workspace-teams"] });
-    },
-    onError: (error) => {
-      toast.error("Failed to create team", {
-        description: getErrorMessage(error as ErrorResponse),
-      });
     },
   });
 

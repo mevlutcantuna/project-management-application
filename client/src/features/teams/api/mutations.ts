@@ -2,6 +2,7 @@ import { api } from "@/shared/lib/api";
 import type {
   AddUserToTeamInput,
   CreateTeamInput,
+  DeleteTeamInput,
   LeaveTeamInput,
   RemoveUserFromTeamInput,
   Team,
@@ -103,6 +104,23 @@ export const useAddUserToTeamMutation = (
           email,
           role,
         }
+      );
+      return response.data;
+    },
+    ...options,
+  });
+};
+
+export const useDeleteTeamMutation = (
+  options?: Omit<
+    Parameters<typeof useMutation<void, Error, DeleteTeamInput>>[0],
+    "mutationFn"
+  >
+) => {
+  return useMutation<void, Error, DeleteTeamInput>({
+    mutationFn: async ({ workspaceId, teamId }: DeleteTeamInput) => {
+      const response = await api.delete(
+        `/workspaces/${workspaceId}/teams/${teamId}`
       );
       return response.data;
     },
