@@ -13,20 +13,24 @@ import {
   UnauthorizedError,
 } from "@/utils/errors";
 import { UserService } from "@/services/user";
+import { WorkspaceService } from "@/services/workspace";
 
 class TeamMemberController {
   private teamMemberService: TeamMemberService;
   private teamService: TeamService;
   private userService: UserService;
+  private workspaceService: WorkspaceService;
 
   constructor(
     teamMemberService: TeamMemberService,
     teamService: TeamService,
-    userService: UserService
+    userService: UserService,
+    workspaceService: WorkspaceService
   ) {
     this.teamMemberService = teamMemberService;
     this.teamService = teamService;
     this.userService = userService;
+    this.workspaceService = workspaceService;
   }
 
   addUserToTeam = async (req: AddUserToTeamRequest, res: Response) => {
@@ -56,6 +60,20 @@ class TeamMemberController {
 
     if (isUserInTeam)
       throw new BadRequestError("User is already a member of this team");
+
+    // If user is not in the workspace, add them to the workspace
+    const isUserInWorkspace =
+      await this.workspaceService.checkUserIsWorkspaceMember(
+        user.id,
+        team.workspaceId
+      );
+    console.log("isUserInWorkspace", isUserInWorkspace);
+    if (!isUserInWorkspace)
+      await this.workspaceService.addUserToWorkspaceMember({
+        workspaceId: team.workspaceId,
+        userId: user.id,
+        role: "Member",
+      });
 
     const member = await this.teamMemberService.addUserToTeam(
       teamId,

@@ -131,4 +131,14 @@ export class WorkspaceService {
   async isWorkspaceInvitationExpired(id: string): Promise<boolean> {
     return this.workspaceRepository.isWorkspaceInvitationExpired(id);
   }
+
+  async checkUserIsWorkspaceMember(
+    userId: string,
+    workspaceId: string
+  ): Promise<boolean> {
+    return this.workspaceRepository.checkUserIsWorkspaceMember(
+      userId,
+      workspaceId
+    );
+  }
 }

@@ -52,9 +52,10 @@ class WorkspaceRepository {
 
   async getWorkspacesByUserId(userId: string): Promise<Workspace[]> {
     const query = `
-      SELECT id, name, description, owner_id, created_at, updated_at, url
+      SELECT workspaces.id as id, name, description, owner_id, created_at, updated_at, url
       FROM workspaces
-      WHERE owner_id = $1
+      LEFT JOIN workspace_members ON workspaces.id = workspace_members.workspace_id
+      WHERE workspace_members.user_id = $1
     `;
 
     const result = await this.db.query(query, [userId]);
@@ -264,6 +265,19 @@ class WorkspaceRepository {
     const result = await this.db.query(query, [id]);
     const row = camelcaseKeys(result.rows[0]);
     return row.expiresAt < new Date();
+  }
+
+  async checkUserIsWorkspaceMember(
+    userId: string,
+    workspaceId: string
+  ): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM workspace_members
+      WHERE user_id = $1 AND workspace_id = $2
+    `;
+    const result = await this.db.query(query, [userId, workspaceId]);
+    return parseInt(result.rows[0].count) > 0;
   }
 }
 
