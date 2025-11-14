@@ -67,7 +67,6 @@ class TeamMemberController {
         user.id,
         team.workspaceId
       );
-    console.log("isUserInWorkspace", isUserInWorkspace);
     if (!isUserInWorkspace)
       await this.workspaceService.addUserToWorkspaceMember({
         workspaceId: team.workspaceId,
