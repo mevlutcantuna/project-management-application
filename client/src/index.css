@@ -78,6 +78,7 @@
   --primary-hover: lch(47.918 59.303 288.421);
   --placeholder: rgb(157, 158, 159);
   --border-hover: lch(76.025 0 282.863);
+  --dialog-bg: lch(100 0 282.863);
 }
 
 .dark {
@@ -126,6 +127,7 @@
   --primary-hover: lch(47.918 59.303 288.421);
   --placeholder: rgb(89, 90, 94);
   --border-hover: lch(32.833 9.707 272);
+  --dialog-bg: lch(10.633 1.867 272);
 }
 
 @theme inline {
@@ -174,6 +176,7 @@
   --color-primary-hover: var(--primary-hover);
   --color-placeholder: var(--placeholder);
   --color-border-hover: var(--border-hover);
+  --color-dialog-bg: var(--dialog-bg);
 }
 
 @layer base {

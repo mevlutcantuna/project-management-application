@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Activity } from "react";
+import { Activity, useState } from "react";
 import {
   Box,
   Check,
@@ -45,6 +45,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useTeamStore } from "@/features/teams/store";
 import { useTheme } from "@/shared/hooks/use-theme";
+import IssueDialog from "@/features/issues/components/issue-dialog";
 export interface SidebarItem {
   icon: LucideIcon;
   iconProps?: LucideProps;
@@ -58,6 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { workspaces, currentWorkspace } = useWorkspaceStore();
   const { teams } = useTeamStore();
   const { setTheme } = useTheme();
+  const [open, setOpen] = useState(false);
 
   const generalSidebarItems: SidebarItem[] = [
     {
@@ -91,123 +93,132 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   ];
 
   return (
-    <Sidebar variant="inset" {...props}>
-      <SidebarHeader className="pt-1.5">
-        <div className="flex justify-between gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              asChild
-              className="hover:bg-sidebar-link-hover aria-expanded:bg-sidebar-link-hover h-7 w-fit rounded-sm pr-1.5 pl-1 outline-none"
-            >
-              <div className="flex items-center gap-1.5">
-                <div className="text-primary flex h-5 w-5 items-center justify-center rounded-lg bg-transparent">
-                  <Command className="size-4" />
-                </div>
-                <span className="text-primary max-w-[100px] truncate text-sm font-semibold tracking-[-0.1px] whitespace-nowrap">
-                  {currentWorkspace?.name || ""}
-                </span>
-
-                <ChevronDown className="size-3" />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuItem
-                onClick={() => navigate(`/${currentWorkspace?.url}/settings`)}
+    <>
+      <Sidebar variant="inset" {...props}>
+        <SidebarHeader className="pt-1.5">
+          <div className="flex justify-between gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                asChild
+                className="hover:bg-sidebar-link-hover aria-expanded:bg-sidebar-link-hover h-7 w-fit rounded-sm pr-1.5 pl-1 outline-none"
               >
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                    Switch workspace
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
-                      {workspaces.map((workspace) => (
+                <div className="flex items-center gap-1.5">
+                  <div className="text-primary flex h-5 w-5 items-center justify-center rounded-lg bg-transparent">
+                    <Command className="size-4" />
+                  </div>
+                  <span className="text-primary max-w-[100px] truncate text-sm font-semibold tracking-[-0.1px] whitespace-nowrap">
+                    {currentWorkspace?.name || ""}
+                  </span>
+
+                  <ChevronDown className="size-3" />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem
+                  onClick={() => navigate(`/${currentWorkspace?.url}/settings`)}
+                >
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      Switch workspace
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
+                        {workspaces.map((workspace) => (
+                          <DropdownMenuItem
+                            className="flex items-center gap-2"
+                            key={workspace.url}
+                            onClick={() => {
+                              if (workspace.id === currentWorkspace?.id) {
+                                return;
+                              }
+                              navigate(`/${workspace.url}`);
+                            }}
+                          >
+                            {workspace.name}
+                            <Activity
+                              mode={
+                                workspace.id === currentWorkspace?.id
+                                  ? "visible"
+                                  : "hidden"
+                              }
+                            >
+                              <Check className="size-4" />
+                            </Activity>
+                          </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>Account</DropdownMenuLabel>
                         <DropdownMenuItem
-                          className="flex items-center gap-2"
-                          key={workspace.url}
                           onClick={() => {
-                            if (workspace.id === currentWorkspace?.id) {
-                              return;
-                            }
-                            navigate(`/${workspace.url}`);
+                            navigate("/create");
                           }}
                         >
-                          {workspace.name}
-                          <Activity
-                            mode={
-                              workspace.id === currentWorkspace?.id
-                                ? "visible"
-                                : "hidden"
-                            }
-                          >
-                            <Check className="size-4" />
-                          </Activity>
+                          Create a workspace
                         </DropdownMenuItem>
-                      ))}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel>Account</DropdownMenuLabel>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          navigate("/create");
-                        }}
-                      >
-                        Create a workspace
-                      </DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-              </DropdownMenuGroup>
-              <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <div className="flex gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="h-7 w-7" variant="ghost" size="icon">
-                  <Sun className="size-3.5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                  <Moon className="absolute size-3.5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                  <span className="sr-only">Toggle theme</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  System
-                </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                </DropdownMenuGroup>
+                <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button className="h-7 w-7" variant="ghost" size="icon">
-              <Search className="size-3.5" />
-            </Button>
+            <div className="flex gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="h-7 w-7" variant="ghost" size="icon">
+                    <Sun className="size-3.5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                    <Moon className="absolute size-3.5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                    <span className="sr-only">Toggle theme</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setTheme("light")}>
+                    Light
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme("dark")}>
+                    Dark
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme("system")}>
+                    System
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            <Button className="h-7 w-7" variant="outline" size="icon">
-              <SquarePen className="size-3.5" />
-            </Button>
+              <Button className="h-7 w-7" variant="ghost" size="icon">
+                <Search className="size-3.5" />
+              </Button>
+
+              <Button
+                className="h-7 w-7"
+                variant="outline"
+                size="icon"
+                onClick={() => setOpen(true)}
+              >
+                <SquarePen className="size-3.5" />
+              </Button>
+            </div>
           </div>
-        </div>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavGeneral items={generalSidebarItems} />
-        <NavWorkspace workspaces={workspaceSidebarItems} />
-        <NavTeams
-          teams={teams.map((team) => ({
-            ...team,
-            url: `/${currentWorkspace?.url}/settings/team/${team.identifier}`,
-          }))}
-          enableSubMenu={true}
-        />
-      </SidebarContent>
-    </Sidebar>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavGeneral items={generalSidebarItems} />
+          <NavWorkspace workspaces={workspaceSidebarItems} />
+          <NavTeams
+            teams={teams.map((team) => ({
+              ...team,
+              url: `/${currentWorkspace?.url}/settings/team/${team.identifier}`,
+            }))}
+            enableSubMenu={true}
+          />
+        </SidebarContent>
+      </Sidebar>
+
+      <IssueDialog open={open} onOpenChange={setOpen} />
+    </>
   );
 }
