@@ -3,6 +3,7 @@ import { loginSchema, signupSchema } from "../schemas/auth";
 import { ValidationError, UnauthorizedError } from "../utils/errors";
 import { AuthService } from "@/services/auth";
 import { LoginRequest, RefreshTokenRequest, SignupRequest } from "@/types/auth";
+import z from "zod";
 
 class AuthController {
   private authService: AuthService;
@@ -11,30 +12,29 @@ class AuthController {
     this.authService = authService;
   }
 
-  signup = async (req: SignupRequest, res: Response) => {
-    const validatedData = signupSchema.safeParse(req.body);
+  private async validateRequest<T>(
+    schema: z.ZodSchema<T>,
+    data: T
+  ): Promise<T> {
+    const validatedData = schema.safeParse(data);
     if (!validatedData.success) throw new ValidationError(validatedData.error);
+    return validatedData.data;
+  }
 
-    const { firstName, lastName, email, password } = validatedData.data;
-
-    const user = await this.authService.signup({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
-
+  signup = async (req: SignupRequest, res: Response) => {
+    const validatedData = await this.validateRequest(signupSchema, req.body);
+    const user = await this.authService.signup(validatedData);
     res.status(201).json(user);
   };
 
   login = async (req: LoginRequest, res: Response) => {
-    const validatedData = loginSchema.safeParse(req.body);
-    if (!validatedData.success) throw new ValidationError(validatedData.error);
+    const validatedData = await this.validateRequest(loginSchema, req.body);
+    const result = await this.authService.login(
+      validatedData.email,
+      validatedData.password
+    );
 
-    const { email, password } = validatedData.data;
-    const result = await this.authService.login(email, password);
     if (!result) throw new UnauthorizedError("Invalid email or password");
-
     res.status(200).json(result);
   };
 

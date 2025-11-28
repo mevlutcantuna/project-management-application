@@ -32,6 +32,20 @@ class TeamController {
     this.workspaceService = workspaceService;
   }
 
+  private async validateUserIds(userIds?: string[]) {
+    if (userIds && userIds.length > 0) {
+      const users = await this.userService.getUsersByIds(userIds);
+
+      if (users.length !== userIds.length)
+        throw new BadRequestError("Invalid user IDs", [
+          {
+            field: "userIds",
+            message: "Invalid user IDs",
+          },
+        ]);
+    }
+  }
+
   createTeam = async (req: CreateTeamRequest, res: Response) => {
     const { name, identifier, workspaceId, iconName, color, userIds } =
       req.body;
@@ -67,18 +81,7 @@ class TeamController {
         "Team identifier already exists for this workspace"
       );
 
-    // Check if the userIds are valid
-    if (userIds && userIds.length > 0) {
-      const users = await this.userService.getUsersByIds(userIds);
-
-      if (users.length !== userIds.length)
-        throw new BadRequestError("Invalid user IDs", [
-          {
-            field: "userIds",
-            message: "Invalid user IDs",
-          },
-        ]);
-    }
+    await this.validateUserIds(userIds);
 
     const team = await this.teamService.createTeam({
       name,
@@ -112,18 +115,7 @@ class TeamController {
         );
     }
 
-    // Check if the userIds are valid
-    if (userIds && userIds.length > 0) {
-      const users = await this.userService.getUsersByIds(userIds);
-
-      if (users.length !== userIds.length)
-        throw new BadRequestError("Invalid user IDs", [
-          {
-            field: "userIds",
-            message: "Invalid user IDs",
-          },
-        ]);
-    }
+    await this.validateUserIds(userIds);
 
     const team = await this.teamService.updateTeam(id, {
       name,

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { WorkspaceService } from "@/services/workspace";
-import { extractTokenFromHeader, verifyToken } from "@/utils/jwt";
 import {
   BadRequestError,
   ConflictError,
@@ -26,26 +25,46 @@ class WorkspaceController {
     this.userService = userService;
   }
 
+  private async ensureWorkspaceMember(workspaceId: string, userId: string) {
+    const workspaceMembers =
+      await this.workspaceService.getWorkspaceMembers(workspaceId);
+    if (!workspaceMembers.some((member) => member.userId === userId))
+      throw new UnauthorizedError("You are not a member of this workspace");
+  }
+
+  private async ensureWorkspaceOwner(workspaceId: string, userId: string) {
+    const workspace = await this.workspaceService.getWorkspaceById(workspaceId);
+    if (!workspace) throw new NotFoundError("Workspace not found");
+
+    if (workspace.ownerId !== userId)
+      throw new UnauthorizedError("You are not the owner of this workspace");
+
+    return workspace;
+  }
+
+  private async ensureWorkspaceAdminOrManager(
+    workspaceId: string,
+    userId: string
+  ) {
+    const workspaceMembers =
+      await this.workspaceService.getWorkspaceMembers(workspaceId);
+    if (!workspaceMembers.some((member) => member.userId === userId))
+      throw new UnauthorizedError("You are not a member of this workspace");
+
+    const member = workspaceMembers.find((member) => member.userId === userId);
+    if (member && member.role !== "Admin" && member.role !== "Manager")
+      throw new UnauthorizedError(
+        "You are not the admin or manager of this workspace"
+      );
+  }
+
   // Workspaces
 
   createWorkspace = async (req: CreateWorkspaceRequest, res: Response) => {
-    const {
-      name,
-      description = "",
-      url,
-    } = createWorkspaceSchema.parse(req.body);
-
     const validatedData = createWorkspaceSchema.safeParse(req.body);
     if (!validatedData.success) throw new ValidationError(validatedData.error);
 
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
+    const { name, description = "", url } = validatedData.data;
 
     // check if the workspace url already exists
     const existingWorkspaceByUrl =
@@ -62,7 +81,7 @@ class WorkspaceController {
     const workspace = await this.workspaceService.createWorkspace({
       name,
       description,
-      ownerId: user.id,
+      ownerId: req.user.id,
       url: url.toLowerCase().trim(),
     });
 
@@ -72,20 +91,7 @@ class WorkspaceController {
   getWorkspaceById = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
-    // check user is a member or the owner of the workspace
-    const workspaceMembers =
-      await this.workspaceService.getWorkspaceMembers(id);
-    if (!workspaceMembers.some((member) => member.userId === user.id))
-      throw new UnauthorizedError("You are not a member of this workspace");
+    await this.ensureWorkspaceMember(id, req.user.id);
 
     const workspace = await this.workspaceService.getWorkspaceById(id);
     if (!workspace) throw new NotFoundError("Workspace not found");
@@ -96,41 +102,17 @@ class WorkspaceController {
   getWorkspaceByUrl = async (req: Request, res: Response) => {
     const { url } = req.params;
 
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
     const workspaceByUrl = await this.workspaceService.getWorkspaceByUrl(url);
     if (!workspaceByUrl) throw new NotFoundError("Workspace not found");
 
-    // check user is a member or the owner of the workspace
-    const workspaceMembers = await this.workspaceService.getWorkspaceMembers(
-      workspaceByUrl.id
-    );
-    if (!workspaceMembers.some((member) => member.userId === user.id))
-      throw new UnauthorizedError("You are not a member of this workspace");
+    await this.ensureWorkspaceMember(workspaceByUrl.id, req.user.id);
 
-    const workspace = await this.workspaceService.getWorkspaceByUrl(url);
-    res.status(200).json(workspace);
+    res.status(200).json(workspaceByUrl);
   };
 
   getMyWorkspaces = async (req: Request, res: Response) => {
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
     const workspaces = await this.workspaceService.getWorkspacesByUserId(
-      user.id
+      req.user.id
     );
     res.status(200).json(workspaces);
   };
@@ -139,20 +121,7 @@ class WorkspaceController {
     const { id } = req.params;
     const { name, description } = req.body;
 
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
-    const workspace = await this.workspaceService.getWorkspaceById(id);
-    if (!workspace) throw new NotFoundError("Workspace not found");
-
-    if (workspace.ownerId !== user.id)
-      throw new UnauthorizedError("You are not the owner of this workspace");
+    await this.ensureWorkspaceOwner(id, req.user.id);
 
     const updatedWorkspace = await this.workspaceService.updateWorkspace({
       id: id,
@@ -166,20 +135,7 @@ class WorkspaceController {
   deleteWorkspace = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
-    const workspace = await this.workspaceService.getWorkspaceById(id);
-    if (!workspace) throw new NotFoundError("Workspace not found");
-
-    if (workspace.ownerId !== user.id)
-      throw new UnauthorizedError("You are not the owner of this workspace");
+    await this.ensureWorkspaceOwner(id, req.user.id);
 
     await this.workspaceService.deleteWorkspace(id);
 
@@ -195,20 +151,7 @@ class WorkspaceController {
     const { id: workspaceId } = req.params;
     const { userId, role } = req.body;
 
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
-    const workspace = await this.workspaceService.getWorkspaceById(workspaceId);
-    if (!workspace) throw new NotFoundError("Workspace not found");
-
-    if (workspace.ownerId !== user.id)
-      throw new UnauthorizedError("You are not the owner of this workspace");
+    await this.ensureWorkspaceOwner(workspaceId, req.user.id);
 
     const member = await this.workspaceService.addUserToWorkspaceMember({
       workspaceId: workspaceId,
@@ -232,17 +175,10 @@ class WorkspaceController {
   // Workspace Invitations
 
   getWorkspaceMyInvitations = async (req: Request, res: Response) => {
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
     const invitations =
-      await this.workspaceService.getWorkspaceInvitationsByEmail(user.email);
+      await this.workspaceService.getWorkspaceInvitationsByEmail(
+        req.user.email
+      );
 
     res.status(200).json(invitations);
   };
@@ -254,20 +190,11 @@ class WorkspaceController {
     const { id } = req.params;
     const { email, role } = req.body;
 
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
     const workspace = await this.workspaceService.getWorkspaceById(id);
     if (!workspace) throw new NotFoundError("Workspace not found");
 
-    const sender = await this.userService.getUserById(payload.sub);
-    if (!sender) throw new UnauthorizedError("Sender user not found");
-
     const senderMember = await this.workspaceService.getWorkspaceMemberByUserId(
-      sender.id,
+      req.user.id,
       workspace.id
     );
     if (!senderMember) throw new UnauthorizedError("Sender user not found");
@@ -275,7 +202,7 @@ class WorkspaceController {
     const receiver = await this.userService.getUserByEmail(email);
     if (!receiver) throw new NotFoundError("Receiver user not found");
 
-    if (sender.id === receiver.id)
+    if (req.user.id === receiver.id)
       throw new ConflictError("email", "You cannot invite yourself");
 
     // Check if invited by has a valid role such as Admin or Manager
@@ -301,7 +228,7 @@ class WorkspaceController {
       workspaceId: id,
       email,
       role,
-      invitedBy: sender.id,
+      invitedBy: req.user.id,
     });
 
     res.status(200).json(invitation);
@@ -309,12 +236,6 @@ class WorkspaceController {
 
   acceptWorkspaceInvitation = async (req: Request, res: Response) => {
     const { id } = req.params;
-
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
 
     // workspace invitaion exists
     const invitation =
@@ -330,18 +251,15 @@ class WorkspaceController {
         },
       ]);
 
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
     // check if the user is the invited user
-    if (invitation.email !== user.email)
+    if (invitation.email !== req.user.email)
       throw new UnauthorizedError("You are not the invited user");
 
     // check if the user is already a member of the workspace
     const workspaceMembers = await this.workspaceService.getWorkspaceMembers(
       invitation.workspaceId
     );
-    if (workspaceMembers.some((member) => member.userId === user.id))
+    if (workspaceMembers.some((member) => member.userId === req.user.id))
       throw new ConflictError(
         "email",
         "User is already a member of this workspace"
@@ -350,7 +268,7 @@ class WorkspaceController {
     // add the user to the workspace
     await this.workspaceService.addUserToWorkspaceMember({
       workspaceId: invitation.workspaceId,
-      userId: user.id,
+      userId: req.user.id,
       role: invitation.role,
     });
 
@@ -362,15 +280,6 @@ class WorkspaceController {
 
   declineWorkspaceInvitation = async (req: Request, res: Response) => {
     const { id } = req.params;
-
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
 
     const invitation =
       await this.workspaceService.getWorkspaceInvitationById(id);
@@ -386,7 +295,7 @@ class WorkspaceController {
       ]);
 
     // check if the user is the invited user
-    if (invitation.email !== user.email)
+    if (invitation.email !== req.user.email)
       throw new UnauthorizedError("You are not the invited user");
 
     await this.workspaceService.deleteWorkspaceInvitation(id);
@@ -397,26 +306,76 @@ class WorkspaceController {
   removeWorkspaceInvitation = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const token = extractTokenFromHeader(req.headers.authorization);
-    if (!token) throw new UnauthorizedError("No token provided");
-
-    const payload = verifyToken(token);
-    if (!payload) throw new UnauthorizedError("Invalid token");
-
-    const user = await this.userService.getUserById(payload.sub);
-    if (!user) throw new UnauthorizedError("User not found");
-
     const invitation =
       await this.workspaceService.getWorkspaceInvitationById(id);
     if (!invitation) throw new NotFoundError("Invitation not found");
 
     // check if the user is the owner of the workspace
-    if (invitation.invitedBy !== user.id)
+    if (invitation.invitedBy !== req.user.id)
       throw new UnauthorizedError("You are not the owner of this workspace");
 
     await this.workspaceService.deleteWorkspaceInvitation(id);
 
     res.status(200).json({ message: "Invitation removed" });
+  };
+
+  // Workspace Statuses
+
+  getWorkspaceStatuses = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    await this.ensureWorkspaceMember(id, req.user.id);
+
+    const statuses = await this.workspaceService.getWorkspaceStatuses(id);
+    res.status(200).json(statuses);
+  };
+
+  createWorkspaceStatus = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name, iconName, color } = req.body;
+
+    await this.ensureWorkspaceMember(id, req.user.id);
+
+    const status = await this.workspaceService.createWorkspaceStatus({
+      workspaceId: id,
+      name,
+      iconName,
+      color,
+      createdById: req.user.id,
+    });
+
+    res.status(200).json(status);
+  };
+
+  updateWorkspaceStatus = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name, iconName, color } = req.body;
+
+    await this.ensureWorkspaceAdminOrManager(id, req.user.id);
+
+    // Check the status already exists
+    const existingStatus =
+      await this.workspaceService.getWorkspaceStatusById(id);
+    if (!existingStatus) throw new NotFoundError("Status not found");
+
+    const status = await this.workspaceService.updateWorkspaceStatus({
+      id,
+      name,
+      iconName,
+      color,
+    });
+
+    res.status(200).json(status);
+  };
+
+  deleteWorkspaceStatus = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    await this.ensureWorkspaceAdminOrManager(id, req.user.id);
+
+    await this.workspaceService.deleteWorkspaceStatus(id);
+
+    res.status(200).json({ message: "Workspace status deleted" });
   };
 }
 

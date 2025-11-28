@@ -3,7 +3,6 @@ import { TeamMemberService } from "@/services/team-member";
 import {
   AddUserToTeamRequest,
   DeleteTeamMemberRequest,
-  RemoveUserFromTeamRequest,
   UpdateTeamMemberRoleRequest,
 } from "@/types/team-member";
 import { TeamService } from "@/services/team";
@@ -33,21 +32,25 @@ class TeamMemberController {
     this.workspaceService = workspaceService;
   }
 
+  private async ensureTeamAdminOrManager(teamId: string, userId: string) {
+    const team = await this.teamService.getTeamById(teamId, userId);
+    if (!team) throw new NotFoundError("Team not found");
+
+    const isUserTeamAdminOrManager =
+      await this.teamService.checkUserIsTeamAdminOrManager(userId, teamId);
+    if (!isUserTeamAdminOrManager)
+      throw new UnauthorizedError(
+        "You are not authorized to perform this action"
+      );
+
+    return team;
+  }
+
   addUserToTeam = async (req: AddUserToTeamRequest, res: Response) => {
     const { email, role } = req.body;
     const { teamId } = req.params;
 
-    // Check if the team exists
-    const team = await this.teamService.getTeamById(teamId, req.user.id);
-    if (!team) throw new NotFoundError("Team not found");
-
-    // Check if the adder user is a admin or manager of the team
-    const isUserTeamAdminOrManager =
-      await this.teamService.checkUserIsTeamAdminOrManager(req.user.id, teamId);
-    if (!isUserTeamAdminOrManager)
-      throw new UnauthorizedError(
-        "You are not authorized to add users to this team"
-      );
+    const team = await this.ensureTeamAdminOrManager(teamId, req.user.id);
 
     const user = await this.userService.getUserByEmail(email);
     if (!user) throw new NotFoundError("User not found");
@@ -90,17 +93,7 @@ class TeamMemberController {
     const { teamId, userId } = req.params;
     const { role } = req.body;
 
-    // Check if the team exists
-    const team = await this.teamService.getTeamById(teamId, req.user.id);
-    if (!team) throw new NotFoundError("Team not found");
-
-    // Check if the updater user is a admin or manager of the team
-    const isUserTeamAdminOrManager =
-      await this.teamService.checkUserIsTeamAdminOrManager(req.user.id, teamId);
-    if (!isUserTeamAdminOrManager)
-      throw new UnauthorizedError(
-        "You are not authorized to update the role of this team member"
-      );
+    await this.ensureTeamAdminOrManager(teamId, req.user.id);
 
     const member = await this.teamMemberService.updateTeamMemberRole(
       teamId,
@@ -113,37 +106,7 @@ class TeamMemberController {
   deleteTeamMember = async (req: DeleteTeamMemberRequest, res: Response) => {
     const { teamId, userId } = req.params;
 
-    // Check if the team exists
-    const team = await this.teamService.getTeamById(teamId, req.user.id);
-    if (!team) throw new NotFoundError("Team not found");
-
-    // Check if the deleter user is a admin or manager of the team
-    const isUserTeamAdminOrManager =
-      await this.teamService.checkUserIsTeamAdminOrManager(req.user.id, teamId);
-    if (!isUserTeamAdminOrManager)
-      throw new UnauthorizedError(
-        "You are not authorized to delete this team member"
-      );
-
-    await this.teamMemberService.deleteTeamMember(teamId, userId);
-    res.status(200).json({ message: "success" });
-  };
-
-  removeUserFromTeam = async (
-    req: RemoveUserFromTeamRequest,
-    res: Response
-  ) => {
-    const { teamId, userId } = req.params;
-
-    const team = await this.teamService.getTeamById(teamId, req.user.id);
-    if (!team) throw new NotFoundError("Team not found");
-
-    const isUserTeamAdminOrManager =
-      await this.teamService.checkUserIsTeamAdminOrManager(req.user.id, teamId);
-    if (!isUserTeamAdminOrManager)
-      throw new UnauthorizedError(
-        "You are not authorized to remove this user from the team"
-      );
+    await this.ensureTeamAdminOrManager(teamId, req.user.id);
 
     await this.teamMemberService.deleteTeamMember(teamId, userId);
     res.status(200).json({ message: "success" });

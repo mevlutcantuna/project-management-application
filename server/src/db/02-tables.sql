@@ -66,26 +66,32 @@ CREATE TABLE IF NOT EXISTS team_members (
 );
 
 
--- Issue statuses (predefined statuses)
-CREATE TABLE IF NOT EXISTS issue_statuses (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(50) NOT NULL UNIQUE,
-  icon_name VARCHAR(50),
-  color VARCHAR(7),
-  sort_order INTEGER NOT NULL DEFAULT 0
-);
-
--- Issue labels
-CREATE TABLE IF NOT EXISTS issue_labels (
+-- Workspace statuses (predefined statuses)
+CREATE TABLE IF NOT EXISTS workspace_statuses (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   name VARCHAR(100) NOT NULL,
-  color VARCHAR(7) NOT NULL,
-  is_frequently_used BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  icon_name VARCHAR(50) NOT NULL,
+  color VARCHAR(50) NOT NULL,
+  created_by_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(workspace_id, name)
 );
 
--- Issues table
+-- Workspace labels
+CREATE TABLE IF NOT EXISTS workspace_labels (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  name VARCHAR(100) NOT NULL,
+  color VARCHAR(50) NOT NULL,
+  created_by_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(workspace_id, name)
+);
+
+-- Workspace issues table
 CREATE TABLE IF NOT EXISTS issues (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL,
@@ -94,8 +100,8 @@ CREATE TABLE IF NOT EXISTS issues (
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
   created_by_id UUID REFERENCES users(id) ON DELETE SET NULL,
-  status_id UUID NOT NULL REFERENCES issue_statuses(id),
-  label_id UUID REFERENCES issue_labels(id) ON DELETE SET NULL,
+  status_id UUID NOT NULL REFERENCES workspace_statuses(id),
+  label_id UUID REFERENCES workspace_labels(id) ON DELETE SET NULL,
   priority issue_priority_type DEFAULT 'medium',
   parent_issue_id UUID REFERENCES issues(id) ON DELETE SET NULL,
   due_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),

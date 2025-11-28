@@ -48,3 +48,14 @@ CREATE TRIGGER trigger_delete_empty_teams
 AFTER DELETE ON team_members
 FOR EACH ROW EXECUTE FUNCTION delete_empty_teams();
 
+-- Trigger to create default workspace statuses when workspace is created
+DROP TRIGGER IF EXISTS trigger_create_default_workspace_statuses ON workspaces;
+CREATE TRIGGER trigger_create_default_workspace_statuses
+AFTER INSERT ON workspaces
+FOR EACH ROW EXECUTE FUNCTION create_default_workspace_statuses();
+
+-- Trigger to create default workspace labels when workspace is created
+DROP TRIGGER IF EXISTS trigger_create_default_workspace_labels ON workspaces;
+CREATE TRIGGER trigger_create_default_workspace_labels
+AFTER INSERT ON workspaces
+FOR EACH ROW EXECUTE FUNCTION create_default_workspace_labels();

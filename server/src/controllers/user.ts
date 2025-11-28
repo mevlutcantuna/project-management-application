@@ -11,6 +11,12 @@ class UserController {
     this.userService = userService;
   }
 
+  private async ensureUserExists(id: string) {
+    const user = await this.userService.getUserById(id);
+    if (!user) throw new NotFoundError("User not found");
+    return user;
+  }
+
   getAllUsers = async (req: Request, res: Response) => {
     const users = await this.userService.getAllUsers();
     if (!users) throw new NotFoundError("No users found");
@@ -19,15 +25,13 @@ class UserController {
 
   getUser = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const user = await this.userService.getUserById(id);
-    if (!user) throw new NotFoundError("User not found");
+    const user = await this.ensureUserExists(id);
     res.status(200).json(user);
   };
 
   deleteUser = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const user = await this.userService.getUserById(id);
-    if (!user) throw new NotFoundError("User not found");
+    await this.ensureUserExists(id);
     await this.userService.deleteUser(id);
     res.status(200).json({ message: "User deleted successfully" });
   };

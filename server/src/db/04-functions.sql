@@ -64,3 +64,25 @@ BEGIN
   RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Function to create default workspace statuses when workspace is created
+CREATE OR REPLACE FUNCTION create_default_workspace_statuses()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO workspace_statuses (workspace_id, name, icon_name, color) VALUES
+    (NEW.id, 'To Do', 'ToDo', 'lch(70.313 3.577 260.65)'),
+    (NEW.id, 'In Progress', 'InProgress', 'lch(70.313 19.321 31.72)'),
+    (NEW.id, 'Done', 'Done', 'lch(48 59.31 288.43)');
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to create default workspace labels when workspace is created
+CREATE OR REPLACE FUNCTION create_default_workspace_labels()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO workspace_labels (workspace_id, name, color) VALUES
+    (NEW.id, 'Bug', 'lch(70.313 3.577 260.65)'),
+    (NEW.id, 'Feature', 'lch(70.313 19.321 31.72)'),
+    (NEW.id, 'Task', 'lch(48 59.31 288.43)');
+END;
+$$ LANGUAGE plpgsql;

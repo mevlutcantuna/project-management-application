@@ -9,6 +9,9 @@ import {
   CreateWorkspaceInvitationInput,
   UpdateWorkspaceInvitationInput,
   AddUserToWorkspaceInput,
+  WorkspaceStatus,
+  CreateWorkspaceStatusInput,
+  UpdateWorkspaceStatusInput,
 } from "@/types/workspace";
 import WorkspaceRepository from "@/repositories/workspace";
 
@@ -150,5 +153,30 @@ export class WorkspaceService {
       userId,
       workspaceId
     );
+  }
+
+  // Workspace Statuses
+  async getWorkspaceStatuses(workspaceId: string): Promise<WorkspaceStatus[]> {
+    return this.workspaceRepository.getWorkspaceStatuses(workspaceId);
+  }
+
+  async getWorkspaceStatusById(id: string): Promise<WorkspaceStatus | null> {
+    return this.workspaceRepository.getWorkspaceStatusById(id);
+  }
+
+  async createWorkspaceStatus(
+    input: CreateWorkspaceStatusInput
+  ): Promise<WorkspaceStatus> {
+    return this.workspaceRepository.createWorkspaceStatus(input);
+  }
+
+  async updateWorkspaceStatus(
+    input: UpdateWorkspaceStatusInput
+  ): Promise<WorkspaceStatus> {
+    return this.workspaceRepository.updateWorkspaceStatus(input);
+  }
+
+  async deleteWorkspaceStatus(id: string): Promise<void> {
+    return this.workspaceRepository.deleteWorkspaceStatus(id);
   }
 }

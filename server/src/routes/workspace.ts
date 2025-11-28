@@ -38,5 +38,6 @@ router.delete(
   "/:id/invitations/:invitation_id",
   workspaceController.removeWorkspaceInvitation
 );
+router.get("/:id/statuses", workspaceController.getWorkspaceStatuses);
 
 export default router;

@@ -28,7 +28,6 @@ const teamMemberController = new TeamMemberController(
 router.post("/", teamMemberController.addUserToTeam);
 router.put("/:userId", teamMemberController.updateTeamMemberRole);
 router.delete("/:userId", teamMemberController.deleteTeamMember);
-router.delete("/:userId/remove", teamMemberController.removeUserFromTeam);
 router.post("/leave", teamMemberController.leaveTeam);
 
 export default router;
