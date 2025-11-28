@@ -1,3 +1,4 @@
+import type { COLORS } from "@/components/common/icon-picker/constants";
 import type { User, UserRole } from "./user";
 
 export interface Team {
@@ -6,7 +7,7 @@ export interface Team {
   identifier: string;
   workspaceId: string;
   iconName: string;
-  color: string;
+  color: (typeof COLORS)[keyof typeof COLORS];
   createdAt: Date;
   updatedAt: Date;
   users: (Omit<User, "createdAt" | "updatedAt"> & { role: UserRole })[];

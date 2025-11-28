@@ -1,15 +1,21 @@
 import { useTeamStore } from "@/features/teams/store";
-import React from "react";
 import { useParams } from "react-router-dom";
 
 const IssueForm = () => {
-  const { teamId } = useParams();
-  const { teams } = useTeamStore();
-
-  const defaultTeam =
-    teams.find((team) => team.identifier === teamId) ?? teams[0];
-
-  return <div>IssueForm</div>;
+  return (
+    <div>
+      <div className="px-[18px]">
+        <input
+          className="placeholder:text-placeholder h-7 w-full border-none text-lg font-semibold outline-none"
+          placeholder="Issue Title"
+        />
+        <textarea
+          placeholder="Add description..."
+          className="placeholder:text-placeholder min-h-20 w-full resize-none border-none pt-1.5 pb-3 text-base outline-none"
+        />
+      </div>
+    </div>
+  );
 };
 
 export default IssueForm;
