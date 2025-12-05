@@ -20,7 +20,7 @@ export const useCreateTeamMutation = (
   return useMutation<Team, Error, CreateTeamInput>({
     mutationFn: async (team: CreateTeamInput) => {
       const response = await api.post(
-        `workspaces/${team.workspaceId}/teams`,
+        `/workspaces/${team.workspaceId}/teams`,
         team
       );
       return response.data;
@@ -60,7 +60,7 @@ export const useRemoveUserFromTeamMutation = (
       userId,
     }: RemoveUserFromTeamInput) => {
       const response = await api.delete(
-        `/workspaces/${workspaceId}/teams/${teamId}/members/${userId}/remove`
+        `/workspaces/${workspaceId}/teams/${teamId}/members/${userId}`
       );
       return response.data;
     },

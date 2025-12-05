@@ -15,21 +15,21 @@ import {
 } from "@/utils/errors";
 import { Response } from "express";
 import { UserService } from "@/services/user";
-import { WorkspaceService } from "@/services/workspace";
+import { WorkspaceMemberService } from "@/services/workspace-member";
 
 class TeamController {
   private teamService: TeamService;
   private userService: UserService;
-  private workspaceService: WorkspaceService;
+  private workspaceMemberService: WorkspaceMemberService;
 
   constructor(
     teamService: TeamService,
     userService: UserService,
-    workspaceService: WorkspaceService
+    workspaceMemberService: WorkspaceMemberService
   ) {
     this.teamService = teamService;
     this.userService = userService;
-    this.workspaceService = workspaceService;
+    this.workspaceMemberService = workspaceMemberService;
   }
 
   private async validateUserIds(userIds?: string[]) {
@@ -52,7 +52,7 @@ class TeamController {
 
     // Check creator is in the workspace and is a admin or manager
     const isUserInWorkspace =
-      await this.workspaceService.checkUserIsWorkspaceMember(
+      await this.workspaceMemberService.checkUserIsWorkspaceMember(
         req.user.id,
         workspaceId
       );
@@ -60,7 +60,7 @@ class TeamController {
       throw new UnauthorizedError("User is not a member of the workspace");
 
     const isUserAdminOrManager =
-      await this.workspaceService.checkUserIsWorkspaceAdminOrManager(
+      await this.workspaceMemberService.checkUserIsWorkspaceAdminOrManager(
         req.user.id,
         workspaceId
       );

@@ -12,24 +12,24 @@ import {
   UnauthorizedError,
 } from "@/utils/errors";
 import { UserService } from "@/services/user";
-import { WorkspaceService } from "@/services/workspace";
+import { WorkspaceMemberService } from "@/services/workspace-member";
 
 class TeamMemberController {
   private teamMemberService: TeamMemberService;
   private teamService: TeamService;
   private userService: UserService;
-  private workspaceService: WorkspaceService;
+  private workspaceMemberService: WorkspaceMemberService;
 
   constructor(
     teamMemberService: TeamMemberService,
     teamService: TeamService,
     userService: UserService,
-    workspaceService: WorkspaceService
+    workspaceMemberService: WorkspaceMemberService
   ) {
     this.teamMemberService = teamMemberService;
     this.teamService = teamService;
     this.userService = userService;
-    this.workspaceService = workspaceService;
+    this.workspaceMemberService = workspaceMemberService;
   }
 
   private async ensureTeamAdminOrManager(teamId: string, userId: string) {
@@ -66,12 +66,12 @@ class TeamMemberController {
 
     // If user is not in the workspace, add them to the workspace
     const isUserInWorkspace =
-      await this.workspaceService.checkUserIsWorkspaceMember(
+      await this.workspaceMemberService.checkUserIsWorkspaceMember(
         user.id,
         team.workspaceId
       );
     if (!isUserInWorkspace)
-      await this.workspaceService.addUserToWorkspaceMember({
+      await this.workspaceMemberService.addUserToWorkspaceMember({
         workspaceId: team.workspaceId,
         userId: user.id,
         role: "Member",

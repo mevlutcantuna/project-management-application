@@ -9,7 +9,7 @@ export const useGetWorkspaceTeamsQuery = (
   return useQuery<Team[]>({
     queryKey: ["workspace-teams", workspaceId],
     queryFn: async () => {
-      const response = await api.get(`workspaces/${workspaceId}/teams`);
+      const response = await api.get(`/workspaces/${workspaceId}/teams`);
       return response.data;
     },
     ...options,
@@ -25,7 +25,7 @@ export const useGetTeamByIdentifierQuery = (
     queryKey: ["team-by-identifier", identifier, workspaceId],
     queryFn: async () => {
       const response = await api.get(
-        `workspaces/${workspaceId}/teams/by-identifier/${identifier}`
+        `/workspaces/${workspaceId}/teams/by-identifier/${identifier}`
       );
       return response.data;
     },

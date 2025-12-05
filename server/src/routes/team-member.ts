@@ -6,7 +6,7 @@ import TeamMemberController from "@/controllers/team-member";
 import { TeamService } from "@/services/team";
 import TeamMemberRepository from "@/repositories/team-member";
 import { UserService } from "@/services/user";
-import { WorkspaceService } from "@/services/workspace";
+import { WorkspaceMemberService } from "@/services/workspace-member";
 
 const router = Router({ mergeParams: true });
 
@@ -16,13 +16,13 @@ const teamMemberRepository = new TeamMemberRepository(db);
 const teamMemberService = new TeamMemberService(teamMemberRepository);
 const teamService = new TeamService(db);
 const userService = new UserService(db);
-const workspaceService = new WorkspaceService(db);
+const workspaceMemberService = new WorkspaceMemberService(db);
 
 const teamMemberController = new TeamMemberController(
   teamMemberService,
   teamService,
   userService,
-  workspaceService
+  workspaceMemberService
 );
 
 router.post("/", teamMemberController.addUserToTeam);

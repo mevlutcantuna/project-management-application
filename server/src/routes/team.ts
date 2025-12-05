@@ -4,7 +4,7 @@ import { TeamService } from "@/services/team";
 import { db } from "@/config/dbClient";
 import TeamController from "@/controllers/team";
 import { UserService } from "@/services/user";
-import { WorkspaceService } from "@/services/workspace";
+import { WorkspaceMemberService } from "@/services/workspace-member";
 
 const router = Router({ mergeParams: true });
 
@@ -12,11 +12,11 @@ router.use(authenticate);
 
 const teamService = new TeamService(db);
 const userService = new UserService(db);
-const workspaceService = new WorkspaceService(db);
+const workspaceMemberService = new WorkspaceMemberService(db);
 const teamController = new TeamController(
   teamService,
   userService,
-  workspaceService
+  workspaceMemberService
 );
 
 router.post("/", teamController.createTeam);
