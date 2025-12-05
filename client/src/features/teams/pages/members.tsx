@@ -37,10 +37,12 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import MemberForm from "../components/member-form";
+import { useTeamStore } from "../store";
 
 export const TeamMembersPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { teams } = useTeamStore();
   const { currentWorkspace } = useWorkspaceStore();
   const { identifier } = useParams();
   const { data: team, isLoading } = useGetTeamByIdentifierQuery(
@@ -98,6 +100,7 @@ export const TeamMembersPage = () => {
     {
       hidden: (user: Team["users"][number]) => user.id !== currentUser?.id,
       label: "Leave Team",
+      disabled: teams?.length === 1,
       onClick: () => {
         leaveTeam({
           workspaceId: currentWorkspace?.id as string,
@@ -234,6 +237,7 @@ export const TeamMembersPage = () => {
                             >
                               <DropdownMenuItem
                                 key={action.label}
+                                disabled={action.disabled}
                                 onClick={() => action.onClick(user)}
                               >
                                 {action.label}
