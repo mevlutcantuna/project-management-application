@@ -1,6 +1,3 @@
-import { useTeamStore } from "@/features/teams/store";
-import { useParams } from "react-router-dom";
-
 const IssueForm = () => {
   return (
     <div>
