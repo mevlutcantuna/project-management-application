@@ -22,7 +22,6 @@ const workspaceInvitationController = new WorkspaceInvitationController(
   userService
 );
 
-// /workspaces/:workspaceId/invitations
 router.get("/", workspaceInvitationController.getWorkspaceMyInvitations);
 router.post("/", workspaceInvitationController.sendWorkspaceInvitation);
 router.post(

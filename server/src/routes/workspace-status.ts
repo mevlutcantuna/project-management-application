@@ -16,7 +16,6 @@ const workspaceStatusController = new WorkspaceStatusController(
   workspaceMemberService
 );
 
-// /workspaces/:workspaceId/statuses
 router.get("/", workspaceStatusController.getWorkspaceStatuses);
 router.post("/", workspaceStatusController.createWorkspaceStatus);
 router.put("/:statusId", workspaceStatusController.updateWorkspaceStatus);

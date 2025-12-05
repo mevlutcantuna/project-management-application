@@ -16,7 +16,6 @@ const workspaceMemberController = new WorkspaceMemberController(
   workspaceService
 );
 
-// /workspaces/:workspaceId/members
 router.get("/", workspaceMemberController.getWorkspaceMembers);
 router.post("/", workspaceMemberController.addWorkspaceMember);
 
